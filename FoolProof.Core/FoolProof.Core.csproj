@@ -7,6 +7,7 @@
     <Authors>Rafael Peña García</Authors>
     <Company />
     <PackageTags>MVC Foolproof Validation AspNetCore</PackageTags>
+    <PackageProjectUrl>https://github.com/rpgkaiser/FoolProof.Core</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\license.txt" Link="license.txt" />
     <Content Include="Scripts\mvcfoolproof.unobtrusive.js">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
