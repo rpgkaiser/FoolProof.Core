@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Migration to asp.net core of the "MVC Foolproof Validation" library.</Description>
+    <Authors>Rafael Peña García</Authors>
+    <Company />
+    <PackageTags>MVC Foolproof Validation AspNetCore</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\mvcfoolproof.unobtrusive.js" />
+    <None Remove="Scripts\mvcfoolproof.unobtrusive.min.js" />
+    <None Remove="Scripts\MvcFoolproofJQueryValidation.js" />
+    <None Remove="Scripts\MvcFoolproofJQueryValidation.min.js" />
+    <None Remove="Scripts\MvcFoolproofValidation.js" />
+    <None Remove="Scripts\MvcFoolproofValidation.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Scripts\mvcfoolproof.unobtrusive.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\mvcfoolproof.unobtrusive.min.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\MvcFoolproofJQueryValidation.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\MvcFoolproofJQueryValidation.min.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\MvcFoolproofValidation.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\MvcFoolproofValidation.min.js">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+  </ItemGroup>
+
+</Project>
