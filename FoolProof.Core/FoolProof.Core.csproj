@@ -11,7 +11,7 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/rpgkaiser/FoolProof.Core/master/license.txt</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/rpgkaiser/FoolProof.Core</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Version>1.0.5</Version>
+    <Version>1.0.6</Version>
   </PropertyGroup>
 
   <ItemGroup>
