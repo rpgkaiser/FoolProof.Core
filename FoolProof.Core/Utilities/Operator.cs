@@ -10,6 +10,8 @@ namespace FoolProof.Core
         GreaterThanOrEqualTo,
         LessThanOrEqualTo,
         RegExMatch,
-        NotRegExMatch
+        NotRegExMatch,
+		In,
+		NotIn
     }
 }

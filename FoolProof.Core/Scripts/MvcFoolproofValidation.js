@@ -1,5 +1,5 @@
-﻿var FoolProof.Core = function () { };
-FoolProof.Core.is = function (value1, operator, value2, passOnNull) {
+﻿var FoolProofCore = function () { };
+FoolProofCore.is = function (value1, operator, value2, passOnNull) {
     if (passOnNull) {
         var isNullish = function (input) {
             return input == null || input == undefined || input == "";
@@ -42,25 +42,47 @@ FoolProof.Core.is = function (value1, operator, value2, passOnNull) {
     }
 
     switch (operator) {
-        case "EqualTo": if (value1 == value2) return true; break;
-        case "NotEqualTo": if (value1 != value2) return true; break;
-        case "GreaterThan": if (value1 > value2) return true; break;
-        case "LessThan": if (value1 < value2) return true; break;
-        case "GreaterThanOrEqualTo": if (value1 >= value2) return true; break;
-        case "LessThanOrEqualTo": if (value1 <= value2) return true; break;
-        case "RegExMatch": return (new RegExp(value2)).test(value1); break;
-        case "NotRegExMatch": return !(new RegExp(value2)).test(value1); break;
+		case "EqualTo":
+			if (value1 == value2) return true;
+			break;
+		case "NotEqualTo":
+			if (value1 != value2) return true;
+			break;
+		case "GreaterThan":
+			if (value1 > value2) return true;
+			break;
+		case "LessThan":
+			if (value1 < value2) return true;
+			break;
+		case "GreaterThanOrEqualTo":
+			if (value1 >= value2) return true;
+			break;
+		case "LessThanOrEqualTo":
+			if (value1 <= value2) return true;
+			break;
+		case "RegExMatch":
+			return (new RegExp(value2)).test(value1);
+		case "NotRegExMatch":
+			return !(new RegExp(value2)).test(value1);
+		case "In":
+			return value2 && typeof (value2.indexOf) == "function"
+				? value2.indexOf(value1) != -1
+				: value1 == value2;
+		case "NotIn":
+			return value2 && typeof (value2.indexOf) == "function"
+				? value2.indexOf(value1) == -1
+				: value1 == value2;
     }
 
     return false;
 };
 
-FoolProof.Core.getId = function (element, dependentPropety) {
+FoolProofCore.getId = function (element, dependentPropety) {
     var pos = element.id.lastIndexOf("_") + 1;
     return element.id.substr(0, pos) + dependentPropety.replace(/\./g, "_");
 };
 
-FoolProof.Core.getName = function (element, dependentPropety) {
+FoolProofCore.getName = function (element, dependentPropety) {
     var pos = element.name.lastIndexOf(".") + 1;
     return element.name.substr(0, pos) + dependentPropety;
 };
@@ -69,10 +91,10 @@ Sys.Mvc.ValidatorRegistry.validators["is"] = function (rule) {
     return function (value, context) {
         var operator = rule.ValidationParameters["operator"];
         var passOnNull = rule.ValidationParameters["passonnull"];
-        var dependentProperty = FoolProof.Core.getId(context.fieldContext.elements[0], rule.ValidationParameters["dependentproperty"]);
+        var dependentProperty = FoolProofCore.getId(context.fieldContext.elements[0], rule.ValidationParameters["dependentproperty"]);
         var dependentValue = document.getElementById(dependentProperty).value;
 
-        if (FoolProof.Core.is(value, operator, dependentValue, passOnNull))
+        if (FoolProofCore.is(value, operator, dependentValue, passOnNull))
             return true;
 
         return rule.ErrorMessage;
@@ -84,7 +106,7 @@ Sys.Mvc.ValidatorRegistry.validators["requiredif"] = function (rule) {
     var dependentTestValue = rule.ValidationParameters["dependentvalue"];
     var operator = rule.ValidationParameters["operator"];
     return function (value, context) {
-        var dependentProperty = FoolProof.Core.getName(context.fieldContext.elements[0], rule.ValidationParameters["dependentproperty"]);
+        var dependentProperty = FoolProofCore.getName(context.fieldContext.elements[0], rule.ValidationParameters["dependentproperty"]);
         var dependentPropertyElement = document.getElementsByName(dependentProperty);
         var dependentValue = null;
 
@@ -101,7 +123,7 @@ Sys.Mvc.ValidatorRegistry.validators["requiredif"] = function (rule) {
         else
             dependentValue = dependentPropertyElement[0].value;
 
-        if (FoolProof.Core.is(dependentValue, operator, dependentTestValue)) {
+        if (FoolProofCore.is(dependentValue, operator, dependentTestValue)) {
             if (pattern == null) {
                 if (value != null && value.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "")
                     return true;
@@ -118,7 +140,7 @@ Sys.Mvc.ValidatorRegistry.validators["requiredif"] = function (rule) {
 
 Sys.Mvc.ValidatorRegistry.validators["requiredifempty"] = function (rule) {
     return function (value, context) {
-        var dependentProperty = FoolProof.Core.getId(context.fieldContext.elements[0], rule.ValidationParameters["dependentproperty"]);
+        var dependentProperty = FoolProofCore.getId(context.fieldContext.elements[0], rule.ValidationParameters["dependentproperty"]);
         var dependentValue = document.getElementById(dependentProperty).value;
 
         if (dependentValue == null || dependentValue.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') == "") {
@@ -134,7 +156,7 @@ Sys.Mvc.ValidatorRegistry.validators["requiredifempty"] = function (rule) {
 
 Sys.Mvc.ValidatorRegistry.validators["requiredifnotempty"] = function (rule) {
     return function (value, context) {
-        var dependentProperty = FoolProof.Core.getId(context.fieldContext.elements[0], rule.ValidationParameters["dependentproperty"]);
+        var dependentProperty = FoolProofCore.getId(context.fieldContext.elements[0], rule.ValidationParameters["dependentproperty"]);
         var dependentValue = document.getElementById(dependentProperty).value;
 
         if (dependentValue != null && dependentValue.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "") {

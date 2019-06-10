@@ -1,5 +1,5 @@
-﻿var FoolProof.Core = function () { };
-FoolProof.Core.is = function (value1, operator, value2, passOnNull) {
+﻿var FoolProofCore = function () { };
+FoolProofCore.is = function (value1, operator, value2, passOnNull) {
     if (passOnNull) {
         var isNullish = function (input) {
             return input == null || input == undefined || input == "";
@@ -42,44 +42,66 @@ FoolProof.Core.is = function (value1, operator, value2, passOnNull) {
     }
 
     switch (operator) {
-        case "EqualTo": if (value1 == value2) return true; break;
-        case "NotEqualTo": if (value1 != value2) return true; break;
-        case "GreaterThan": if (value1 > value2) return true; break;
-        case "LessThan": if (value1 < value2) return true; break;
-        case "GreaterThanOrEqualTo": if (value1 >= value2) return true; break;
-        case "LessThanOrEqualTo": if (value1 <= value2) return true; break;
-        case "RegExMatch": return (new RegExp(value2)).test(value1); break;
-        case "NotRegExMatch": return !(new RegExp(value2)).test(value1); break;
+		case "EqualTo":
+			if (value1 == value2) return true;
+			break;
+		case "NotEqualTo":
+			if (value1 != value2) return true;
+			break;
+		case "GreaterThan":
+			if (value1 > value2) return true;
+			break;
+		case "LessThan":
+			if (value1 < value2) return true;
+			break;
+		case "GreaterThanOrEqualTo":
+			if (value1 >= value2) return true;
+			break;
+		case "LessThanOrEqualTo":
+			if (value1 <= value2) return true;
+			break;
+		case "RegExMatch":
+			return (new RegExp(value2)).test(value1);
+		case "NotRegExMatch":
+			return !(new RegExp(value2)).test(value1);
+		case "In":
+			return value2 && typeof (value2.indexOf) == "function"
+				? value2.indexOf(value1) != -1
+				: value1 == value2;
+		case "NotIn":
+			return value2 && typeof (value2.indexOf) == "function"
+				? value2.indexOf(value1) == -1
+				: value1 == value2;
     }
 
     return false;
 };
 
-FoolProof.Core.getId = function (element, dependentPropety) {
+FoolProofCore.getId = function (element, dependentPropety) {
     var pos = element.id.lastIndexOf("_") + 1;
     return element.id.substr(0, pos) + dependentPropety.replace(/\./g, "_");
 };
 
-FoolProof.Core.getName = function (element, dependentPropety) {
+FoolProofCore.getName = function (element, dependentPropety) {
     var pos = element.name.lastIndexOf(".") + 1;
     return element.name.substr(0, pos) + dependentPropety;
 };
 
 (function () {
     jQuery.validator.addMethod("is", function (value, element, params) {
-        var dependentProperty = FoolProof.Core.getId(element, params["dependentproperty"]);
+        var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
         var operator = params["operator"];
         var passOnNull = params["passonnull"];
         var dependentValue = document.getElementById(dependentProperty).value;
 
-        if (FoolProof.Core.is(value, operator, dependentValue, passOnNull))
+        if (FoolProofCore.is(value, operator, dependentValue, passOnNull))
             return true;
 
         return false;
     });
 
     jQuery.validator.addMethod("requiredif", function (value, element, params) {
-        var dependentProperty = FoolProof.Core.getName(element, params["dependentproperty"]);
+        var dependentProperty = FoolProofCore.getName(element, params["dependentproperty"]);
         var dependentTestValue = params["dependentvalue"];
         var operator = params["operator"];
         var pattern = params["pattern"];
@@ -99,7 +121,7 @@ FoolProof.Core.getName = function (element, dependentPropety) {
         else
             dependentValue = dependentPropertyElement[0].value;
 
-        if (FoolProof.Core.is(dependentValue, operator, dependentTestValue)) {
+        if (FoolProofCore.is(dependentValue, operator, dependentTestValue)) {
             if (pattern == null) {
                 if (value != null && value.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "")
                     return true;
@@ -114,7 +136,7 @@ FoolProof.Core.getName = function (element, dependentPropety) {
     });
 
     jQuery.validator.addMethod("requiredifempty", function (value, element, params) {
-        var dependentProperty = FoolProof.Core.getId(element, params["dependentproperty"]);
+        var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
         var dependentValue = document.getElementById(dependentProperty).value;
 
         if (dependentValue == null || dependentValue.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') == "") {
@@ -128,7 +150,7 @@ FoolProof.Core.getName = function (element, dependentPropety) {
     });
 
     jQuery.validator.addMethod("requiredifnotempty", function (value, element, params) {
-        var dependentProperty = FoolProof.Core.getId(element, params["dependentproperty"]);
+        var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
         var dependentValue = document.getElementById(dependentProperty).value;
 
         if (dependentValue != null && dependentValue.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "") {

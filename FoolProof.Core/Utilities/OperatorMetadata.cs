@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace FoolProof.Core
@@ -124,8 +125,34 @@ namespace FoolProof.Core
                             return !Regex.Match((value ?? "").ToString(), dependentValue.ToString()).Success;
                         }
                     }
-                }
-            };
+                },
+				{
+					Operator.In, new OperatorMetadata()
+					{
+						ErrorMessage = "not in",
+						IsValid = (value, dependentValue) => {
+							var eqOperMtd = Get(Operator.EqualTo);
+							if(dependentValue is object[] valueList)
+								return valueList.Any(val => eqOperMtd.IsValid(value, val));
+
+							return eqOperMtd.IsValid(value, dependentValue);
+						}
+					}
+				},
+				{
+					Operator.NotIn, new OperatorMetadata()
+					{
+						ErrorMessage = "not in",
+						IsValid = (value, dependentValue) => {
+							var eqOperMtd = Get(Operator.EqualTo);
+							if(dependentValue is object[] valueList)
+								return valueList.All(val => !eqOperMtd.IsValid(value, val));
+
+							return !eqOperMtd.IsValid(value, dependentValue);
+						}
+					}
+				}
+			};
         }
     }
 }

@@ -24,13 +24,14 @@ namespace FoolProof.Core
 					attribute.DependentPropertyDisplayName = displayName;
 			}
 
+			var validName = Attribute.ClientTypeName.ToLowerInvariant();
 			//Add validation rule attributes
 			MergeAttribute(context.Attributes, "data-val", "true");
-			MergeAttribute(context.Attributes, $"data-val-{Attribute.ClientTypeName.ToLowerInvariant()}", GetErrorMessage(context));
+			MergeAttribute(context.Attributes, $"data-val-{validName}", GetErrorMessage(context));
 
 			//Add validation params attributes
 			foreach (var validationParam in Attribute.ClientValidationParameters)
-				MergeAttribute(context.Attributes, $"data-val-{validationParam.Key}", validationParam.Value + "");
+				MergeAttribute(context.Attributes, $"data-val-{validName}-{validationParam.Key.ToLowerInvariant()}", validationParam.Value + "");
 		}
 
 		public override string GetErrorMessage(ModelValidationContextBase validationContext)
