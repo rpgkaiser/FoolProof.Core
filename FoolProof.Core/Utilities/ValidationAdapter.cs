@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 
 namespace FoolProof.Core
 {
@@ -31,7 +32,13 @@ namespace FoolProof.Core
 
 			//Add validation params attributes
 			foreach (var validationParam in Attribute.ClientValidationParameters)
-				MergeAttribute(context.Attributes, $"data-val-{validName}-{validationParam.Key.ToLowerInvariant()}", validationParam.Value + "");
+				MergeAttribute(
+					context.Attributes, 
+					$"data-val-{validName}-{validationParam.Key.ToLowerInvariant()}",
+					validationParam.Value != null && validationParam.Value.GetType() != typeof(string) 
+						? JsonConvert.SerializeObject(validationParam.Value) 
+						: validationParam.Value as string
+				);
 		}
 
 		public override string GetErrorMessage(ModelValidationContextBase validationContext)

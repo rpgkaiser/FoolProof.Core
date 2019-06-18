@@ -11,11 +11,25 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/rpgkaiser/FoolProof.Core/master/license.txt</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/rpgkaiser/FoolProof.Core</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Version>1.0.6</Version>
+    <Version>1.0.9</Version>
+    <PackageReleaseNotes>- Improve operators "In" and "NotIn".
+- Fix rendering unobtrusive attributes for not scalar values.
+- Include javascripts files.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Scripts\mvcfoolproof.core.js" />
+    <None Remove="Scripts\mvcfoolproof.jquery.validation.js" />
+    <None Remove="Scripts\mvcfoolproof.msajax.validation.js" />
+    <None Remove="Scripts\mvcfoolproof.unobtrusive.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="..\license.txt" Link="license.txt" />
+    <Content Include="Scripts\mvcfoolproof.core.js" />
+    <Content Include="Scripts\mvcfoolproof.unobtrusive.js" />
+    <Content Include="Scripts\mvcfoolproof.jquery.validation.js" />
+    <Content Include="Scripts\mvcfoolproof.msajax.validation.js" />
   </ItemGroup>
 
   <ItemGroup>
