@@ -34,4 +34,4 @@ _New operator validators:_
 
 ## Installation
 
-**NuGet:** _install-package_ FoolProof.Core
+**NuGet:** _install-package_ [FoolProof.Core](https://www.nuget.org/packages/FoolProof.Core "FoolProof.Core nuget package URL")
