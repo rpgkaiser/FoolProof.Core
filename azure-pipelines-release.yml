@@ -9,6 +9,8 @@ trigger:
   branches:
     include:
       - master
+      
+pr: none
 
 pool:
   vmImage: 'windows-latest'
@@ -52,7 +54,7 @@ steps:
 - task: CopyFiles@2
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)\FoolProof.Core\bin\$(buildConfiguration)\'
-    contents: '**'
+    contents: 'FoolProof.Core.*.nupkg'
     targetFolder: '$(Build.ArtifactStagingDirectory)'
     cleanTargetFolder: true
 
