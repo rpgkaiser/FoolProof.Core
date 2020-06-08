@@ -10,11 +10,6 @@ trigger:
     include:
       - master
 
-pr:
-  branches:
-    include:
-      - master
-
 pool:
   vmImage: 'windows-latest'
 
@@ -32,7 +27,7 @@ steps:
   inputs:
     targetType: inline
     script: |
-      [string] $buildName = "$(build.definitionName)_$(versionNumber)"
+      [string] $buildName = "$(build.definitionName) - $(versionNumber)"
       Write-Host "Update the build name to '$buildName'."
       Write-Host "##vso[build.updatebuildnumber]$buildName"
 
