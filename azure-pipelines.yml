@@ -3,7 +3,7 @@
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-name: '$(BuildDefinitionName)_$(Date:yyyy.MM.dd)_$(Rev:.r)'
+name: '$(BuildDefinitionName) - $(Date:yyyy.MM.dd)$(Rev:.r)'
 
 trigger:
   branches:
@@ -33,8 +33,8 @@ steps:
     targetType: inline
     script: |
       [string] $buildName = "$(build.definitionName)_$(versionNumber)"
-      Write-Host: "Update the build name to '$buildName'."
-      Write-Host: "##vso[build.updatebuildnumber]$buildName"
+      Write-Host "Update the build name to '$buildName'."
+      Write-Host "##vso[build.updatebuildnumber]$buildName"
 
 - task: NuGetToolInstaller@1
 
