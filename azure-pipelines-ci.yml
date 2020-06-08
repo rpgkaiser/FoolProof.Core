@@ -52,7 +52,7 @@ steps:
 - task: CopyFiles@2
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)\FoolProof.Core\bin\$(buildConfiguration)\'
-    contents: '**'
+    contents: 'FoolProof.Core.*'
     targetFolder: '$(Build.ArtifactStagingDirectory)'
     cleanTargetFolder: true
 
