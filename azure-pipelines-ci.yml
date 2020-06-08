@@ -40,7 +40,7 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:Version=$(versionNumber) /p:SkipInvalidConfigurations=true /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:publishUrl="$(Build.ArtifactStagingDirectory)"'
+    msbuildArgs: '/p:Version=$(versionNumber) /p:SkipInvalidConfigurations=true'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
@@ -48,6 +48,13 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)\FoolProof.Core\bin\$(buildConfiguration)\'
+    contents: '**'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+    cleanTargetFolder: true
 
 - task: PublishBuildArtifacts@1
   inputs:
