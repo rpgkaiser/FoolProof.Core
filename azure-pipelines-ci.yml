@@ -5,6 +5,8 @@
 
 name: '$(BuildDefinitionName) - $(Date:yyyy.MM.dd)$(Rev:.r)'
 
+trigger: none
+
 pr:
   branches:
     include:
