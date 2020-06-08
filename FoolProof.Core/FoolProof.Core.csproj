@@ -8,7 +8,7 @@
     <Company />
     <PackageTags>MVC Foolproof Validation AspNetCore</PackageTags>
     <PackageProjectUrl>https://github.com/rpgkaiser/FoolProof.Core</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/rpgkaiser/FoolProof.Core/master/license.txt</PackageLicenseUrl>
+		<PackageLicenseFile>license.txt</PackageLicenseFile>
     <RepositoryUrl>https://github.com/rpgkaiser/FoolProof.Core</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <Version>1.1.0</Version>
