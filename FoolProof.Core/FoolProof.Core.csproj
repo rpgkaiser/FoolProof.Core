@@ -15,7 +15,7 @@
     <PackageReleaseNotes>
 			- Change targeting to .Net Framework 4.7.2 and Net Standard 2.0.
 			- Update config extension methods.
-		</PackageReleaseNotes>
+</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,15 +23,18 @@
     <None Remove="Scripts\mvcfoolproof.jquery.validation.js" />
     <None Remove="Scripts\mvcfoolproof.msajax.validation.js" />
     <None Remove="Scripts\mvcfoolproof.unobtrusive.js" />
-  </ItemGroup>
+	</ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\license.txt" Link="license.txt" />
     <Content Include="Scripts\mvcfoolproof.core.js" />
     <Content Include="Scripts\mvcfoolproof.unobtrusive.js" />
     <Content Include="Scripts\mvcfoolproof.jquery.validation.js" />
     <Content Include="Scripts\mvcfoolproof.msajax.validation.js" />
   </ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\license.txt" Link="license.txt" Pack="true" PackagePath="" />
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
