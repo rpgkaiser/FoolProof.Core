@@ -32,7 +32,7 @@ steps:
   inputs:
     targetType: inline
     script: |
-      [string] $buildName = "$(BuildDefinitionName)_$(Date:yyyMMdd)_$(versionNumber)"
+      [string] $buildName = "$(build.definitionName)_$(Date:yyyMMdd)_$(versionNumber)"
       Write-Host: "Update the build name to '$buildName'."
       Write-Host: "##vso[build.updatebuildnumber]$buildName"
 
