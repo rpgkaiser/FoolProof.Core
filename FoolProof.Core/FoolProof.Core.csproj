@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
@@ -11,10 +11,11 @@
     <PackageLicenseUrl>https://raw.githubusercontent.com/rpgkaiser/FoolProof.Core/master/license.txt</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/rpgkaiser/FoolProof.Core</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Version>1.0.9</Version>
-    <PackageReleaseNotes>- Improve operators "In" and "NotIn".
-- Fix rendering unobtrusive attributes for not scalar values.
-- Include javascripts files.</PackageReleaseNotes>
+    <Version>1.1.0</Version>
+    <PackageReleaseNotes>
+			- Change targeting to .Net Framework 4.7.2 and Net Standard 2.0.
+			- Update config extension methods.
+		</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
