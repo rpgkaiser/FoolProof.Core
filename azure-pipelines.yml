@@ -3,6 +3,8 @@
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
+name: '$(BuildDefinitionName)_$(Date:yyyy.MM.dd)$(Rev:.r)'
+
 trigger:
   branches:
     include:
@@ -20,8 +22,20 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  version.MajorMinor: '1.1'
+  version.Revision: $[counter(variables['version.MajorMinor'], 0)]
+  versionNumber: '$(version.MajorMinor).$(version.Revision)'
 
 steps:
+- task: PowerShell@2
+  displayName: Update the name of the build, using the generated version number.
+  inputs:
+    targetType: inline
+    script: |
+      [string] $buildName = "$(BuildDefinitionName)_$(Date:yyyMMdd)_$(versionNumber)"
+      Write-Host: "Update the build name to '$buildName'."
+      Write-Host: "##vso[build.updatebuildnumber]$buildName"
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -31,7 +45,7 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=false /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)"'
+    msbuildArgs: '/p:Version=$(versionNumber) /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=false /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)"'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
