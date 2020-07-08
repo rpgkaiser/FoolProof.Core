@@ -25,7 +25,7 @@ namespace FoolProof.Core
 
         public override string DefaultErrorMessage
         {
-            get { return "{0} is invalide due to {1}."; }
+            get { return "{0} is invalid due to {1}."; }
         }
         
         public override bool IsValid(object value, object container)
