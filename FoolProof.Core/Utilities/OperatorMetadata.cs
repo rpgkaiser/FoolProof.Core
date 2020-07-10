@@ -129,7 +129,7 @@ namespace FoolProof.Core
 				{
 					Operator.In, new OperatorMetadata()
 					{
-						ErrorMessage = "not in",
+						ErrorMessage = "in",
 						IsValid = (value, dependentValue) => {
 							var eqOperMtd = Get(Operator.EqualTo);
 							if(dependentValue is object[] valueList)
