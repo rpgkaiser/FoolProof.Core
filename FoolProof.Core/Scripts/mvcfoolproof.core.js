@@ -27,22 +27,45 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
 
     var isBool = function (input) {
         return input === true || input === false || input === "true" || input === "false";
-    };
+	};
 
-    if (isDate(value1)) {
-        value1 = Date.parse(value1);
-        value2 = Date.parse(value2);
-    }
-    else if (isBool(value1)) {
-        if (value1 == "false") value1 = false;
-        if (value2 == "false") value2 = false;
-        value1 = !!value1;
-        value2 = !!value2;
-    }
-    else if (isNumeric(value1)) {
-        value1 = parseFloat(value1);
-        value2 = parseFloat(value2);
-    }
+	var isTime = function (input) {
+		var timeTest = new RegExp(/(?=\d)^((?<days>\d+)\.)?(?<hours>[0-1]?\d|2[0-4]):(?<mins>[0-5]?\d)(:(?<secs>[0-5]?\d))?(\.(?<milis>\d{1,3}))?$/);
+
+		var regexExec = timeTest.exec(input);
+		if (!regexExec)
+			return false;
+
+		var days = regexExec.groups["days"] || "0";
+		var hours = regexExec.groups["hours"];
+		var mins = regexExec.groups["mins"];
+		var secs = regexExec.groups["secs"] || "0";
+		var milis = regexExec.groups["milis"] || "0";
+		return parseInt(days) * 24 * 3600 * 1000 // Days in milisecs
+			 + parseInt(hours) * 3600 * 1000     // Hours in milisecs
+			 + parseInt(mins) * 60 * 1000		 // Minutes in milisecs
+			 + parseInt(secs) * 1000			 // Seconds in milisecs
+			 + parseInt(milis);
+	};
+
+	if (isDate(value1)) {
+		value1 = Date.parse(value1);
+		value2 = Date.parse(value2);
+	}
+	else if (isBool(value1)) {
+		if (value1 == "false") value1 = false;
+		if (value2 == "false") value2 = false;
+		value1 = !!value1;
+		value2 = !!value2;
+	}
+	else if (isNumeric(value1)) {
+		value1 = parseFloat(value1);
+		value2 = parseFloat(value2);
+	}
+	else if (isTime(value1) !== false) {
+		value1 = isTime(value1);
+		value2 = isTime(value2);
+	}
 
     switch (operator) {
 		case "EqualTo":
