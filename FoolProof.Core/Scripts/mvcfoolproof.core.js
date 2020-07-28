@@ -42,10 +42,10 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
 		var secs = regexExec.groups["secs"] || "0";
 		var milis = regexExec.groups["milis"] || "0";
 		return parseInt(days) * 24 * 3600 * 1000 // Days in milisecs
-			 + parseInt(hours) * 3600 * 1000     // Hours in milisecs
-			 + parseInt(mins) * 60 * 1000		 // Minutes in milisecs
-			 + parseInt(secs) * 1000			 // Seconds in milisecs
-			 + parseInt(milis);
+             + parseInt(hours) * 3600 * 1000     // Hours in milisecs
+             + parseInt(mins) * 60 * 1000		 // Minutes in milisecs
+             + parseInt(secs) * 1000			 // Seconds in milisecs
+             + parseInt(milis);
 	};
 
 	if (isDate(value1)) {
