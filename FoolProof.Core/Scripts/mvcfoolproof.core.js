@@ -20,7 +20,7 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
     };
 
     var isDate = function (input) {
-        var dateTest = new RegExp(/(?=\d)^(?:(?!(?:10\D(?:0?[5-9]|1[0-4])\D(?:1582))|(?:0?9\D(?:0?[3-9]|1[0-3])\D(?:1752)))((?:0?[13578]|1[02])|(?:0?[469]|11)(?!\/31)(?!-31)(?!\.31)|(?:0?2(?=.?(?:(?:29.(?!000[04]|(?:(?:1[^0-6]|[2468][^048]|[3579][^26])00))(?:(?:(?:\d\d)(?:[02468][048]|[13579][26])(?!\x20BC))|(?:00(?:42|3[0369]|2[147]|1[258]|09)\x20BC))))))|(?:0?2(?=.(?:(?:\d\D)|(?:[01]\d)|(?:2[0-8])))))([-.\/])(0?[1-9]|[12]\d|3[01])\2(?!0000)((?=(?:00(?:4[0-5]|[0-3]?\d)\x20BC)|(?:\d{4}(?!\x20BC)))\d{4}(?:\x20BC)?)(?:$|(?=\x20\d)\x20))?((?:(?:0?[1-9]|1[012])(?::[0-5]\d){0,2}(?:\x20[aApP][mM]))|(?:[01]\d|2[0-3])(?::[0-5]\d){1,2})?$/);
+		var dateTest = new RegExp(/(?=\d)^(?:(?!(?:10\D(?:0?[5-9]|1[0-4])\D(?:1582))|(?:0?9\D(?:0?[3-9]|1[0-3])\D(?:1752)))((?:0?[13578]|1[02])|(?:0?[469]|11)(?!\/31)(?!-31)(?!\.31)|(?:0?2(?=.?(?:(?:29.(?!000[04]|(?:(?:1[^0-6]|[2468][^048]|[3579][^26])00))(?:(?:(?:\d\d)(?:[02468][048]|[13579][26])(?!\x20BC))|(?:00(?:42|3[0369]|2[147]|1[258]|09)\x20BC))))))|(?:0?2(?=.(?:(?:\d\D)|(?:[01]\d)|(?:2[0-8])))))([-.\/])(0?[1-9]|[12]\d|3[01])\2(?!0000)((?=(?:00(?:4[0-5]|[0-3]?\d)\x20BC)|(?:\d{4}(?!\x20BC)))\d{4}(?:\x20BC)?)(?:$|(?=\x20\d)\x20))((?:(?:0?[1-9]|1[012])(?::[0-5]\d){0,2}(?:\x20[aApP][mM]))|(?:[01]\d|2[0-3])(?::[0-5]\d){1,2})?$/);
 
         return dateTest.test(input);
     };
@@ -29,12 +29,14 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
         return input === true || input === false || input === "true" || input === "false";
 	};
 
+	var timeRegex = new RegExp(/(?=\d)^((?<days>\d+)\.)?(?<hours>[0-1]?\d|2[0-4]):(?<mins>[0-5]?\d)(:(?<secs>[0-5]?\d))?(\.(?<milis>\d{1,3}))?$/);
 	var isTime = function (input) {
-		var timeTest = new RegExp(/(?=\d)^((?<days>\d+)\.)?(?<hours>[0-1]?\d|2[0-4]):(?<mins>[0-5]?\d)(:(?<secs>[0-5]?\d))?(\.(?<milis>\d{1,3}))?$/);
-
-		var regexExec = timeTest.exec(input);
+		return timeRegex.test(input);
+	};
+	var getTime = function (input) {
+		var regexExec = timeRegex.exec(input);
 		if (!regexExec)
-			return false;
+			return NaN;
 
 		var days = regexExec.groups["days"] || "0";
 		var hours = regexExec.groups["hours"];
@@ -42,13 +44,17 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
 		var secs = regexExec.groups["secs"] || "0";
 		var milis = regexExec.groups["milis"] || "0";
 		return parseInt(days) * 24 * 3600 * 1000 // Days in milisecs
-             + parseInt(hours) * 3600 * 1000     // Hours in milisecs
-             + parseInt(mins) * 60 * 1000		 // Minutes in milisecs
-             + parseInt(secs) * 1000			 // Seconds in milisecs
-             + parseInt(milis);
+			+ parseInt(hours) * 3600 * 1000      // Hours in milisecs
+			+ parseInt(mins) * 60 * 1000		 // Minutes in milisecs
+			+ parseInt(secs) * 1000			     // Seconds in milisecs
+			+ parseInt(milis);
 	};
 
-	if (isDate(value1)) {
+	if (isTime(value1)) {
+		value1 = getTime(value1);
+		value2 = getTime(value2);
+	}
+	else if (isDate(value1)) {
 		value1 = Date.parse(value1);
 		value2 = Date.parse(value2);
 	}
@@ -61,10 +67,6 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
 	else if (isNumeric(value1)) {
 		value1 = parseFloat(value1);
 		value2 = parseFloat(value2);
-	}
-	else if (isTime(value1) !== false) {
-		value1 = isTime(value1);
-		value2 = isTime(value2);
 	}
 
     switch (operator) {
