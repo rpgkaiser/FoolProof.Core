@@ -35,3 +35,8 @@ _New operator validators:_
 ## Installation
 
 **NuGet:** _install-package_ [FoolProof.Core](https://www.nuget.org/packages/FoolProof.Core "FoolProof.Core nuget package URL")
+
+## Setting Up
+
++ Include namespace  _FoolProof.Core_
++ Just add this line `services.AddFoolProof();` to your _ConfigureServices_ method on the _Startup_ class; this will register a new `IValidationAttributeAdapterProvider`.
