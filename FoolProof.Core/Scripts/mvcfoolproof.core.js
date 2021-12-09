@@ -16,7 +16,7 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
     }
 
     var isNumeric = function (input) {
-        return (input - 0) == input && input.length > 0;
+		return !isNaN(parseFloat(input));
     };
 
     var isDate = function (input) {

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Migration to asp.net core of the "MVC Foolproof Validation" library.</Description>
     <Authors>Rafael Peña García</Authors>
@@ -13,9 +13,10 @@
     <RepositoryType>Git</RepositoryType>
     <Version>1.1.0</Version>
     <PackageReleaseNotes>
-			- Change targeting to .Net Framework 4.7.2 and Net Standard 2.0.
-			- Update config extension methods.
-</PackageReleaseNotes>
+			- Update targeting frameworks to: *.Net Framework 4.7.2*, *Net Standard 2.0*, *Net Core Apps 3.1* and *.Net 5*,
+			using conditional references to stop unnecessarily installing the **Microsoft.AspNetCore.Mvc.DataAnnotations** package.
+			- Fix **isNumeric** JavaScript function to properly handle whitespace-only values.
+		</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,8 +37,23 @@
 		<None Include="..\license.txt" Link="license.txt" Pack="true" PackagePath="" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+	</ItemGroup>
+	
+	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+	</ItemGroup>
+	
+	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+	</ItemGroup>
 
 </Project>
