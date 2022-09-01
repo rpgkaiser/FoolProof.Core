@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.0;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Migration to asp.net core of the "MVC Foolproof Validation" library.</Description>
     <Authors>Rafael Peña García</Authors>
@@ -52,6 +52,11 @@
 	</ItemGroup>
 	
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
