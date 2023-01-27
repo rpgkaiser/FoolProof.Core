@@ -43,7 +43,7 @@ namespace FoolProof.Core
 			}
 			else
 			{
-				return new ValidationResult(this.ErrorMessage, new[] { validationContext.MemberName });
+				return new ValidationResult(FormatErrorMessage(validationContext.MemberName));
 			}
 		}
 
