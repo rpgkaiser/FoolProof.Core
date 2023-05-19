@@ -25,8 +25,12 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
         return dateTest.test(input);
     };
 
-    var isBool = function (input) {
-        return input === true || input === false || input === "true" || input === "false";
+	var isBool = function (input) {
+		return typeof (input) === "boolean"
+				|| input === "true"
+				|| input === "True"
+				|| input === "false"
+				|| input === "False";
 	};
 
 	var timeRegex = new RegExp(/(?=\d)^((?<days>\d+)\.)?(?<hours>[0-1]?\d|2[0-4]):(?<mins>[0-5]?\d)(:(?<secs>[0-5]?\d))?(\.(?<milis>\d{1,3}))?$/);
@@ -50,6 +54,10 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
 			+ parseInt(milis);
 	};
 
+	var getBool = function (input) {
+		return input !== false && input !== "false" && input !== 'False' && !!input;
+	};
+
 	if (isTime(value1)) {
 		value1 = getTime(value1);
 		value2 = getTime(value2);
@@ -59,10 +67,8 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
 		value2 = Date.parse(value2);
 	}
 	else if (isBool(value1)) {
-		if (value1 == "false") value1 = false;
-		if (value2 == "false") value2 = false;
-		value1 = !!value1;
-		value2 = !!value2;
+		value1 = getBool(value1);
+		value2 = getBool(value2);
 	}
 	else if (isNumeric(value1)) {
 		value1 = parseFloat(value1);
