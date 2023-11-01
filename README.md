@@ -1,4 +1,4 @@
-## Migration to asp.net core of the [MVC Foolproof Validation](https://archive.codeplex.com/?p=foolproof) library. 
+## Migration to asp.net core of the [MVC Foolproof Validation](https://codeplexarchive.org/project/foolproof) library. 
 
 This library add many new validation attributes to your toolbox.
 
@@ -22,7 +22,7 @@ _Operator validators:_
 + RequiredIfRegExMatch
 + RequiredIfNotRegExMatch
 
-See full library documentation here: [https://archive.codeplex.com/?p=foolproof](https://archive.codeplex.com/?p=foolproof "FoolProof library doc.").
+See full library documentation here: [https://codeplexarchive.org/project/foolproof](https://codeplexarchive.org/project/foolproof)
 
 ### New features added:
 
