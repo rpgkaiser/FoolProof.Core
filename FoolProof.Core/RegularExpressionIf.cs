@@ -18,8 +18,9 @@ namespace FoolProof.Core
 
         public override bool IsValid(object value, object dependentValue, object container)
         {
-            if (Metadata.IsValid(dependentValue, DependentValue))
-                return OperatorMetadata.Get(Operator.RegExMatch).IsValid(value, Pattern);
+	        if (Metadata.IsValid(dependentValue, DependentValue))
+                return value == null || string.IsNullOrEmpty(value.ToString().Trim()) 
+                                     || OperatorMetadata.Get(Operator.RegExMatch).IsValid(value, Pattern);
 
             return true;
         }
