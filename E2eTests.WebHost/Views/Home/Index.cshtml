@@ -1,0 +1,111 @@
+﻿@model PersonalInfoViewModel
+
+@{
+    ViewData["Title"] = "FoolProof.Core Example Page";
+}
+
+<div>
+    <div class="text-center mb-4">
+        <h1 class="display-4">
+            Please, provide some info about yourself.
+        </h1>
+        <small>
+            This is an usage example of the <a href="https://github.com/rpgkaiser/FoolProof.Core" target="_blank">FoolProof.Core</a> validation library
+        </small>
+    </div>
+    <form asp-action="Save" method="post" class="d-flex flex-column gap-4">
+        @if (!string.IsNullOrWhiteSpace(ViewBag.SuccessMessage))
+        {
+            <div class="alert alert-success alert-dismissible m-4">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <span>
+                    @ViewBag.SuccessMessage
+                </span>
+            </div>
+        }
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="FirstName" placeholder="" />
+            <label>Your first name</label>
+            <span class="text-danger" asp-validation-for="FirstName"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="LastName" placeholder="" />
+            <label>Your last name</label>
+            <span class="text-danger" asp-validation-for="LastName"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="BirthDate" placeholder="" />
+            <label>Your birth date</label>
+            <span class="text-danger" asp-validation-for="BirthDate"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="Email" placeholder="" />
+            <label>Your email address</label>
+            <span class="text-danger" asp-validation-for="Email"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="Country" placeholder="" />
+            <label>Your country (type 'USA' to force another validation)</label>
+            <span class="text-danger" asp-validation-for="Country"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="Address" placeholder="" />
+            <label>Your postal address</label>
+            <span class="text-danger" asp-validation-for="Address"></span>
+        </div>
+        <div class="form-check flex-fill">
+            <input type="checkbox" class="form-check-input" asp-for="ContactByPhone" placeholder="" />
+            <label class="form-check-label">Could we call?</label>
+            <span class="text-danger" asp-validation-for="ContactByPhone"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="PhoneNumber" placeholder="" />
+            <label>Your phone number</label>
+            <span class="text-danger" asp-validation-for="PhoneNumber"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="Age" placeholder="" />
+            <label>Your age</label>
+            <span class="text-danger" asp-validation-for="Age"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="Occupation" placeholder="" />
+            <label>Your occupation</label>
+            <span class="text-danger" asp-validation-for="Occupation"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <select asp-for="Education" class="form-select">
+                @foreach (var level in Enum.GetValues<EducationalLevel>())
+                {
+                    var levelName = Enum.GetName(level);
+                    <option value="@level">@levelName</option>
+                }
+            </select>
+            <label>Educational level</label>
+            <span class="text-danger" asp-validation-for="Education"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="ElementaryScoolGraduationDate" placeholder="" />
+            <label>Elementary school graduation date</label>
+            <span class="text-danger" asp-validation-for="ElementaryScoolGraduationDate"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="HighScoolGraduationDate" placeholder="" />
+            <label>High school graduation date</label>
+            <span class="text-danger" asp-validation-for="HighScoolGraduationDate"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input class="form-control" asp-for="CollegeGraduationDate" placeholder="" />
+            <label>Graduation date from higher education</label>
+            <span class="text-danger" asp-validation-for="CollegeGraduationDate"></span>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg col-4 m-auto mt-4">
+            Submit for Validation
+        </button>
+    </form>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}
