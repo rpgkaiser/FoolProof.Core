@@ -1,64 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net472;netstandard2.0;netcoreapp3.1;net6.0;net7.0</TargetFrameworks>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Description>Migration to asp.net core of the "MVC Foolproof Validation" library.</Description>
-    <Authors>Rafael Peña García</Authors>
-    <Company />
-    <PackageTags>MVC Foolproof Validation AspNetCore</PackageTags>
-    <PackageProjectUrl>https://github.com/rpgkaiser/FoolProof.Core</PackageProjectUrl>
+	<PropertyGroup>
+		<TargetFrameworks>netcoreapp3.1;net6.0;net7.0;net8.0</TargetFrameworks>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Description>"MVC Foolproof Validation" for modern .Net</Description>
+		<Authors>Rafael Peña García</Authors>
+		<Company />
+		<PackageId>FoolProof.Core</PackageId>
+		<PackageTags>MVC Foolproof Validation AspNetCore</PackageTags>
+		<PackageProjectUrl>https://github.com/rpgkaiser/FoolProof.Core</PackageProjectUrl>
 		<PackageLicenseFile>license.txt</PackageLicenseFile>
-    <RepositoryUrl>https://github.com/rpgkaiser/FoolProof.Core</RepositoryUrl>
-    <RepositoryType>Git</RepositoryType>
-    <Version>1.1.0</Version>
-    <PackageReleaseNotes>
-			- Update targeting frameworks to: *.Net Framework 4.7.2*, *Net Standard 2.0*, *Net Core Apps 3.1* and *.Net 5*,
-			using conditional references to stop unnecessarily installing the **Microsoft.AspNetCore.Mvc.DataAnnotations** package.
-			- Fix **isNumeric** JavaScript function to properly handle whitespace-only values.
+		<RepositoryUrl>https://github.com/rpgkaiser/FoolProof.Core</RepositoryUrl>
+		<RepositoryType>Git</RepositoryType>
+		<Version>1.2.2</Version>
+		<PackageReleaseNotes>
+			- Dropped support for *.Net Framework 4.7.2* and *Net Standard 2.0*.
+			- Add build target to copy required JavaScript files to the static assets folder (*wwwroot*).
 		</PackageReleaseNotes>
-  </PropertyGroup>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Scripts\mvcfoolproof.core.js" />
-    <None Remove="Scripts\mvcfoolproof.jquery.validation.js" />
-    <None Remove="Scripts\mvcfoolproof.msajax.validation.js" />
-    <None Remove="Scripts\mvcfoolproof.unobtrusive.js" />
+	<ItemGroup Label="Packaging">
+		<Content Include="build\FoolProof.Core.targets" PackagePath="build\FoolProof.Core.targets" />
+		<Content Include="Scripts\*.js">
+			<Pack>true</Pack>
+			<PackagePath>contentFiles\Scripts\</PackagePath>
+		</Content>
 	</ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Scripts\mvcfoolproof.core.js" />
-    <Content Include="Scripts\mvcfoolproof.unobtrusive.js" />
-    <Content Include="Scripts\mvcfoolproof.jquery.validation.js" />
-    <Content Include="Scripts\mvcfoolproof.msajax.validation.js" />
-  </ItemGroup>
 
 	<ItemGroup>
 		<None Include="..\license.txt" Link="license.txt" Pack="true" PackagePath="" />
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net472'">
-	  <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 	
-	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-	</ItemGroup>
-
 </Project>
