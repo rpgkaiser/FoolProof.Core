@@ -1,0 +1,1 @@
+global using FoolProof.Core.Tests.Models;
