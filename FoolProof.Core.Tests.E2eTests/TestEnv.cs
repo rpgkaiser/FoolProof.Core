@@ -1,28 +1,29 @@
 ﻿using FoolProof.Core.Tests.E2eTests.WebApp;
-using Microsoft.AspNetCore.Builder;
 
 namespace FoolProof.Core.Tests.E2eTests
 {
     internal static class TestEnv
     {
-        public static string Url => Application?.Urls?.First() ?? string.Empty;
+        public static string? WebAppUrl { get; set; }
 
-        private static WebApplication? Application { get; set; }
+        private static CustomWebAppFactory? Factory { get; set; }
 
-        public static void StartApp()
+        public static void StartApp(TestContext testContext)
         {
-            Application = Program.BuildApp([]);
-            Application.RunAsync();
+            var port = int.TryParse(testContext.Properties["WebAppPort"] + "", out var p) ? p : 8080;
+            Factory = new CustomWebAppFactory(port);
+            WebAppUrl = Factory?.ServerAddress;
         }
 
-        public static void StopApp() => Application?.StopAsync().Wait();
+        public static void StopApp() 
+            => Factory?.AppHost?.StopAsync();
     }
 
     [TestClass]
     public class InitTestEnv
     {
         [AssemblyInitialize]
-        public static void AssemblyInitialize(TestContext _) => TestEnv.StartApp();
+        public static void AssemblyInitialize(TestContext testContext) => TestEnv.StartApp(testContext);
 
         [AssemblyCleanup]
         public static void AssemblyCleanup() => TestEnv.StopApp();

@@ -11,4 +11,15 @@
     <ProjectReference Include="..\FoolProof.Core\FoolProof.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\lib\foolproof-validation\mvcfoolproof.core.js">
+      <PackagePath>contentFiles\Scripts\</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+  </ItemGroup>
+
 </Project>

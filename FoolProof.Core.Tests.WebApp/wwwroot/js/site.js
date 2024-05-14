@@ -66,4 +66,14 @@ function setupForms() {
         else
             clientValidate($form);
     });
+
+    $("form .btn-reset").on("click", function (evt) {
+        evt.preventDefault();
+
+        var $form = $(this).closest("form");
+        $form[0].reset();
+
+        $(".valid-alert", $form).fadeOut();
+        $("[data-valmsg-for]", $form).html("");
+    });
 }

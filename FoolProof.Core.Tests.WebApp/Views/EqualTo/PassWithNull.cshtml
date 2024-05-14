@@ -1,11 +1,11 @@
 ﻿@{
     ViewData["Title"] = "FoolProof.Core Tests - EqualTo";
     ViewData["ValidatorName"] = "EqualTo Validator Attribute";
-    var validModel = new EqualTo.Model();
+    var validModel = new EqualTo.ModelWithPassOnNull();
 }
 
 <div class="d-flex flex-column gap-5">
     <div>
-        <partial name="_NotNull.cshtml" model="@validModel" />
+        <partial name="_PassWithNull.cshtml" model="@validModel" />
     </div>
 </div>

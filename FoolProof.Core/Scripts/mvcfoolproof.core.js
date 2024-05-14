@@ -3,6 +3,7 @@
 var FoolProofCore = function() { };
 
 FoolProofCore.is = function (value1, operator, value2, passOnNull) {
+	passOnNull = (/true/i).test(passOnNull + "");
     if (passOnNull) {
         var isNullish = function (input) {
             return input == null || input == undefined || input == "";

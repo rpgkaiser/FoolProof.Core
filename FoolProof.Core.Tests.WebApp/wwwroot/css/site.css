@@ -16,3 +16,7 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.alert .alert-message p:last-child {
+    margin-bottom: 0;
+}
