@@ -5,10 +5,10 @@
     asp-controller="Home"
     asp-route-modelTypeName="@(Model.GetType().FullName)">
     <h3>
-        Pass On Null
+        Allow to not assign one of the fields
     </h3>
 
-    <div data-testid="eq2wn-valid-alert" class="alert alert-success alert-dismissible valid-alert" style='display: none;'>
+    <div data-testid="valid-alert" class="alert alert-success alert-dismissible valid-alert" style='display: none;'>
         <button type="button" class="btn-close" onclick="$(this).parent().fadeOut();"></button>
         <span class="alert-message">
         </span>
@@ -17,21 +17,21 @@
     <div class="form-floating flex-fill">
         <input asp-for="Value1" class="form-control" placeholder="" />
         <label asp-for="Value1">First Value</label>
-        <span asp-validation-for="Value1" class="text-danger" data-testid="eq2wn-val1-valid-msg"></span>
+        <span asp-validation-for="Value1" class="text-danger" data-testid="val1-valid-msg"></span>
     </div>
     <div class="form-floating flex-fill">
         <input asp-for="Value2" class="form-control" placeholder="" />
         <label asp-for="Value2">Second Value</label>
-        <span asp-validation-for="Value2" class="text-danger" data-testid="eq2wn-val2-valid-msg"></span>
+        <span asp-validation-for="Value2" class="text-danger" data-testid="val2-valid-msg"></span>
     </div>
     <div class="d-flex flex-row gap-4 align-items-center justify-content-center">
-        <button data-testid="eq2wn-btn-reset" type="button" class="btn btn-outline-secondary btn-lg btn-reset">
+        <button data-testid="btn-reset" type="button" class="btn btn-outline-secondary btn-lg btn-reset">
             Reset
         </button>
-        <button data-testid="eq2wn-btn-client" type="button" class="btn btn-outline-info btn-lg btn-validate">
+        <button data-testid="btn-client" type="button" class="btn btn-outline-info btn-lg btn-validate">
             Validate on Client
         </button>
-        <button data-testid="eq2wn-btn-server" type="button" class="btn btn-outline-primary btn-lg btn-validate" data-ignore-client="true"
+        <button data-testid="btn-server" type="button" class="btn btn-outline-primary btn-lg btn-validate" data-ignore-client="true"
                 data-server-validate="true">
             Validate on Server
         </button>

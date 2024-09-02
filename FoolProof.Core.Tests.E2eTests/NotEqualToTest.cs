@@ -2,14 +2,14 @@ using System.Text.RegularExpressions;
 
 namespace FoolProof.Core.Tests.E2eTests
 {
-    public class EqualToTest
+    public class NotEqualToTest
     {
         [TestClass]
         public class Default : BasePageTest
         {
-            protected override Regex PageTitleRegex { get; } = new (@".+\s+[-]\s+EqualTo");
+            protected override Regex PageTitleRegex { get; } = new (@".+\s+[-]\s+NotEqualTo");
 
-            protected override Uri PageUri { get; } = new (new Uri(WebAppUrl), "equalto");
+            protected override Uri PageUri { get; } = new (new Uri(WebAppUrl), "notequalto");
 
             [TestMethod]
             public virtual async Task EmptyValues()
@@ -20,12 +20,15 @@ namespace FoolProof.Core.Tests.E2eTests
                 await ExpectValue2Empty();
                 
                 await ExecClientValidation();
-                await ExpectValidationSucceed();
+                await ExpectValidationFailed(
+                    value2ErrorMsg: "Value2 must be not equal to Value1",
+                    alertValidationMsg: "Model validation failed"
+                );
 
                 await ResetForm();
 
                 await ExecServerValidation();
-                await ExpectValidationSucceed();
+                await ExpectValidationFailed("Value2 must be not equal to Value1");
             }
 
             [TestMethod]
@@ -37,16 +40,13 @@ namespace FoolProof.Core.Tests.E2eTests
                 await AssignValue2("Value two.");
 
                 await ExecClientValidation();
-                await ExpectValidationFailed(
-                    value2ErrorMsg: "Value2 must be equal to Value1",
-                    alertValidationMsg: "Model validation failed"
-                );
+                await ExpectValidationSucceed();
 
                 await ResetForm();
                 await AssignValue2("Value two.");
 
                 await ExecServerValidation();
-                await ExpectValidationFailed("Value2 must be equal to Value1");
+                await ExpectValidationSucceed();
             }
 
             [TestMethod]
@@ -58,16 +58,13 @@ namespace FoolProof.Core.Tests.E2eTests
                 await ExpectValue2Empty();
 
                 await ExecClientValidation();
-                await ExpectValidationFailed(
-                    value2ErrorMsg: "Value2 must be equal to Value1",
-                    alertValidationMsg: "Model validation failed"
-                );
+                await ExpectValidationSucceed();
 
                 await ResetForm();
                 await AssignValue1("Value one");
 
                 await ExecServerValidation();
-                await ExpectValidationFailed("Value2 must be equal to Value1");
+                await ExpectValidationSucceed();
             }
 
             [TestMethod]
@@ -79,7 +76,10 @@ namespace FoolProof.Core.Tests.E2eTests
                 await AssignValue2("Same value.");
 
                 await ExecClientValidation();
-                await ExpectValidationSucceed();
+                await ExpectValidationFailed(
+                    value2ErrorMsg: "Value2 must be not equal to Value1",
+                    alertValidationMsg: "Model validation failed"
+                );
 
                 await ResetForm();
 
@@ -87,7 +87,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 await AssignValue2("Same value.");
 
                 await ExecServerValidation();
-                await ExpectValidationSucceed();
+                await ExpectValidationFailed("Value2 must be not equal to Value1");
             }
 
             [TestMethod]
@@ -99,10 +99,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 await AssignValue2("Value two.");
 
                 await ExecClientValidation();
-                await ExpectValidationFailed(
-                    value2ErrorMsg: "Value2 must be equal to Value1",
-                    alertValidationMsg: "Model validation failed"
-                );
+                await ExpectValidationSucceed();
 
                 await ResetForm();
 
@@ -110,14 +107,14 @@ namespace FoolProof.Core.Tests.E2eTests
                 await AssignValue2("Value two.");
 
                 await ExecServerValidation();
-                await ExpectValidationFailed("Value2 must be equal to Value1");
+                await ExpectValidationSucceed();
             }
         }
 
         [TestClass]
         public class PassWithNull : Default
         {
-            protected override Uri PageUri { get; } = new (new Uri(WebAppUrl), "equalto-pwn");
+            protected override Uri PageUri { get; } = new (new Uri(WebAppUrl), "notequalto-pwn");
 
             [TestMethod]
             public override async Task Value1Empty()

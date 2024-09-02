@@ -17,6 +17,12 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
         [HttpGet("equalto-pwn")]
         public IActionResult EqualToWithNull() => View("/Views/EqualTo/PassWithNull.cshtml");
 
+        [HttpGet("notequalto")]
+        public IActionResult NotEqualTo() => View("/Views/NotEqualTo/Index.cshtml");
+
+        [HttpGet("notequalto-pwn")]
+        public IActionResult NotEqualToWithNull() => View("/Views/NotEqualTo/PassWithNull.cshtml");
+
         [HttpPost("validate")]
         public async Task<JsonResult> Save([FromQuery]string modelTypeName)
         {
