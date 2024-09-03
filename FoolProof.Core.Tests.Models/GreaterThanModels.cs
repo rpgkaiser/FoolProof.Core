@@ -1,4 +1,6 @@
-﻿namespace FoolProof.Core.Tests.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FoolProof.Core.Tests.Models
 {
     public class GreaterThan
     {

@@ -23,6 +23,12 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
         [HttpGet("notequalto-pwn")]
         public IActionResult NotEqualToWithNull() => View("/Views/NotEqualTo/PassWithNull.cshtml");
 
+        [HttpGet("greaterthan-date")]
+        public IActionResult GreaterThan() => View("/Views/GreaterThan/Date.cshtml");
+
+        [HttpGet("greaterthan-date-pwn")]
+        public IActionResult GreaterThanWithNull() => View("/Views/GreaterThan/Date_PassWithNull.cshtml");
+
         [HttpPost("validate")]
         public async Task<JsonResult> Save([FromQuery]string modelTypeName)
         {

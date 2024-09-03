@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "FoolProof.Core Validation - GreaterThan (Date)";
+    ViewData["ValidatorName"] = "GreaterThan Validator Attribute (Date)";
+    var validModel = new GreaterThan.DateModelWithPassOnNull();
+}
+
+<div class="d-flex flex-column gap-5">
+    <div>
+        <partial name="_TwoFieldsForm" model="@validModel" />
+    </div>
+</div>

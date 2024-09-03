@@ -1,11 +1,11 @@
 ﻿@{
-    ViewData["Title"] = "FoolProof.Core Tests - NotEqualTo";
+    ViewData["Title"] = "FoolProof.Core Validation - NotEqualTo";
     ViewData["ValidatorName"] = "NotEqualTo Validator Attribute";
     var validModel = new NotEqualTo.ModelWithPassOnNull();
 }
 
 <div class="d-flex flex-column gap-5">
     <div>
-        <partial name="/Views/NotEqualTo/_PassWithNull.cshtml" model="@validModel" />
+        <partial name="_TwoFieldsForm" model="@validModel" />
     </div>
 </div>

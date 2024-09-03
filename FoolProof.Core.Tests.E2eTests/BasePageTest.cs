@@ -92,13 +92,13 @@ namespace FoolProof.Core.Tests.E2eTests
             await Expect(Page.Locator("#Value2")).ToBeEmptyAsync();
         }
 
-        protected async Task ExecClientValidation()
+        protected async Task CallClientValidation()
         {
             var clientValidationBtn = Page.GetByTestId($"btn-client");
             await clientValidationBtn.ClickAsync();
         }
 
-        protected async Task ExecServerValidation()
+        protected async Task CallServerValidation()
         {
             var serverValidationBtn = Page.GetByTestId($"btn-server");
             await Page.RunAndWaitForResponseAsync(async () =>

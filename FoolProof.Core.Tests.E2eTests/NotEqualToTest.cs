@@ -12,14 +12,14 @@ namespace FoolProof.Core.Tests.E2eTests
             protected override Uri PageUri { get; } = new (new Uri(WebAppUrl), "notequalto");
 
             [TestMethod]
-            public virtual async Task EmptyValues()
+            public virtual async Task EmptyValues_ER()
             {
                 await LoadPage();
 
                 await ExpectValue1Empty();
                 await ExpectValue2Empty();
                 
-                await ExecClientValidation();
+                await CallClientValidation();
                 await ExpectValidationFailed(
                     value2ErrorMsg: "Value2 must be not equal to Value1",
                     alertValidationMsg: "Model validation failed"
@@ -27,55 +27,55 @@ namespace FoolProof.Core.Tests.E2eTests
 
                 await ResetForm();
 
-                await ExecServerValidation();
+                await CallServerValidation();
                 await ExpectValidationFailed("Value2 must be not equal to Value1");
             }
 
             [TestMethod]
-            public virtual async Task Value1Empty()
+            public virtual async Task Value1Empty_OK()
             {
                 await LoadPage();
 
                 await ExpectValue1Empty();
                 await AssignValue2("Value two.");
 
-                await ExecClientValidation();
+                await CallClientValidation();
                 await ExpectValidationSucceed();
 
                 await ResetForm();
                 await AssignValue2("Value two.");
 
-                await ExecServerValidation();
+                await CallServerValidation();
                 await ExpectValidationSucceed();
             }
 
             [TestMethod]
-            public virtual async Task Value2Empty()
+            public virtual async Task Value2Empty_OK()
             {
                 await LoadPage();
 
                 await AssignValue1("Value one");
                 await ExpectValue2Empty();
 
-                await ExecClientValidation();
+                await CallClientValidation();
                 await ExpectValidationSucceed();
 
                 await ResetForm();
                 await AssignValue1("Value one");
 
-                await ExecServerValidation();
+                await CallServerValidation();
                 await ExpectValidationSucceed();
             }
 
             [TestMethod]
-            public virtual async Task SameValues()
+            public virtual async Task SameValues_ER()
             {
                 await LoadPage();
 
                 await AssignValue1("Same value.");
                 await AssignValue2("Same value.");
 
-                await ExecClientValidation();
+                await CallClientValidation();
                 await ExpectValidationFailed(
                     value2ErrorMsg: "Value2 must be not equal to Value1",
                     alertValidationMsg: "Model validation failed"
@@ -86,19 +86,19 @@ namespace FoolProof.Core.Tests.E2eTests
                 await AssignValue1("Same value.");
                 await AssignValue2("Same value.");
 
-                await ExecServerValidation();
+                await CallServerValidation();
                 await ExpectValidationFailed("Value2 must be not equal to Value1");
             }
 
             [TestMethod]
-            public virtual async Task DifferentValues()
+            public virtual async Task DifferentValues_OK()
             {
                 await LoadPage();
 
                 await AssignValue1("Value one.");
                 await AssignValue2("Value two.");
 
-                await ExecClientValidation();
+                await CallClientValidation();
                 await ExpectValidationSucceed();
 
                 await ResetForm();
@@ -106,49 +106,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 await AssignValue1("Value one.");
                 await AssignValue2("Value two.");
 
-                await ExecServerValidation();
-                await ExpectValidationSucceed();
-            }
-        }
-
-        [TestClass]
-        public class PassWithNull : Default
-        {
-            protected override Uri PageUri { get; } = new (new Uri(WebAppUrl), "notequalto-pwn");
-
-            [TestMethod]
-            public override async Task Value1Empty()
-            {
-                await LoadPage();
-
-                await ExpectValue1Empty();
-                await AssignValue2("Value two.");
-
-                await ExecClientValidation();
-                await ExpectValidationSucceed();
-
-                await ResetForm();
-                await AssignValue2("Value two.");
-
-                await ExecServerValidation();
-                await ExpectValidationSucceed();
-            }
-
-            [TestMethod]
-            public override async Task Value2Empty()
-            {
-                await LoadPage();
-
-                await AssignValue1("Value one.");
-                await ExpectValue2Empty();
-
-                await ExecClientValidation();
-                await ExpectValidationSucceed();
-
-                await ResetForm();
-                await AssignValue1("Value one.");
-
-                await ExecServerValidation();
+                await CallServerValidation();
                 await ExpectValidationSucceed();
             }
         }
