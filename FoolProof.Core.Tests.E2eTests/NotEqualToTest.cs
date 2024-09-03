@@ -7,9 +7,9 @@ namespace FoolProof.Core.Tests.E2eTests
         [TestClass]
         public class Default : BasePageTest
         {
-            protected override Regex PageTitleRegex { get; } = new (@".+\s+[-]\s+NotEqualTo");
+            protected override Regex PageTitleRegex() => new (@".+\s+[-]\s+NotEqualTo");
 
-            protected override Uri PageUri { get; } = new (new Uri(WebAppUrl), "notequalto");
+            protected override Uri PageUri() => new (new Uri(WebAppUrl), "notequalto");
 
             [TestMethod]
             public virtual async Task EmptyValues_ER()

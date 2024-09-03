@@ -4,12 +4,13 @@ namespace FoolProof.Core.Tests.E2eTests
 {
     public class GreaterThanTest
     {
-        [TestClass]
-        public class DateValues : BasePageTest
+        public abstract class BaseTests : BasePageTest
         {
-            protected override Regex PageTitleRegex { get; } = new(@".+\s+[-]\s+GreaterThan\s+\(Date\)");
+            protected override Regex PageTitleRegex() => new($@".+\s+[-]\s+GreaterThan\s+\({DataType}\)");
 
-            protected override Uri PageUri { get; } = new(new Uri(WebAppUrl), "greaterthan-date");
+            protected override Uri PageUri() => new(new Uri(WebAppUrl), $"greaterthan/{DataType}");
+
+            protected abstract string DataType { get; }
 
             [TestMethod]
             public virtual async Task EmptyValues_ER()
@@ -32,12 +33,13 @@ namespace FoolProof.Core.Tests.E2eTests
             }
 
             [TestMethod]
-            public virtual async Task SameNotDateValues_ER()
+            public virtual async Task SameInvalidValues_ER()
             {
                 await LoadPage();
 
-                await AssignValue1("Not date value.");
-                await AssignValue2("Not date value.");
+                var invalidValue = GetNotValidValue();
+                await AssignValue1(invalidValue);
+                await AssignValue2(invalidValue);
 
                 await CallClientValidation();
                 await ExpectValidationFailed(
@@ -47,12 +49,12 @@ namespace FoolProof.Core.Tests.E2eTests
 
                 await ResetForm();
 
-                await AssignValue1("Not date value.");
-                await AssignValue2("Not date value.");
+                await AssignValue1(invalidValue);
+                await AssignValue2(invalidValue);
 
                 await CallServerValidation();
-                await ExpectValidationFailed("Value2 must be greater than Value1", "The value 'Not date value.' is not valid for Value1");
-                await ExpectValidationFailed("Value2 must be greater than Value1", "The value 'Not date value.' is not valid for Value2");
+                await ExpectValidationFailed("Value2 must be greater than Value1", $"The value '{invalidValue}' is not valid for Value1");
+                await ExpectValidationFailed("Value2 must be greater than Value1", $"The value '{invalidValue}' is not valid for Value2");
             }
 
             [TestMethod]
@@ -60,8 +62,9 @@ namespace FoolProof.Core.Tests.E2eTests
             {
                 await LoadPage();
 
+                var value = GetValidValues().Value1;
                 await ExpectValue1Empty();
-                await AssignValue2("10/10/2024");
+                await AssignValue2(value);
 
                 await CallClientValidation();
                 await ExpectValidationFailed(
@@ -70,7 +73,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 );
 
                 await ResetForm();
-                await AssignValue2("10/10/2024");
+                await AssignValue2(value);
 
                 await CallServerValidation();
                 await ExpectValidationFailed("Value2 must be greater than Value1");
@@ -81,7 +84,8 @@ namespace FoolProof.Core.Tests.E2eTests
             {
                 await LoadPage();
 
-                await AssignValue1("10/10/2024");
+                var value = GetValidValues().Value1;
+                await AssignValue1(value);
                 await ExpectValue2Empty();
 
                 await CallClientValidation();
@@ -91,7 +95,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 );
 
                 await ResetForm();
-                await AssignValue1("10/10/2024");
+                await AssignValue1(value);
 
                 await CallServerValidation();
                 await ExpectValidationFailed("Value2 must be greater than Value1");
@@ -102,8 +106,9 @@ namespace FoolProof.Core.Tests.E2eTests
             {
                 await LoadPage();
 
-                await AssignValue1("10/10/2024");
-                await AssignValue2("10/10/2024");
+                var value = GetValidValues().Value1;
+                await AssignValue1(value);
+                await AssignValue2(value);
 
                 await CallClientValidation();
                 await ExpectValidationFailed(
@@ -113,28 +118,29 @@ namespace FoolProof.Core.Tests.E2eTests
 
                 await ResetForm();
 
-                await AssignValue1("10/10/2024");
-                await AssignValue2("10/10/2024");
+                await AssignValue1(value);
+                await AssignValue2(value);
 
                 await CallServerValidation();
                 await ExpectValidationFailed("Value2 must be greater than Value1");
             }
 
             [TestMethod]
-            public virtual async Task Value2GreaterThanValueOne_OK()
+            public virtual async Task Value2GreaterThanValue1_OK()
             {
                 await LoadPage();
 
-                await AssignValue1("5/10/2020");
-                await AssignValue2("10/20/2024");
+                var (value1, value2) = GetValidValues();
+                await AssignValue1(value1);
+                await AssignValue2(value2);
 
                 await CallClientValidation();
                 await ExpectValidationSucceed();
 
                 await ResetForm();
 
-                await AssignValue1("5/10/2020");
-                await AssignValue2("10/20/2024");
+                await AssignValue1(value1);
+                await AssignValue2(value2);
 
                 await CallServerValidation();
                 await ExpectValidationSucceed();
@@ -145,8 +151,9 @@ namespace FoolProof.Core.Tests.E2eTests
             {
                 await LoadPage();
 
-                await AssignValue1("10/20/2024");
-                await AssignValue2("5/10/2020");
+                var (value1, value2) = GetValidValues(true);
+                await AssignValue1(value1);
+                await AssignValue2(value2);
 
                 await CallClientValidation();
                 await ExpectValidationFailed(
@@ -156,32 +163,36 @@ namespace FoolProof.Core.Tests.E2eTests
 
                 await ResetForm();
 
-                await AssignValue1("10/20/2024");
-                await AssignValue2("5/10/2020");
+                await AssignValue1(value1);
+                await AssignValue2(value2);
 
                 await CallServerValidation();
                 await ExpectValidationFailed("Value2 must be greater than Value1");
             }
+
+            protected virtual string GetNotValidValue() => $"Not {DataType} value.";
+
+            protected abstract (string Value1, string Value2) GetValidValues(bool firstBigger = false);
         }
 
-        [TestClass]
-        public class DateValues_PassWithNull : DateValues
+        public abstract class BaseTests_PassWithNull : BaseTests
         {
-            protected override Uri PageUri { get; } = new(new Uri(WebAppUrl), "greaterthan-date-pwn");
+            protected override Uri PageUri() => new(new Uri(WebAppUrl), $"greaterthan/{DataType}?pwn=true");
 
             [TestMethod]
             public override async Task Value1Empty()
             {
                 await LoadPage();
 
+                var value = GetValidValues().Value1;
                 await ExpectValue1Empty();
-                await AssignValue2("10/20/2024");
+                await AssignValue2(value);
 
                 await CallClientValidation();
                 await ExpectValidationSucceed();
 
                 await ResetForm();
-                await AssignValue2("10/20/2024");
+                await AssignValue2(value);
 
                 await CallServerValidation();
                 await ExpectValidationSucceed();
@@ -192,17 +203,74 @@ namespace FoolProof.Core.Tests.E2eTests
             {
                 await LoadPage();
 
-                await AssignValue1("10/20/2024");
+                var value = GetValidValues().Value1;
+                await AssignValue1(value);
                 await ExpectValue2Empty();
 
                 await CallClientValidation();
                 await ExpectValidationSucceed();
 
                 await ResetForm();
-                await AssignValue1("10/20/2024");
+                await AssignValue1(value);
 
                 await CallServerValidation();
                 await ExpectValidationSucceed();
+            }
+        }
+
+        [TestClass]
+        public class DateValues : BaseTests
+        {
+            protected override string DataType => "Date";
+
+            protected override (string Value1, string Value2) GetValidValues(bool firstBigger = false)
+            {
+                if (firstBigger)
+                    return ("10/10/2010", "5/5/2005");
+
+                return ("5/5/2005", "10/10/2010");
+            }
+        }
+
+        [TestClass]
+        public class DateValues_PassWithNull : BaseTests_PassWithNull
+        {
+            protected override string DataType => "Date";
+
+            protected override (string Value1, string Value2) GetValidValues(bool firstBigger = false)
+            {
+                if (firstBigger)
+                    return ("10/10/2010", "5/5/2005");
+
+                return ("5/5/2005", "10/10/2010");
+            }
+        }
+
+        [TestClass]
+        public class TimeValues : BaseTests
+        {
+            protected override string DataType => "Time";
+
+            protected override (string Value1, string Value2) GetValidValues(bool firstBigger = false)
+            {
+                if (firstBigger)
+                    return ("20:30", "10:00");
+
+                return ("08:00", "22:00");
+            }
+        }
+
+        [TestClass]
+        public class TimeValues_PassWithNull : BaseTests_PassWithNull
+        {
+            protected override string DataType => "Time";
+
+            protected override (string Value1, string Value2) GetValidValues(bool firstBigger = false)
+            {
+                if (firstBigger)
+                    return ("20:30", "10:00");
+
+                return ("08:00", "22:00");
             }
         }
     }

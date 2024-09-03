@@ -12,22 +12,35 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
         public IActionResult Index() => View();
 
         [HttpGet("equalto")]
-        public IActionResult EqualTo() => View("/Views/EqualTo/Index.cshtml");
-
-        [HttpGet("equalto-pwn")]
-        public IActionResult EqualToWithNull() => View("/Views/EqualTo/PassWithNull.cshtml");
+        public IActionResult EqualTo([FromQuery] bool pwn = false)
+        {
+            object model = pwn ? new EqualTo.ModelWithPassOnNull() : new EqualTo.Model();
+            ViewBag.PassWithNull = pwn;
+            return View("EqualTo", model);
+        }
 
         [HttpGet("notequalto")]
-        public IActionResult NotEqualTo() => View("/Views/NotEqualTo/Index.cshtml");
+        public IActionResult NotEqualTo([FromQuery] bool pwn = false)
+        {
+            object model = pwn ? new NotEqualTo.ModelWithPassOnNull() : new NotEqualTo.Model();
+            ViewBag.PassWithNull = pwn;
+            return View("NotEqualTo", model);
+        }
 
-        [HttpGet("notequalto-pwn")]
-        public IActionResult NotEqualToWithNull() => View("/Views/NotEqualTo/PassWithNull.cshtml");
-
-        [HttpGet("greaterthan-date")]
-        public IActionResult GreaterThan() => View("/Views/GreaterThan/Date.cshtml");
-
-        [HttpGet("greaterthan-date-pwn")]
-        public IActionResult GreaterThanWithNull() => View("/Views/GreaterThan/Date_PassWithNull.cshtml");
+        [HttpGet("greaterthan/{type}")]
+        public IActionResult GreaterThan([FromRoute] string type, [FromQuery] bool pwn = false)
+        {
+            object model = type.ToLowerInvariant() switch
+            {
+                "date" => pwn ? new GreaterThan.DateModelWithPassOnNull() : new GreaterThan.DateModel(),
+                "int16" => pwn ? new GreaterThan.Int16ModelWithPassOnNull() : new GreaterThan.Int16Model(),
+                "time" => pwn ? new GreaterThan.TimeModelWithPassOnNull() : new GreaterThan.TimeModel(),
+                _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
+            };
+            ViewBag.DataType = type;
+            ViewBag.PassWithNull = pwn;
+            return View("GreaterThan", model);
+        }
 
         [HttpPost("validate")]
         public async Task<JsonResult> Save([FromQuery]string modelTypeName)

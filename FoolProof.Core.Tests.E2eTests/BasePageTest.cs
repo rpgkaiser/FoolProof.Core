@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using Microsoft.Playwright.MSTest;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.ObjectModel;
 
 namespace FoolProof.Core.Tests.E2eTests
 {
@@ -8,14 +7,14 @@ namespace FoolProof.Core.Tests.E2eTests
     {
         public static string WebAppUrl => TestEnv.WebAppUrl ?? string.Empty;
 
-        protected abstract Regex PageTitleRegex { get; }
+        protected abstract Regex PageTitleRegex();
 
-        protected abstract Uri PageUri { get; }
+        protected abstract Uri PageUri();
 
         protected virtual async Task LoadPage()
         {
-            await Page.GotoAsync(PageUri.AbsoluteUri);
-            await Expect(Page).ToHaveTitleAsync(PageTitleRegex);
+            await Page.GotoAsync(PageUri().AbsoluteUri);
+            await Expect(Page).ToHaveTitleAsync(PageTitleRegex());
         }
 
         protected async Task ExpectValidationSucceed(string alertValidationMsg = "Model validation succeed")

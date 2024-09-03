@@ -7,9 +7,9 @@ namespace FoolProof.Core.Tests.E2eTests
         [TestClass]
         public class Default : BasePageTest
         {
-            protected override Regex PageTitleRegex { get; } = new (@".+\s+[-]\s+EqualTo");
+            protected override Regex PageTitleRegex() => new (@".+\s+[-]\s+EqualTo");
 
-            protected override Uri PageUri { get; } = new (new Uri(WebAppUrl), "equalto");
+            protected override Uri PageUri() => new (new Uri(WebAppUrl), "equalto");
 
             [TestMethod]
             public virtual async Task EmptyValues_OK()
@@ -117,7 +117,7 @@ namespace FoolProof.Core.Tests.E2eTests
         [TestClass]
         public class PassWithNull : Default
         {
-            protected override Uri PageUri { get; } = new (new Uri(WebAppUrl), "equalto-pwn");
+            protected override Uri PageUri() => new (new Uri(WebAppUrl), "equalto?pwn=true");
 
             [TestMethod]
             public override async Task Value1Empty()
