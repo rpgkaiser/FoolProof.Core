@@ -11,7 +11,7 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
 
         public IActionResult Index() => View();
 
-        [HttpGet("equalto")]
+        [HttpGet("eq2")]
         public IActionResult EqualTo([FromQuery] bool pwn = false)
         {
             object model = pwn ? new EqualTo.ModelWithPassOnNull() : new EqualTo.Model();
@@ -19,7 +19,7 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
             return View("EqualTo", model);
         }
 
-        [HttpGet("notequalto")]
+        [HttpGet("neq2")]
         public IActionResult NotEqualTo([FromQuery] bool pwn = false)
         {
             object model = pwn ? new NotEqualTo.ModelWithPassOnNull() : new NotEqualTo.Model();
@@ -27,7 +27,7 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
             return View("NotEqualTo", model);
         }
 
-        [HttpGet("greaterthan/{type}")]
+        [HttpGet("gt/{type}")]
         public IActionResult GreaterThan([FromRoute] string type, [FromQuery] bool pwn = false)
         {
             object model = type.ToLowerInvariant() switch
@@ -42,7 +42,7 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
             return View("GreaterThan", model);
         }
 
-        [HttpGet("lessthan/{type}")]
+        [HttpGet("lt/{type}")]
         public IActionResult LessThan([FromRoute] string type, [FromQuery] bool pwn = false)
         {
             object model = type.ToLowerInvariant() switch
@@ -55,6 +55,21 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
             ViewBag.DataType = type;
             ViewBag.PassWithNull = pwn;
             return View("LessThan", model);
+        }
+
+        [HttpGet("ge2/{type}")]
+        public IActionResult GreaterOrEqualTo([FromRoute] string type, [FromQuery] bool pwn = false)
+        {
+            object model = type.ToLowerInvariant() switch
+            {
+                "date" => pwn ? new GreaterThanOrEqualTo.DateModelWithPassNull() : new GreaterThanOrEqualTo.DateModel(),
+                "int16" => pwn ? new GreaterThanOrEqualTo.DateModelWithPassNull() : new GreaterThanOrEqualTo.Int16Model(),
+                "time" => pwn ? new GreaterThanOrEqualTo.DateModelWithPassNull() : new GreaterThanOrEqualTo.TimeModel(),
+                _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
+            };
+            ViewBag.DataType = type;
+            ViewBag.PassWithNull = pwn;
+            return View("GreaterOrEqualTo", model);
         }
 
         [HttpPost("validate")]

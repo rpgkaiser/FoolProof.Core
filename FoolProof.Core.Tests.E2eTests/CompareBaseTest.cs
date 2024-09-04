@@ -34,7 +34,7 @@ namespace FoolProof.Core.Tests.E2eTests
         }
 
         [TestMethod]
-        public virtual async Task SameInvalidValues()
+        public virtual async Task InvalidValues()
         {
             await LoadPage();
 
@@ -97,30 +97,6 @@ namespace FoolProof.Core.Tests.E2eTests
 
             await ResetForm();
             await AssignValue1(value);
-
-            await CallServerValidation();
-            await ExpectValidationFailed(Value2ValidationError);
-        }
-
-        [TestMethod]
-        public virtual async Task SameValues()
-        {
-            await LoadPage();
-
-            var value = GetValues2PassCompare().Value1;
-            await AssignValue1(value);
-            await AssignValue2(value);
-
-            await CallClientValidation();
-            await ExpectValidationFailed(
-                value2ErrorMsg: Value2ValidationError,
-                alertValidationMsg: "Model validation failed"
-            );
-
-            await ResetForm();
-
-            await AssignValue1(value);
-            await AssignValue2(value);
 
             await CallServerValidation();
             await ExpectValidationFailed(Value2ValidationError);

@@ -7,9 +7,45 @@ namespace FoolProof.Core.Tests.E2eTests
     {
         protected override Regex PageTitleRegex() => new($@".+\s+[-]\s+LessThan\s+\({DataType}\)");
 
-        protected override Uri PageUri() => new(new Uri(WebAppUrl), $"lessthan/{DataType}");
+        protected override Uri PageUri() => new(new Uri(WebAppUrl), $"lt/{DataType}");
 
         protected override string Value2ValidationError => "Value2 must be less than Value1";
+
+        [TestMethod("Value2 < Value1 : Valid")]
+        public override Task CompareValuesPass()
+        {
+            return base.CompareValuesPass();
+        }
+
+        [TestMethod("Value2 > Value1 : Invalid")]
+        public override Task CompareValuesFails()
+        {
+            return base.CompareValuesFails();
+        }
+
+        [TestMethod("Value1 == Value2 : Invalid")]
+        public virtual async Task SameValuesFails()
+        {
+            await LoadPage();
+
+            var value1 = GetValues2PassCompare().Value1;
+            await AssignValue1(value1);
+            await AssignValue2(value1);
+
+            await CallClientValidation();
+            await ExpectValidationFailed(
+                value2ErrorMsg: Value2ValidationError,
+                alertValidationMsg: "Model validation failed"
+            );
+
+            await ResetForm();
+
+            await AssignValue1(value1);
+            await AssignValue2(value1);
+
+            await CallServerValidation();
+            await ExpectValidationFailed(Value2ValidationError);
+        }
 
         [TestClass]
         public class DateValues : LessThanTest
@@ -64,20 +100,44 @@ namespace FoolProof.Core.Tests.E2eTests
     {
         protected override Regex PageTitleRegex() => new($@".+\s+[-]\s+LessThan\s+\({DataType}\)");
 
-        protected override Uri PageUri() => new(new Uri(WebAppUrl), $"lessthan/{DataType}?pwn=true");
+        protected override Uri PageUri() => new(new Uri(WebAppUrl), $"lt/{DataType}?pwn=true");
 
         protected override string Value2ValidationError => "Value2 must be less than Value1";
 
-        [TestMethod("Value2LessThanValue1_Valid")]
+        [TestMethod("Value2 < Value1 : Valid")]
         public override Task CompareValuesPass()
         {
             return base.CompareValuesPass();
         }
 
-        [TestMethod("Value1LessThanValue2_Invalid")]
+        [TestMethod("Value2 > Value1 : Invalid")]
         public override Task CompareValuesFails()
         {
             return base.CompareValuesFails();
+        }
+
+        [TestMethod("Value1 == Value2 : Invalid")]
+        public virtual async Task SameValuesFails()
+        {
+            await LoadPage();
+
+            var value1 = GetValues2PassCompare().Value1;
+            await AssignValue1(value1);
+            await AssignValue2(value1);
+
+            await CallClientValidation();
+            await ExpectValidationFailed(
+                value2ErrorMsg: Value2ValidationError,
+                alertValidationMsg: "Model validation failed"
+            );
+
+            await ResetForm();
+
+            await AssignValue1(value1);
+            await AssignValue2(value1);
+
+            await CallServerValidation();
+            await ExpectValidationFailed(Value2ValidationError);
         }
 
         [TestClass]

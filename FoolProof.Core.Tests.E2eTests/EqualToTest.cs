@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 namespace FoolProof.Core.Tests.E2eTests
@@ -9,7 +10,7 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override Regex PageTitleRegex() => new (@".+\s+[-]\s+EqualTo");
 
-            protected override Uri PageUri() => new (new Uri(WebAppUrl), "equalto");
+            protected override Uri PageUri() => new (new Uri(WebAppUrl), "eq2");
 
             protected override string Value2ValidationError => "Value2 must be equal to Value1";
 
@@ -48,73 +49,78 @@ namespace FoolProof.Core.Tests.E2eTests
             }
 
             [Ignore]
-            public override Task SameInvalidValues()
+            public override Task InvalidValues()
             {
-                return base.SameInvalidValues();
+                return base.InvalidValues();
             }
 
-            public override async Task SameValues()
+            [TestMethod("Value1 == Value2 : Valid")]
+            public override Task CompareValuesPass()
             {
-                await LoadPage();
+                return base.CompareValuesPass();
+            }
 
-                var value = GetValues2PassCompare().Value1;
-                await AssignValue1(value);
-                await AssignValue2(value);
-
-                await CallClientValidation();
-                await ExpectValidationSucceed();
-
-                await ResetForm();
-
-                await AssignValue1(value);
-                await AssignValue2(value);
-
-                await CallServerValidation();
-                await ExpectValidationSucceed();
+            [TestMethod("Value1 != Value2 : Invalid")]
+            public override Task CompareValuesFails()
+            {
+                return base.CompareValuesFails();
             }
         }
 
         [TestClass]
-        public class PassWithNull : Default
+        public class PassWithNull : CompareBaseTest_PassWithNull
         {
-            protected override Uri PageUri() => new (new Uri(WebAppUrl), "equalto?pwn=true");
+            protected override Regex PageTitleRegex() => new(@".+\s+[-]\s+EqualTo");
+
+            protected override Uri PageUri() => new (new Uri(WebAppUrl), "eq2?pwn=true");
+
+            protected override string DataType => "string";
+
+            protected override string Value2ValidationError => "Value2 must be equal to Value1";
 
             [TestMethod]
-            public override async Task Value1Empty()
+            public override async Task EmptyValues()
             {
                 await LoadPage();
 
-                var value = GetValues2PassCompare().Value1;
                 await ExpectValue1Empty();
-                await AssignValue2(value);
-
-                await CallClientValidation();
-                await ExpectValidationSucceed();
-
-                await ResetForm();
-                await AssignValue2(value);
-
-                await CallServerValidation();
-                await ExpectValidationSucceed();
-            }
-
-            [TestMethod]
-            public override async Task Value2Empty()
-            {
-                await LoadPage();
-
-                var value = GetValues2PassCompare().Value1;
-                await AssignValue1(value);
                 await ExpectValue2Empty();
 
                 await CallClientValidation();
                 await ExpectValidationSucceed();
 
                 await ResetForm();
-                await AssignValue1(value);
 
                 await CallServerValidation();
                 await ExpectValidationSucceed();
+            }
+
+            [Ignore]
+            public override Task InvalidValues()
+            {
+                return base.InvalidValues();
+            }
+
+            [TestMethod("Value1 == Value2 : Valid")]
+            public override Task CompareValuesPass()
+            {
+                return base.CompareValuesPass();
+            }
+
+            [TestMethod("Value1 != Value2 : Invalid")]
+            public override Task CompareValuesFails()
+            {
+                return base.CompareValuesFails();
+            }
+
+            protected override (string Value1, string Value2) GetValues2PassCompare()
+            {
+                return ("Value one", "Value one");
+            }
+
+            protected override (string Value1, string Value2) GetValues2FailsCompare()
+            {
+                return ("Value one", "Value two");
             }
         }
     }

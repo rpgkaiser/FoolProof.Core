@@ -2,13 +2,13 @@ using System.Text.RegularExpressions;
 
 namespace FoolProof.Core.Tests.E2eTests
 {
-    public abstract class GreaterThanTest: CompareBaseTest
+    public abstract class GreaterOrEqualTest : CompareBaseTest
     {
-        protected override Regex PageTitleRegex() => new($@".+\s+[-]\s+GreaterThan\s+\({DataType}\)");
+        protected override Regex PageTitleRegex() => new($@".+\s+[-]\s+GreaterThanOrEqualTo\s+\({DataType}\)");
 
-        protected override Uri PageUri() => new(new Uri(WebAppUrl), $"gt/{DataType}");
+        protected override Uri PageUri() => new(new Uri(WebAppUrl), $"ge2/{DataType}");
 
-        protected override string Value2ValidationError => "Value2 must be greater than Value1";
+        protected override string Value2ValidationError => "Value2 must be greater than or equal to Value1.";
 
         [TestMethod("Value2 > Value1 : Valid")]
         public override Task CompareValuesPass()
@@ -22,8 +22,8 @@ namespace FoolProof.Core.Tests.E2eTests
             return base.CompareValuesFails();
         }
 
-        [TestMethod("Value1 == Value2 : Invalid")]
-        public virtual async Task SameValuesFails()
+        [TestMethod("Value1 == Value2 : Valid")]
+        public virtual async Task SameValuesPass()
         {
             await LoadPage();
 
@@ -32,10 +32,7 @@ namespace FoolProof.Core.Tests.E2eTests
             await AssignValue2(value1);
 
             await CallClientValidation();
-            await ExpectValidationFailed(
-                value2ErrorMsg: Value2ValidationError,
-                alertValidationMsg: "Model validation failed"
-            );
+            await ExpectValidationSucceed();
 
             await ResetForm();
 
@@ -43,7 +40,7 @@ namespace FoolProof.Core.Tests.E2eTests
             await AssignValue2(value1);
 
             await CallServerValidation();
-            await ExpectValidationFailed(Value2ValidationError);
+            await ExpectValidationSucceed();
         }
 
 
@@ -96,13 +93,13 @@ namespace FoolProof.Core.Tests.E2eTests
         }
     }
 
-    public abstract class GreaterThanTest_PassWithNull : CompareBaseTest_PassWithNull
+    public abstract class GreaterOrEqualTest_PassWithNull : CompareBaseTest_PassWithNull
     {
-        protected override Regex PageTitleRegex() => new($@".+\s+[-]\s+GreaterThan\s+\({DataType}\)");
+        protected override Regex PageTitleRegex() => new($@".+\s+[-]\s+GreaterThanOrEqualTo\s+\({DataType}\)");
 
-        protected override Uri PageUri() => new(new Uri(WebAppUrl), $"gt/{DataType}?pwn=true");
+        protected override Uri PageUri() => new(new Uri(WebAppUrl), $"ge2/{DataType}?pwn=true");
 
-        protected override string Value2ValidationError => "Value2 must be greater than Value1";
+        protected override string Value2ValidationError => "Value2 must be greater than or equal to Value1.";
 
         [TestMethod("Value2 > Value1 : Valid")]
         public override Task CompareValuesPass()
@@ -116,8 +113,8 @@ namespace FoolProof.Core.Tests.E2eTests
             return base.CompareValuesFails();
         }
 
-        [TestMethod("Value1 == Value2 : Invalid")]
-        public virtual async Task SameValuesFails()
+        [TestMethod("Value1 == Value2 : Valid")]
+        public virtual async Task SameValuesPass()
         {
             await LoadPage();
 
@@ -126,10 +123,7 @@ namespace FoolProof.Core.Tests.E2eTests
             await AssignValue2(value1);
 
             await CallClientValidation();
-            await ExpectValidationFailed(
-                value2ErrorMsg: Value2ValidationError,
-                alertValidationMsg: "Model validation failed"
-            );
+            await ExpectValidationSucceed();
 
             await ResetForm();
 
@@ -137,7 +131,7 @@ namespace FoolProof.Core.Tests.E2eTests
             await AssignValue2(value1);
 
             await CallServerValidation();
-            await ExpectValidationFailed(Value2ValidationError);
+            await ExpectValidationSucceed();
         }
 
         [TestClass]

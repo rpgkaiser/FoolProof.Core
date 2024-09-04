@@ -9,7 +9,7 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override Regex PageTitleRegex() => new (@".+\s+[-]\s+NotEqualTo");
 
-            protected override Uri PageUri() => new (new Uri(WebAppUrl), "notequalto");
+            protected override Uri PageUri() => new (new Uri(WebAppUrl), "neq2");
 
             protected override string Value2ValidationError => "Value2 must be not equal to Value1";
 
@@ -31,9 +31,9 @@ namespace FoolProof.Core.Tests.E2eTests
             }
 
             [Ignore]
-            public override Task SameInvalidValues()
+            public override Task InvalidValues()
             {
-                return base.SameInvalidValues();
+                return base.InvalidValues();
             }
 
             [TestMethod]
@@ -72,6 +72,18 @@ namespace FoolProof.Core.Tests.E2eTests
 
                 await CallServerValidation();
                 await ExpectValidationSucceed();
+            }
+
+            [TestMethod("Value2 != Value1 : Valid")]
+            public override Task CompareValuesPass()
+            {
+                return base.CompareValuesPass();
+            }
+
+            [TestMethod("Value1 == Value2 : Invalid")]
+            public override Task CompareValuesFails()
+            {
+                return base.CompareValuesFails();
             }
         }
     }
