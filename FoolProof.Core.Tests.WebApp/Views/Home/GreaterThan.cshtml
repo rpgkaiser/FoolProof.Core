@@ -1,0 +1,12 @@
+﻿@{
+    var dataType = ViewBag.DataType as string;
+    var pwd = (bool?)ViewBag.PassWithNull ?? false;
+    ViewData["Title"] = $"FoolProof.Core Validation - GreaterThan ({dataType})";
+    ViewData["ValidatorName"] = $"GreaterThan Validator Attribute ({dataType}{(pwd ? " - Pass With Null" : "")})";
+}
+
+<div class="d-flex flex-column gap-5">
+    <div>
+        <partial name="_TwoFieldsForm" />
+    </div>
+</div>
