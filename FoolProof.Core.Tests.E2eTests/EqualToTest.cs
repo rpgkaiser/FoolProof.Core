@@ -31,7 +31,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 return ("Value one", "Value two");
             }
 
-            [TestMethod]
+            [TestMethod("Empty Values : Valid")]
             public override async Task EmptyValues()
             {
                 await LoadPage();
@@ -78,7 +78,7 @@ namespace FoolProof.Core.Tests.E2eTests
 
             protected override string Value2ValidationError => "Value2 must be equal to Value1";
 
-            [TestMethod]
+            [TestMethod("Empty Values : Valid")]
             public override async Task EmptyValues()
             {
                 await LoadPage();
@@ -99,6 +99,18 @@ namespace FoolProof.Core.Tests.E2eTests
             public override Task InvalidValues()
             {
                 return base.InvalidValues();
+            }
+
+            [TestMethod("Value1 is Empty : Valid")]
+            public override Task Value1Empty()
+            {
+                return base.Value1Empty();
+            }
+
+            [TestMethod("Value2 is Empty : Valid")]
+            public override Task Value2Empty()
+            {
+                return base.Value2Empty();
             }
 
             [TestMethod("Value1 == Value2 : Valid")]

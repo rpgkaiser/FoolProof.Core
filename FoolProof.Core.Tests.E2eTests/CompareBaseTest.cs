@@ -13,7 +13,7 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected abstract string Value2ValidationError { get; }
 
-        [TestMethod]
+        [TestMethod("Empty Values : Invalid")]
         public virtual async Task EmptyValues()
         {
             await LoadPage();
@@ -33,7 +33,7 @@ namespace FoolProof.Core.Tests.E2eTests
             await ExpectValidationFailed(Value2ValidationError);
         }
 
-        [TestMethod]
+        [TestMethod("Not Valid Values : Invalid")]
         public virtual async Task InvalidValues()
         {
             await LoadPage();
@@ -58,7 +58,7 @@ namespace FoolProof.Core.Tests.E2eTests
             await ExpectValidationFailed(Value2ValidationError, $"The value '{invalidValue}' is not valid for Value2");
         }
 
-        [TestMethod]
+        [TestMethod("Value1 is Empty : Invalid")]
         public virtual async Task Value1Empty()
         {
             await LoadPage();
@@ -80,7 +80,7 @@ namespace FoolProof.Core.Tests.E2eTests
             await ExpectValidationFailed(Value2ValidationError);
         }
 
-        [TestMethod]
+        [TestMethod("Value2 is Empty : Invalid")]
         public virtual async Task Value2Empty()
         {
             await LoadPage();
@@ -158,7 +158,7 @@ namespace FoolProof.Core.Tests.E2eTests
     {
         protected override Uri PageUri() => new(new Uri(WebAppUrl), $"lessthan/{DataType}?pwn=true");
 
-        [TestMethod]
+        [TestMethod("Value1 is Empty : Valid")]
         public override async Task Value1Empty()
         {
             await LoadPage();
@@ -177,7 +177,7 @@ namespace FoolProof.Core.Tests.E2eTests
             await ExpectValidationSucceed();
         }
 
-        [TestMethod]
+        [TestMethod("Value2 is Empty : Valid")]
         public override async Task Value2Empty()
         {
             await LoadPage();

@@ -36,7 +36,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 return base.InvalidValues();
             }
 
-            [TestMethod]
+            [TestMethod("Value1 is Empty : Valid")]
             public override async Task Value1Empty()
             {
                 await LoadPage();
@@ -55,7 +55,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 await ExpectValidationSucceed();
             }
 
-            [TestMethod]
+            [TestMethod("Value2 is Empty : Valid")]
             public override async Task Value2Empty()
             {
                 await LoadPage();

@@ -5,9 +5,9 @@
     asp-action="@nameof(HomeController.Save)" 
     asp-controller="Home"
     asp-route-modelTypeName="@(Model.GetType().FullName)">
-    <h3>
+    <h4 class="m-0">
         Assign @dataType values to fields and click one of the validate buttons.
-    </h3>
+    </h4>
 
     <div data-testid="valid-alert" class="alert alert-success alert-dismissible valid-alert" style='display: none;'>
         <button type="button" class="btn-close" onclick="$(this).parent().fadeOut();"></button>

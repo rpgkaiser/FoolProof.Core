@@ -72,6 +72,21 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
             return View("GreaterOrEqualTo", model);
         }
 
+        [HttpGet("le2/{type}")]
+        public IActionResult LessOrEqualTo([FromRoute] string type, [FromQuery] bool pwn = false)
+        {
+            object model = type.ToLowerInvariant() switch
+            {
+                "date" => pwn ? new LessThanOrEqualTo.DateModelWithPassNull() : new LessThanOrEqualTo.DateModel(),
+                "int16" => pwn ? new LessThanOrEqualTo.DateModelWithPassNull() : new LessThanOrEqualTo.Int16Model(),
+                "time" => pwn ? new LessThanOrEqualTo.DateModelWithPassNull() : new LessThanOrEqualTo.TimeModel(),
+                _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
+            };
+            ViewBag.DataType = type;
+            ViewBag.PassWithNull = pwn;
+            return View("LessOrEqualTo", model);
+        }
+
         [HttpPost("validate")]
         public async Task<JsonResult> Save([FromQuery]string modelTypeName)
         {
