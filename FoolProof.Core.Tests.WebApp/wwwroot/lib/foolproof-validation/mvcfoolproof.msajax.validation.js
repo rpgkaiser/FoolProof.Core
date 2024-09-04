@@ -10,10 +10,11 @@ Sys.Mvc.ValidatorRegistry.validators["is"] = function(rule) {
     return function (value, context) {
         var operator = rule.ValidationParameters["operator"];
         var passOnNull = rule.ValidationParameters["passonnull"];
+        var dataType = rule.ValidationParameters["datatype"];
         var dependentProperty = FoolProofCore.getId(context.fieldContext.elements[0], rule.ValidationParameters["dependentproperty"]);
         var dependentValue = document.getElementById(dependentProperty).value;
 
-        if (FoolProofCore.is(value, operator, dependentValue, passOnNull))
+        if (FoolProofCore.is(value, operator, dependentValue, passOnNull, dataType))
             return true;
 
         return rule.ErrorMessage;
@@ -24,6 +25,7 @@ Sys.Mvc.ValidatorRegistry.validators["requiredif"] = function (rule) {
     var pattern = rule.ValidationParameters["pattern"];
     var dependentTestValue = rule.ValidationParameters["dependentvalue"];
     var operator = rule.ValidationParameters["operator"];
+    var dataType = rule.ValidationParameters["datatype"];
     return function (value, context) {
         var dependentProperty = FoolProofCore.getName(context.fieldContext.elements[0], rule.ValidationParameters["dependentproperty"]);
         var dependentPropertyElement = document.getElementsByName(dependentProperty);
@@ -42,7 +44,7 @@ Sys.Mvc.ValidatorRegistry.validators["requiredif"] = function (rule) {
         else
             dependentValue = dependentPropertyElement[0].value;
 
-        if (FoolProofCore.is(dependentValue, operator, dependentTestValue)) {
+        if (FoolProofCore.is(dependentValue, operator, dependentTestValue, undefined, dataType)) {
             if (pattern == null) {
                 if (value != null && value.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "")
                     return true;

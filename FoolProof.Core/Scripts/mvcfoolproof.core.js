@@ -106,6 +106,8 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull, dataType) {
 		value1 = getTime(value1);
 		value2 = getTime(value2);
 	}
+	else if (dataType && dataType !== DataTypes.string)
+		return false; //Provided values do not correspond with the specified data type
 
     switch (operator) {
 		case "EqualTo":

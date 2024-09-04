@@ -1,8 +1,8 @@
 ﻿;
 
-var FoolProofCore = function() { };
+var FoolProofCore = function () { };
 
-FoolProofCore.is = function (value1, operator, value2, passOnNull) {
+FoolProofCore.is = function (value1, operator, value2, passOnNull, dataType) {
 	passOnNull = (/true/i).test(passOnNull + "");
     if (passOnNull) {
         var isNullish = function (input) {
@@ -14,15 +14,30 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
 
         if ((value1nullish && !value2nullish) || (value2nullish && !value1nullish))
             return true;
-    }
+	}
+
+	var DataTypes = {
+		string: "String",
+		number: "Number",
+		bool: "Bool",
+		date: "Date",
+		time: "Time",
+		dateTime: "DateTime"
+	};
 
 	var numberRegex = new RegExp(/^[+-]?(?:\d+\.?\d*|\d*\.?\d+)$/);
 	var isNumeric = function (input) {
+		if (dataType && dataType !== DataTypes.number)
+			return false;
+
 		return numberRegex.test(input);
     };
 
 	var dateRegex = new RegExp(/(?=\d)^(?:(?!(?:10\D(?:0?[5-9]|1[0-4])\D(?:1582))|(?:0?9\D(?:0?[3-9]|1[0-3])\D(?:1752)))((?:0?[13578]|1[02])|(?:0?[469]|11)(?!\/31)(?!-31)(?!\.31)|(?:0?2(?=.?(?:(?:29.(?!000[04]|(?:(?:1[^0-6]|[2468][^048]|[3579][^26])00))(?:(?:(?:\d\d)(?:[02468][048]|[13579][26])(?!\x20BC))|(?:00(?:42|3[0369]|2[147]|1[258]|09)\x20BC))))))|(?:0?2(?=.(?:(?:\d\D)|(?:[01]\d)|(?:2[0-8])))))([-.\/])(0?[1-9]|[12]\d|3[01])\2(?!0000)((?=(?:00(?:4[0-5]|[0-3]?\d)\x20BC)|(?:\d{4}(?!\x20BC)))\d{4}(?:\x20BC)?)(?:$|(?=\x20\d)\x20))((?:(?:0?[1-9]|1[012])(?::[0-5]\d){0,2}(?:\x20[aApP][mM]))|(?:[01]\d|2[0-3])(?::[0-5]\d){1,2})?$/);
 	var isDate = function (input) {
+		if (dataType && dataType !== DataTypes.date && dataType !== DataTypes.dateTime)
+			return false;
+
 		if (Date.parse(input))
 			return true;
 
@@ -30,6 +45,9 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
     };
 
 	var isBool = function (input) {
+		if (dataType && dataType !== DataTypes.bool)
+			return false;
+
 		return typeof (input) === "boolean"
 				|| input === "true"
 				|| input === "True"
@@ -39,6 +57,9 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
 
 	var timeRegex = new RegExp(/(?=\d)^((?<days>\d+)\.)?(?<hours>[0-1]?\d|2[0-4]):(?<mins>[0-5]?\d)(:(?<secs>[0-5]?\d))?(\.(?<milis>\d{1,3}))?$/);
 	var isTime = function (input) {
+		if (dataType && dataType !== DataTypes.time)
+			return false;
+
 		if (input && Date.parse(new Date().toDateString() + input))
 			return true;
 
@@ -85,6 +106,8 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
 		value1 = getTime(value1);
 		value2 = getTime(value2);
 	}
+	else if (dataType && dataType !== DataTypes.string)
+		return false; //Provided values do not correspond with the specified data type
 
     switch (operator) {
 		case "EqualTo":
@@ -106,9 +129,9 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull) {
 			if (value1 <= value2) return true;
 			break;
 		case "RegExMatch":
-			return (new RegExp(value2)).test(value1);
+			return value2 && (new RegExp(value2)).test(value1);
 		case "NotRegExMatch":
-			return !(new RegExp(value2)).test(value1);
+			return value2 && !(new RegExp(value2)).test(value1);
 		case "In":
 			try {
 				var valArr = JSON.parse(value2);

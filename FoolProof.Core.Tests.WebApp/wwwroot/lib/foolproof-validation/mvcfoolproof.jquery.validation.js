@@ -11,9 +11,10 @@ FoolProofCore.registerValidators = function(jQuery) {
         var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
         var operator = params["operator"];
         var passOnNull = params["passonnull"];
+        var dataType = params["datatype"];
         var dependentValue = document.getElementById(dependentProperty).value;
 
-        if (FoolProofCore.is(value, operator, dependentValue, passOnNull))
+        if (FoolProofCore.is(value, operator, dependentValue, passOnNull, dataType))
             return true;
 
         return false;
@@ -24,6 +25,7 @@ FoolProofCore.registerValidators = function(jQuery) {
         var dependentTestValue = params["dependentvalue"];
         var operator = params["operator"];
         var pattern = params["pattern"];
+        var dataType = params["datatype"];
         var dependentPropertyElement = document.getElementsByName(dependentProperty);
         var dependentValue = null;
 
@@ -40,7 +42,7 @@ FoolProofCore.registerValidators = function(jQuery) {
         else
             dependentValue = dependentPropertyElement[0].value;
 
-        if (FoolProofCore.is(dependentValue, operator, dependentTestValue)) {
+        if (FoolProofCore.is(dependentValue, operator, dependentTestValue, undefined, dataType)) {
             if (pattern == null) {
                 if (value != null && value.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "")
                     return true;
