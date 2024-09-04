@@ -32,7 +32,7 @@ namespace FoolProof.Core
 			MergeAttribute(context.Attributes, $"data-val-{validName}", GetErrorMessage(context));
 
 			//Add validation params attributes
-			foreach (var validationParam in Attribute.ClientValidationParameters)
+			foreach (var validationParam in Attribute.ClientValidationParameters(context.ModelMetadata))
 				MergeAttribute(
 					context.Attributes, 
 					$"data-val-{validName}-{validationParam.Key.ToLowerInvariant()}",

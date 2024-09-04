@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FoolProof.Core
 {
@@ -30,9 +31,9 @@ namespace FoolProof.Core
             get { return this.GetType().Name.Replace("Attribute", ""); }
         }
 
-        public Dictionary<string, object> ClientValidationParameters
+        public Dictionary<string, object> ClientValidationParameters(ModelMetadata modelMetadata)
         {
-            get { return GetClientValidationParameters().ToDictionary(kv => kv.Key.ToLower(), kv => kv.Value); }
+            return GetClientValidationParameters(modelMetadata).ToDictionary(kv => kv.Key.ToLower(), kv => kv.Value);
         }
 
 
@@ -49,7 +50,7 @@ namespace FoolProof.Core
             }
         }
 
-        protected virtual IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters()
+        protected virtual IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
             return new KeyValuePair<string, object>[0];
         }

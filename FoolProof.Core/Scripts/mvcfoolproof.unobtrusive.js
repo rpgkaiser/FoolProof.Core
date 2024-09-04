@@ -15,22 +15,24 @@ var setValidationValues = function(options, ruleName, value) {
 
 var $Unob = $.validator.unobtrusive;
 
-$Unob.adapters.add("requiredif", ["dependentproperty", "dependentvalue", "operator", "pattern"], function(options) {
+$Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull", "datatype"], function(options) {
+    setValidationValues(options, "is", {
+        dependentproperty: options.params.dependentproperty,
+        operator: options.params.operator,
+        passonnull: options.params.passonnull,
+        datatype: options.params.datatype
+    });
+});
+
+$Unob.adapters.add("requiredif", ["dependentproperty", "dependentvalue", "operator", "pattern", "datatype"], function(options) {
     var value = {
         dependentproperty: options.params.dependentproperty,
         dependentvalue: options.params.dependentvalue,
         operator: options.params.operator,
-        pattern: options.params.pattern
+        pattern: options.params.pattern,
+        datatype: options.params.datatype
     };
     setValidationValues(options, "requiredif", value);
-});
-
-$Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull"], function(options) {
-    setValidationValues(options, "is", {
-        dependentproperty: options.params.dependentproperty,
-        operator: options.params.operator,
-        passonnull: options.params.passonnull
-    });
 });
 
 $Unob.adapters.add("requiredifempty", ["dependentproperty"], function(options) {

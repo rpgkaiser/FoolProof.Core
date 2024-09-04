@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FoolProof.Core
 {
@@ -11,6 +12,7 @@ namespace FoolProof.Core
             : base(dependentProperty, @operator, dependentValue)
         {
             Pattern = pattern;
+            DataType = ClientDataType.String;
         }
 
         public RegularExpressionIfAttribute(string pattern, string dependentProperty, object dependentValue)
@@ -24,9 +26,9 @@ namespace FoolProof.Core
             return true;
         }
 
-        protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters()
+        protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            return base.GetClientValidationParameters()
+            return base.GetClientValidationParameters(modelMetadata)
                 .Union(new[] {
                     new KeyValuePair<string, object>("Pattern", Pattern),
                 });
