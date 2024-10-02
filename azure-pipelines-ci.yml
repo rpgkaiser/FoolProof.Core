@@ -45,6 +45,13 @@ steps:
     msbuildArgs: '/p:Version=$(versionNumber) /p:SkipInvalidConfigurations=true'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    
+task: PowerShell@2
+  displayName: Install Playwright browsers.
+  inputs:
+    targetType: filePath
+    filePath: 'FoolProof.Core.Tests.E2eTests/bin/$(buildConfiguration)/net8.0/playwright.ps1'
+    arguments: install --with-deps'
 
 - task: VSTest@2
   inputs:
