@@ -103,5 +103,15 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
                 Errors = ModelState.Values.SelectMany(mv => mv.Errors).Select(err => err.ErrorMessage)
             });
         }
+
+        public override void OnActionExecuted(ActionExecutedContext context)
+        {
+            base.OnActionExecuted(context);
+
+            ViewBag.UseInputTypes = Request.Cookies.TryGetValue("UseInputTypes", out var cookie)
+                                    ? bool.TryParse(cookie, out var useInputTypes)
+                                        && useInputTypes
+                                    : (bool?)null;
+        }
     }
 }

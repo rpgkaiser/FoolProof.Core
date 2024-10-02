@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
 
 namespace FoolProof.Core.Tests.E2eTests
@@ -13,6 +14,11 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected virtual async Task LoadPage()
         {
+            await (Page.Context.AddCookiesAsync([ new Cookie {
+                Url = PageUri().AbsoluteUri,
+                Name = "UseInputTypes",
+                Value = "false"
+            } ]) ?? Task.CompletedTask);
             await Page.GotoAsync(PageUri().AbsoluteUri);
             await Expect(Page).ToHaveTitleAsync(PageTitleRegex());
         }

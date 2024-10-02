@@ -1,13 +1,14 @@
 ﻿@{
     var dataType = ViewBag.DataType as string;
+    var useEditor = (bool?)ViewBag.UseInputTypes ?? true;
 }
 <form method="post" class="d-flex flex-column gap-4" novalidate 
     asp-action="@nameof(HomeController.Save)" 
     asp-controller="Home"
     asp-route-modelTypeName="@(Model.GetType().FullName)">
-    <h4 class="m-0">
+    <h5 class="m-0">
         Assign @dataType values to fields and click one of the validate buttons.
-    </h4>
+    </h5>
 
     <div data-testid="valid-alert" class="alert alert-success alert-dismissible valid-alert" style='display: none;'>
         <button type="button" class="btn-close" onclick="$(this).parent().fadeOut();"></button>
@@ -17,14 +18,26 @@
 
     <div class="d-flex flex-column gap-4">
         <div class="form-floating flex-fill">
-            @* @Html.Editor("Value1", new { htmlAttributes = new { @class = "form-control", placeholder = "" } }) *@
-            @Html.TextBox("Value1", null, new { @class = "form-control", placeholder = "" })
+            @if (useEditor)
+            {
+                @Html.Editor("Value1", new { htmlAttributes = new { @class = "form-control", placeholder = "" } })
+            }
+            else
+            {
+                @Html.TextBox("Value1", null, new { @class = "form-control", placeholder = "" })
+            }
             @Html.Label("Value1", "Value1: Dependent Value")
             @Html.ValidationMessage("Value1", new { @class = "text-danger", data_testid = "val1-valid-msg" })
         </div>
         <div class="form-floating flex-fill">
-            @* @Html.Editor("Value2", new { htmlAttributes = new { @class = "form-control", placeholder = "" } }) *@
-            @Html.TextBox("Value2", null, new { @class = "form-control", placeholder = "" })
+            @if(useEditor)
+            {
+                @Html.Editor("Value2", new { htmlAttributes = new { @class = "form-control", placeholder = "" } })
+            }
+            else
+            {
+                @Html.TextBox("Value2", null, new { @class = "form-control", placeholder = "" })
+            }
             @Html.Label("Value2", "Value2: Value To Validate")
             @Html.ValidationMessage("Value2", new { @class = "text-danger", data_testid = "val2-valid-msg" })
         </div>
