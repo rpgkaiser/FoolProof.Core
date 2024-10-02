@@ -46,7 +46,7 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
     
-task: PowerShell@2
+- task: PowerShell@2
   displayName: Install Playwright browsers.
   inputs:
     targetType: filePath
