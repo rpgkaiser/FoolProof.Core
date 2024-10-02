@@ -51,7 +51,7 @@ steps:
   inputs:
     targetType: filePath
     filePath: 'FoolProof.Core.Tests.E2eTests/bin/$(buildConfiguration)/net8.0/playwright.ps1'
-    arguments: install --with-deps'
+    arguments: install --with-deps
 
 - task: VSTest@2
   inputs:
