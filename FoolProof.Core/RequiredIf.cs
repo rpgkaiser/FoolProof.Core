@@ -31,7 +31,7 @@ namespace FoolProof.Core
             if (string.IsNullOrEmpty(ErrorMessageResourceName) && string.IsNullOrEmpty(ErrorMessage))
                 ErrorMessage = DefaultErrorMessage;
 
-            return string.Format(ErrorMessageString, name, DependentProperty, DependentValue);
+            return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty, DependentValue);
         }
 
         public override string ClientTypeName

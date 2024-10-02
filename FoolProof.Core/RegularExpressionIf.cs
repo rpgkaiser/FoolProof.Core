@@ -39,7 +39,7 @@ namespace FoolProof.Core
             if (string.IsNullOrEmpty(ErrorMessageResourceName) && string.IsNullOrEmpty(ErrorMessage))
                 ErrorMessage = DefaultErrorMessage;
 
-            return string.Format(ErrorMessageString, name, DependentProperty, DependentValue, Pattern);
+            return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty, DependentValue, Pattern);
         }
 
         public override string DefaultErrorMessage
