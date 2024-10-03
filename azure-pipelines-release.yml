@@ -44,7 +44,7 @@ steps:
   displayName: Build the solution
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:Version=$(versionNumber) /p:SkipInvalidConfigurations=true'
+    msbuildArgs: '/p:Version=$(packageVersionNumber) /p:SkipInvalidConfigurations=true'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
     
