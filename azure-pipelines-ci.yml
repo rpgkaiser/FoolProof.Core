@@ -36,10 +36,12 @@ steps:
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
+  displayName: Restore package references
   inputs:
     restoreSolution: '$(solution)'
 
 - task: VSBuild@1
+  displayName: Build the solution
   inputs:
     solution: '$(solution)'
     msbuildArgs: '/p:Version=$(versionNumber) /p:SkipInvalidConfigurations=true'
@@ -84,6 +86,7 @@ steps:
     rerunMaxAttempts: '5'
     
 - task: CopyFiles@2
+  displayName: Copy artifacts (packages) to publish
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)\FoolProof.Core\bin\$(buildConfiguration)\'
     contents: |
@@ -93,6 +96,7 @@ steps:
     cleanTargetFolder: true
 
 - task: PublishBuildArtifacts@1
+  displayName: Publish build artifacts (packages)
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'Packages'
