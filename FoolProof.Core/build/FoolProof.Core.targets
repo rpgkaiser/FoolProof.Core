@@ -1,0 +1,8 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<SourceScriptFiles Include="$(MSBuildThisFileDirectory)..\contentFiles\Scripts\*.js" />
+	</ItemGroup>
+	<Target Name="CopyScriptsToProject" BeforeTargets="Build" Condition="!Exists('$(MSBuildProjectDirectory)\wwwroot\lib\foolproof-validation')">
+		<Copy SourceFiles="@(SourceScriptFiles)" DestinationFolder="$(MSBuildProjectDirectory)\wwwroot\lib\foolproof-validation\" />
+	</Target>
+</Project>

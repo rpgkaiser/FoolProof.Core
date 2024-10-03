@@ -1,0 +1,57 @@
+﻿@{
+    var dataType = ViewBag.DataType as string;
+    var useEditor = (bool?)ViewBag.UseInputTypes ?? true;
+}
+<form method="post" class="d-flex flex-column gap-4" novalidate 
+    asp-action="@nameof(HomeController.Save)" 
+    asp-controller="Home"
+    asp-route-modelTypeName="@(Model.GetType().FullName)">
+    <h5 class="m-0">
+        Assign @dataType values to fields and click one of the validate buttons.
+    </h5>
+
+    <div data-testid="valid-alert" class="alert alert-success alert-dismissible valid-alert" style='display: none;'>
+        <button type="button" class="btn-close" onclick="$(this).parent().fadeOut();"></button>
+        <span class="alert-message">
+        </span>
+    </div>
+
+    <div class="d-flex flex-column gap-4">
+        <div class="form-floating flex-fill">
+            @if (useEditor)
+            {
+                @Html.Editor("Value1", new { htmlAttributes = new { @class = "form-control", placeholder = "" } })
+            }
+            else
+            {
+                @Html.TextBox("Value1", null, new { @class = "form-control", placeholder = "" })
+            }
+            @Html.Label("Value1", "Value1: Dependent Value")
+            @Html.ValidationMessage("Value1", new { @class = "text-danger", data_testid = "val1-valid-msg" })
+        </div>
+        <div class="form-floating flex-fill">
+            @if(useEditor)
+            {
+                @Html.Editor("Value2", new { htmlAttributes = new { @class = "form-control", placeholder = "" } })
+            }
+            else
+            {
+                @Html.TextBox("Value2", null, new { @class = "form-control", placeholder = "" })
+            }
+            @Html.Label("Value2", "Value2: Value To Validate")
+            @Html.ValidationMessage("Value2", new { @class = "text-danger", data_testid = "val2-valid-msg" })
+        </div>
+    </div>
+    <div class="d-flex flex-row gap-4 align-items-center justify-content-center">
+        <button data-testid="btn-reset" type="button" class="btn btn-outline-secondary btn-lg btn-reset">
+            Reset
+        </button>
+        <button data-testid="btn-client" type="button" class="btn btn-outline-info btn-lg btn-validate">
+            Validate on Client
+        </button>
+        <button data-testid="btn-server" type="button" class="btn btn-outline-primary btn-lg btn-validate"
+            data-server-validate="true">
+            Submit for Validation
+        </button>
+    </div>
+</form>

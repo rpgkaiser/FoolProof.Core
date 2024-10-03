@@ -36,28 +36,57 @@ steps:
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
+  displayName: Restore package references
   inputs:
     restoreSolution: '$(solution)'
 
 - task: VSBuild@1
+  displayName: Build the solution
   inputs:
     solution: '$(solution)'
     msbuildArgs: '/p:Version=$(versionNumber) /p:SkipInvalidConfigurations=true'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
+    
+- task: VSTest@3
+  displayName: Run Unit Tests
   inputs:
     testSelector: 'testAssemblies'
     testAssemblyVer2: |
-      **\*Tests.dll
+      **\*UnitTests.dll
       !**\*TestAdapter.dll
       !**\obj\**
     searchFolder: '$(System.DefaultWorkingDirectory)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
     
+- task: PowerShell@2
+  displayName: Install Playwright Browsers
+  inputs:
+    targetType: filePath
+    filePath: 'FoolProof.Core.Tests.E2eTests/bin/$(buildConfiguration)/net8.0/playwright.ps1'
+    arguments: install --with-deps
+
+- task: VSTest@3
+  displayName: Run E2E Tests
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*E2eTests.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+    runSettingsFile: 'FoolProof.Core.Tests.E2eTests/test.runsettings'
+    overrideTestrunParameters: -StartWebApp true -WebAppPort 9090 -WebAppUrl http://localhost:9090
+    rerunFailedTests: true
+    rerunType: 'basedOnTestFailurePercentage'
+    rerunFailedThreshold: '50'
+    rerunMaxAttempts: '5'
+    
 - task: CopyFiles@2
+  displayName: Copy artifacts (packages) to publish
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)\FoolProof.Core\bin\$(buildConfiguration)\'
     contents: 'FoolProof.Core.*.nupkg'
@@ -65,8 +94,16 @@ steps:
     cleanTargetFolder: true
 
 - task: PublishBuildArtifacts@1
+  displayName: Publish build artifacts (packages)
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'Packages'
     publishLocation: 'Container'
 
+- task: NuGetCommand@2
+  displayName: Publish package in NuGet.org
+  inputs:
+    command: 'push'
+    externalFeedCredentials: 'Nuget.org'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/FoolProof.Core.*.nupkg'
+    

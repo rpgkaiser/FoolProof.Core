@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+
+@{
+    var headerText = this.ViewBag.HeaderText ?? (string?)ViewData["HeaderText"] ?? "FoolProof.Core Validation Tests";
+    var validatorName = this.ViewBag.ValidatorName ?? (string?)ViewData["ValidatorName"] ?? "";
+}
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(ViewData["Title"] ?? headerText)</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid d-flex flex-row gap-4 align-items-center justify-content-between">
+                <div class="h3">
+                    FoolProof.Core
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:;" role="button" aria-expanded="false">
+                                EqualTo
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.EqualTo)">
+                                        Default
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.EqualTo)" asp-route-pwn="true">
+                                        Pass With Null
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:;" role="button" aria-expanded="false">
+                                NotEqualTo
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.NotEqualTo)">
+                                        Default
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.NotEqualTo)" asp-route-pwn="true">
+                                        Pass With Null
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:;" role="button" aria-expanded="false">
+                                GreaterThan
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterThan)" asp-route-type="Date">
+                                        Date
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterThan)" asp-route-type="Date" asp-route-pwn="true">
+                                        Date - Pass With Null
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterThan)" asp-route-type="Int16">
+                                        Int16
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterThan)" asp-route-type="Int16" asp-route-pwn="true">
+                                        Int16 - Pass With Null
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterThan)" asp-route-type="Time">
+                                        Time
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterThan)" asp-route-type="Time" asp-route-pwn="true">
+                                        Time - Pass With Null
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:;" role="button" aria-expanded="false">
+                                LessThan
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessThan)" asp-route-type="Date">
+                                        Date
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessThan)" asp-route-type="Date" asp-route-pwn="true">
+                                        Date - Pass With Null
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessThan)" asp-route-type="Int16">
+                                        Int16
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessThan)" asp-route-type="Int16" asp-route-pwn="true">
+                                        Int16 - Pass With Null
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessThan)" asp-route-type="Time">
+                                        Time
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessThan)" asp-route-type="Time" asp-route-pwn="true">
+                                        Time - Pass With Null
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:;" role="button" aria-expanded="false">
+                                GreaterThanOrEqualTo
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterOrEqualTo)" asp-route-type="Date">
+                                        Date
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterOrEqualTo)" asp-route-type="Date" asp-route-pwn="true">
+                                        Date - Pass With Null
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterOrEqualTo)" asp-route-type="Int16">
+                                        Int16
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterOrEqualTo)" asp-route-type="Int16" asp-route-pwn="true">
+                                        Int16 - Pass With Null
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterOrEqualTo)" asp-route-type="Time">
+                                        Time
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.GreaterOrEqualTo)" asp-route-type="Time" asp-route-pwn="true">
+                                        Time - Pass With Null
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:;" role="button" aria-expanded="false">
+                                LessThanOrEqualTo
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessOrEqualTo)" asp-route-type="Date">
+                                        Date
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessOrEqualTo)" asp-route-type="Date" asp-route-pwn="true">
+                                        Date - Pass With Null
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessOrEqualTo)" asp-route-type="Int16">
+                                        Int16
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessOrEqualTo)" asp-route-type="Int16" asp-route-pwn="true">
+                                        Int16 - Pass With Null
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessOrEqualTo)" asp-route-type="Time">
+                                        Time
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.LessOrEqualTo)" asp-route-type="Time" asp-route-pwn="true">
+                                        Time - Pass With Null
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="text-center mb-4">
+                <h3 class="display-5">
+                    @validatorName
+                </h3>
+            </div>
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container pt-3">
+            &copy; 2024 - FoolProof.Core Tests
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+
+    <partial name="_ValidationScriptsPartial" />
+    <script type="text/javascript">
+        $(function () {
+            setupForms();
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

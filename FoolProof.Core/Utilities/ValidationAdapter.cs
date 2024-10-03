@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.Extensions.Localization;
-using Newtonsoft.Json;
 
 namespace FoolProof.Core
 {
@@ -31,12 +32,12 @@ namespace FoolProof.Core
 			MergeAttribute(context.Attributes, $"data-val-{validName}", GetErrorMessage(context));
 
 			//Add validation params attributes
-			foreach (var validationParam in Attribute.ClientValidationParameters)
+			foreach (var validationParam in Attribute.ClientValidationParameters(context.ModelMetadata))
 				MergeAttribute(
 					context.Attributes, 
 					$"data-val-{validName}-{validationParam.Key.ToLowerInvariant()}",
 					validationParam.Value != null && validationParam.Value.GetType() != typeof(string) 
-						? JsonConvert.SerializeObject(validationParam.Value) 
+						? JsonSerializer.Serialize(validationParam.Value) 
 						: validationParam.Value as string
 				);
 		}
