@@ -23,7 +23,7 @@
             className = className.Replace("FoolProof.Core.Tests.E2eTests.", "");
             
             foreach (var testRes in testResults)
-                testRes.DisplayName = $"[{className}] {testMethod.TestMethodName}";
+                testRes.DisplayName = $"[{className}] {DisplayName ?? testMethod.TestMethodName}";
 
             return testResults;
         }
