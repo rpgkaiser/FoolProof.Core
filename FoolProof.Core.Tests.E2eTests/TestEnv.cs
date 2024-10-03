@@ -1,4 +1,5 @@
 ﻿using FoolProof.Core.Tests.E2eTests.WebApp;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FoolProof.Core.Tests.E2eTests
 {
@@ -11,8 +12,13 @@ namespace FoolProof.Core.Tests.E2eTests
         public static void StartApp(TestContext testContext)
         {
             var port = int.TryParse(testContext.Properties["WebAppPort"] + "", out var p) ? p : 8080;
-            Factory = new CustomWebAppFactory(port);
-            WebAppUrl = Factory?.ServerAddress;
+            if (bool.TryParse(testContext.Properties["StartWebApp"] + "", out var startWebApp) && startWebApp)
+            {
+                Factory = new CustomWebAppFactory(port);
+                WebAppUrl = Factory?.ServerAddress;
+            }
+            else
+                WebAppUrl = testContext.Properties["WebAppUrl"] as string;
         }
 
         public static void StopApp() 
@@ -22,6 +28,8 @@ namespace FoolProof.Core.Tests.E2eTests
     [TestClass]
     public class InitTestEnv
     {
+        public static bool StartWebApp { get; set; }
+
         [AssemblyInitialize]
         public static void AssemblyInitialize(TestContext testContext) => TestEnv.StartApp(testContext);
 

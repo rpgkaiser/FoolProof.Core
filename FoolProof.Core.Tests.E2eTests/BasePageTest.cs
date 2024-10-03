@@ -4,7 +4,7 @@ using Microsoft.Playwright.MSTest;
 
 namespace FoolProof.Core.Tests.E2eTests
 {
-    public abstract class BasePageTest: PageTest
+    public abstract class BasePageTest: PlaywrightTest
     {
         public static string WebAppUrl => TestEnv.WebAppUrl ?? string.Empty;
 
@@ -12,13 +12,36 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected abstract Uri PageUri();
 
-        protected virtual async Task LoadPage()
+        protected IBrowser Browser { get; set; }
+
+        protected IBrowserContext Context { get; set; }
+
+        protected IPage Page { get; set; }
+
+        [TestInitialize]
+        public virtual async Task InitTest()
         {
-            await (Page.Context.AddCookiesAsync([ new Cookie {
+            Browser = await Playwright.Chromium.LaunchAsync();
+            Context = await Browser.NewContextAsync();
+            
+            Page = await Context.NewPageAsync();
+            await Page.Context.AddCookiesAsync([ new Cookie {
                 Url = PageUri().AbsoluteUri,
                 Name = "UseInputTypes",
                 Value = "false"
-            } ]) ?? Task.CompletedTask);
+            } ]).ConfigureAwait(false);
+        }
+
+        [TestCleanup]
+        public virtual async Task CleanupTest()
+        {
+            await Page.CloseAsync();
+            await Context.CloseAsync();
+            await Browser.CloseAsync();
+        }
+
+        protected virtual async Task LoadPage()
+        {
             await Page.GotoAsync(PageUri().AbsoluteUri);
             await Expect(Page).ToHaveTitleAsync(PageTitleRegex());
         }
@@ -66,7 +89,7 @@ namespace FoolProof.Core.Tests.E2eTests
         protected async Task AssignValue1(string value)
         {
             var textInput = Page.Locator("#Value1");
-            await textInput.TypeAsync(value);
+            await textInput.FillAsync(value);
             await Expect(textInput).ToHaveValueAsync(value);
         }
 
@@ -79,7 +102,7 @@ namespace FoolProof.Core.Tests.E2eTests
         protected async Task AssignValue2(string value)
         {
             var textInput = Page.Locator("#Value2");
-            await textInput.TypeAsync(value);
+            await textInput.FillAsync(value);
             await Expect(textInput).ToHaveValueAsync(value);
         }
 

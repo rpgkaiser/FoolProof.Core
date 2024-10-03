@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <RunSettings>
 	<TestRunParameters>
+		<Parameter name="StartWebApp" value="true" />
 		<Parameter name="WebAppPort" value="9090" />
+		<Parameter name="WebAppUrl" value="http://localhost:9090" />
 	</TestRunParameters>
 </RunSettings>
