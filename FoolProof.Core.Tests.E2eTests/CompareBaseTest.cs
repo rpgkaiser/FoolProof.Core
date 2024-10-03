@@ -6,7 +6,7 @@
 
         protected abstract string Value2ValidationError { get; }
 
-        [TestMethod("Empty Values : Invalid")]
+        [CustomTestMethod("Empty Values : Invalid")]
         public virtual async Task EmptyValues()
         {
             await LoadPage();
@@ -26,7 +26,7 @@
             await ExpectValidationFailed(Value2ValidationError);
         }
 
-        [TestMethod("Not Valid Values : Invalid")]
+        [CustomTestMethod("Not Valid Values : Invalid")]
         public virtual async Task InvalidValues()
         {
             await LoadPage();
@@ -51,7 +51,7 @@
             await ExpectValidationFailed(Value2ValidationError, $"The value '{invalidValue}' is not valid for Value2");
         }
 
-        [TestMethod("Value1 is Empty : Invalid")]
+        [CustomTestMethod("Value1 is Empty : Invalid")]
         public virtual async Task Value1Empty()
         {
             await LoadPage();
@@ -73,7 +73,7 @@
             await ExpectValidationFailed(Value2ValidationError);
         }
 
-        [TestMethod("Value2 is Empty : Invalid")]
+        [CustomTestMethod("Value2 is Empty : Invalid")]
         public virtual async Task Value2Empty()
         {
             await LoadPage();
@@ -151,7 +151,7 @@
     {
         protected override Uri PageUri() => new(new Uri(WebAppUrl), $"lessthan/{DataType}?pwn=true");
 
-        [TestMethod("Value1 is Empty : Valid")]
+        [CustomTestMethod("Value1 is Empty : Valid")]
         public override async Task Value1Empty()
         {
             await LoadPage();
@@ -170,7 +170,7 @@
             await ExpectValidationSucceed();
         }
 
-        [TestMethod("Value2 is Empty : Valid")]
+        [CustomTestMethod("Value2 is Empty : Valid")]
         public override async Task Value2Empty()
         {
             await LoadPage();

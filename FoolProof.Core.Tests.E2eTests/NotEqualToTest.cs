@@ -36,7 +36,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 return base.InvalidValues();
             }
 
-            [TestMethod("Value1 is Empty : Valid")]
+            [CustomTestMethod("Value1 is Empty : Valid")]
             public override async Task Value1Empty()
             {
                 await LoadPage();
@@ -55,7 +55,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 await ExpectValidationSucceed();
             }
 
-            [TestMethod("Value2 is Empty : Valid")]
+            [CustomTestMethod("Value2 is Empty : Valid")]
             public override async Task Value2Empty()
             {
                 await LoadPage();
@@ -74,13 +74,13 @@ namespace FoolProof.Core.Tests.E2eTests
                 await ExpectValidationSucceed();
             }
 
-            [TestMethod("Value2 != Value1 : Valid")]
+            [CustomTestMethod("Value2 != Value1 : Valid")]
             public override Task CompareValuesPass()
             {
                 return base.CompareValuesPass();
             }
 
-            [TestMethod("Value1 == Value2 : Invalid")]
+            [CustomTestMethod("Value1 == Value2 : Invalid")]
             public override Task CompareValuesFails()
             {
                 return base.CompareValuesFails();

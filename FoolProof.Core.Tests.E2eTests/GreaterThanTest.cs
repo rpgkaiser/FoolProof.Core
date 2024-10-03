@@ -10,19 +10,19 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string Value2ValidationError => "Value2 must be greater than Value1";
 
-        [TestMethod("Value2 > Value1 : Valid")]
+        [CustomTestMethod("Value2 > Value1 : Valid")]
         public override Task CompareValuesPass()
         {
             return base.CompareValuesPass();
         }
 
-        [TestMethod("Value2 < Value1 : Invalid")]
+        [CustomTestMethod("Value2 < Value1 : Invalid")]
         public override Task CompareValuesFails()
         {
             return base.CompareValuesFails();
         }
 
-        [TestMethod("Value1 == Value2 : Invalid")]
+        [CustomTestMethod("Value1 == Value2 : Invalid")]
         public virtual async Task SameValuesFails()
         {
             await LoadPage();
@@ -104,19 +104,19 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string Value2ValidationError => "Value2 must be greater than Value1";
 
-        [TestMethod("Value2 > Value1 : Valid")]
+        [CustomTestMethod("Value2 > Value1 : Valid")]
         public override Task CompareValuesPass()
         {
             return base.CompareValuesPass();
         }
 
-        [TestMethod("Value2 < Value1 : Invalid")]
+        [CustomTestMethod("Value2 < Value1 : Invalid")]
         public override Task CompareValuesFails()
         {
             return base.CompareValuesFails();
         }
 
-        [TestMethod("Value1 == Value2 : Invalid")]
+        [CustomTestMethod("Value1 == Value2 : Invalid")]
         public virtual async Task SameValuesFails()
         {
             await LoadPage();

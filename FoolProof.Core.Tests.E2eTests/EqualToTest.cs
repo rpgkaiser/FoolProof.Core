@@ -31,7 +31,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 return ("Value one", "Value two");
             }
 
-            [TestMethod("Empty Values : Valid")]
+            [CustomTestMethod("Empty Values : Valid")]
             public override async Task EmptyValues()
             {
                 await LoadPage();
@@ -54,13 +54,13 @@ namespace FoolProof.Core.Tests.E2eTests
                 return base.InvalidValues();
             }
 
-            [TestMethod("Value1 == Value2 : Valid")]
+            [CustomTestMethod("Value1 == Value2 : Valid")]
             public override Task CompareValuesPass()
             {
                 return base.CompareValuesPass();
             }
 
-            [TestMethod("Value1 != Value2 : Invalid")]
+            [CustomTestMethod("Value1 != Value2 : Invalid")]
             public override Task CompareValuesFails()
             {
                 return base.CompareValuesFails();
@@ -78,7 +78,7 @@ namespace FoolProof.Core.Tests.E2eTests
 
             protected override string Value2ValidationError => "Value2 must be equal to Value1";
 
-            [TestMethod("Empty Values : Valid")]
+            [CustomTestMethod("Empty Values : Valid")]
             public override async Task EmptyValues()
             {
                 await LoadPage();
@@ -101,25 +101,25 @@ namespace FoolProof.Core.Tests.E2eTests
                 return base.InvalidValues();
             }
 
-            [TestMethod("Value1 is Empty : Valid")]
+            [CustomTestMethod("Value1 is Empty : Valid")]
             public override Task Value1Empty()
             {
                 return base.Value1Empty();
             }
 
-            [TestMethod("Value2 is Empty : Valid")]
+            [CustomTestMethod("Value2 is Empty : Valid")]
             public override Task Value2Empty()
             {
                 return base.Value2Empty();
             }
 
-            [TestMethod("Value1 == Value2 : Valid")]
+            [CustomTestMethod("Value1 == Value2 : Valid")]
             public override Task CompareValuesPass()
             {
                 return base.CompareValuesPass();
             }
 
-            [TestMethod("Value1 != Value2 : Invalid")]
+            [CustomTestMethod("Value1 != Value2 : Invalid")]
             public override Task CompareValuesFails()
             {
                 return base.CompareValuesFails();
