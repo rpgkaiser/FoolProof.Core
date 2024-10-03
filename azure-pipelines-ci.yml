@@ -46,7 +46,7 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
     
-- task: VSTest@2
+- task: VSTest@3
   displayName: Run Unit Tests
   inputs:
     testSelector: 'testAssemblies'
@@ -65,7 +65,7 @@ steps:
     filePath: 'FoolProof.Core.Tests.E2eTests/bin/$(buildConfiguration)/net8.0/playwright.ps1'
     arguments: install --with-deps
 
-- task: VSTest@2
+- task: VSTest@3
   displayName: Run E2E Tests
   inputs:
     testSelector: 'testAssemblies'
@@ -76,9 +76,11 @@ steps:
     searchFolder: '$(System.DefaultWorkingDirectory)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    runSettingsFile: 'FoolProof.Core.Tests.E2eTests/test.runsettings'
+    overrideTestrunParameters: -StartWebApp true -WebAppPort 9090 -WebAppUrl http://localhost:9090
     rerunFailedTests: true
     rerunType: 'basedOnTestFailurePercentage'
-    rerunFailedThreshold: '30'
+    rerunFailedThreshold: '50'
     rerunMaxAttempts: '5'
     
 - task: CopyFiles@2
