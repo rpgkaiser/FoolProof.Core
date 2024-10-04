@@ -1,0 +1,39 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+name: '$(BuildDefinitionName) - $(Date:yyyy.MM.dd)$(Rev:.r)'
+
+trigger:
+  branches:
+    include:
+      - master
+      
+pr: none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  publishProfile: '$(System.DefaultWorkingDirectory)\FoolProof.Core.Tests.WebApp\Properties\PublishProfiles\Deploy To MonsterApps.pubxml'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  displayName: Restore package references
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: DotNetCoreCLI@2
+    displayName: 'Publish Demo WebApp'
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      projects: '$(System.DefaultWorkingDirectory)/FoolProof.Core.Tests.WebApp/FoolProof.Core.Tests.E2eTests.WebApp.csproj'
+      arguments: -p:PublishProfile='$(publishProfile)' -p:Configuration='$(buildConfiguration)'
+    
