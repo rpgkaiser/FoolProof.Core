@@ -19,7 +19,8 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  publishProfile: '$(System.DefaultWorkingDirectory)\FoolProof.Core.Tests.WebApp\Properties\PublishProfiles\Deploy To MonsterApps.pubxml'
+  projectFolder: '$(DefaultWorkingDirectory)\FoolProof.Core.Tests.WebApp'
+  publishProfile: '$(projectFolder)\Properties\PublishProfiles\Deploy To MonsterApps.pubxml'
 
 steps:
 - task: NuGetToolInstaller@1
@@ -34,6 +35,6 @@ steps:
     inputs:
       command: 'publish'
       publishWebProjects: false
-      projects: '$(System.DefaultWorkingDirectory)/FoolProof.Core.Tests.WebApp/FoolProof.Core.Tests.E2eTests.WebApp.csproj'
+      projects: '$(projectFolder)/FoolProof.Core.Tests.E2eTests.WebApp.csproj'
       arguments: -p:PublishProfile='$(publishProfile)' -p:Configuration='$(buildConfiguration)'
     
