@@ -38,8 +38,20 @@
             {
                 @Html.TextBox("Value2", null, new { @class = "form-control", placeholder = "" })
             }
-            @Html.Label("Value2", "Value2: Value To Validate")
+            @Html.Label("Value2", "Value2: Value To Compare")
             @Html.ValidationMessage("Value2", new { @class = "text-danger", data_testid = "val2-valid-msg" })
+        </div>
+        <div class="form-floating flex-fill">
+            @if (useEditor)
+            {
+                @Html.Editor("ValuePwn", new { htmlAttributes = new { @class = "form-control", placeholder = "" } })
+            }
+            else
+            {
+                @Html.TextBox("ValuePwn", null, new { @class = "form-control", placeholder = "" })
+            }
+            @Html.Label("ValuePwn", "ValuePwn: Value To Compare If Not NULL")
+            @Html.ValidationMessage("ValuePwn", new { @class = "text-danger", data_testid = "valPwn-valid-msg" })
         </div>
     </div>
     <div class="d-flex flex-row gap-4 align-items-center justify-content-center">

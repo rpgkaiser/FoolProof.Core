@@ -46,12 +46,17 @@ namespace FoolProof.Core.Tests.E2eTests
             await Expect(Page).ToHaveTitleAsync(PageTitleRegex());
         }
 
-        protected async Task ExpectValidationSucceed(string alertValidationMsg = "Model validation succeed")
+        protected async Task ExpectValidationSucceed(
+            string alertValidationMsg = "Model validation succeed"
+        )
         {
             var value1ValidationMessage = Page.GetByTestId($"val1-valid-msg");
             await Expect(value1ValidationMessage).ToBeEmptyAsync();
             
             var value2ValidationMessage = Page.GetByTestId($"val2-valid-msg");
+            await Expect(value2ValidationMessage).ToBeEmptyAsync();
+
+            var valuePwnValidationMessage = Page.GetByTestId($"valPwn-valid-msg");
             await Expect(value2ValidationMessage).ToBeEmptyAsync();
 
             var validAlertDiv = Page.GetByTestId($"valid-alert");
@@ -63,8 +68,9 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected async Task ExpectValidationFailed(
             string value2ErrorMsg,
-            string? alertValidationMsg = null,
-            string? value1ErrorMsg = null
+            string? valuePwnErrorMsg = null,
+            string? value1ErrorMsg = null,
+            params string[] alertValidationMsgs            
         )
         {
             var value1ValidationMessage = Page.GetByTestId($"val1-valid-msg");
@@ -79,11 +85,19 @@ namespace FoolProof.Core.Tests.E2eTests
             else
                 await Expect(value2ValidationMessage).ToContainTextAsync(value2ErrorMsg);
 
+            var valuePwnValidationMessage = Page.GetByTestId($"valPwn-valid-msg");
+            if (string.IsNullOrEmpty(valuePwnErrorMsg))
+                await Expect(valuePwnValidationMessage).ToBeEmptyAsync();
+            else
+                await Expect(valuePwnValidationMessage).ToContainTextAsync(valuePwnErrorMsg);
+
             var validAlertDiv = Page.GetByTestId($"valid-alert");
             await Expect(validAlertDiv).ToBeVisibleAsync();
             var cssClass = await validAlertDiv.GetAttributeAsync("class");
             Assert.IsTrue(cssClass is not null && cssClass.Contains("alert-danger"));
-            await Expect(validAlertDiv).ToContainTextAsync(alertValidationMsg ?? value2ErrorMsg);
+            if(alertValidationMsgs is not null)
+                foreach(var msg in alertValidationMsgs)
+                    await Expect(validAlertDiv).ToContainTextAsync(msg);
         }
 
         protected async Task AssignValue1(string value)
@@ -106,9 +120,22 @@ namespace FoolProof.Core.Tests.E2eTests
             await Expect(textInput).ToHaveValueAsync(value);
         }
 
+        protected async Task AssignValuePwn(string value)
+        {
+            var textInput = Page.Locator("#ValuePwn");
+            await textInput.FillAsync(value);
+            await Expect(textInput).ToHaveValueAsync(value);
+        }
+
         protected async Task ExpectValue2Empty()
         {
             var textInput = Page.Locator("#Value2");
+            await Expect(textInput).ToBeEmptyAsync();
+        }
+
+        protected async Task ExpectValuePwnEmpty()
+        {
+            var textInput = Page.Locator("#ValuePwn");
             await Expect(textInput).ToBeEmptyAsync();
         }
 
@@ -118,6 +145,7 @@ namespace FoolProof.Core.Tests.E2eTests
             await resetFormBtn.ClickAsync();
             await Expect(Page.Locator("#Value1")).ToBeEmptyAsync();
             await Expect(Page.Locator("#Value2")).ToBeEmptyAsync();
+            await Expect(Page.Locator("#ValuePwn")).ToBeEmptyAsync();
         }
 
         protected async Task CallClientValidation()

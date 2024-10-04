@@ -12,78 +12,76 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
         public IActionResult Index() => View();
 
         [HttpGet("eq2")]
-        public IActionResult EqualTo([FromQuery] bool pwn = false)
+        public IActionResult EqualTo()
         {
-            object model = pwn ? new EqualTo.ModelWithPassOnNull() : new EqualTo.Model();
-            ViewBag.PassWithNull = pwn;
+            object model = new EqualTo.Model();
             return View("EqualTo", model);
         }
 
         [HttpGet("neq2")]
-        public IActionResult NotEqualTo([FromQuery] bool pwn = false)
+        public IActionResult NotEqualTo()
         {
-            object model = pwn ? new NotEqualTo.ModelWithPassOnNull() : new NotEqualTo.Model();
-            ViewBag.PassWithNull = pwn;
+            object model = new NotEqualTo.Model();
             return View("NotEqualTo", model);
         }
 
         [HttpGet("gt/{type}")]
-        public IActionResult GreaterThan([FromRoute] string type, [FromQuery] bool pwn = false)
+        public IActionResult GreaterThan([FromRoute] string type)
         {
             object model = type.ToLowerInvariant() switch
             {
-                "date" => pwn ? new GreaterThan.DateModelWithPassOnNull() : new GreaterThan.DateModel(),
-                "int16" => pwn ? new GreaterThan.Int16ModelWithPassOnNull() : new GreaterThan.Int16Model(),
-                "time" => pwn ? new GreaterThan.TimeModelWithPassOnNull() : new GreaterThan.TimeModel(),
+                "date" => new GreaterThan.DateModel(),
+                "int16" => new GreaterThan.Int16Model(),
+                "time" => new GreaterThan.TimeModel(),
+                "datetime" => new GreaterThan.DateTimeModel(),
                 _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
             };
             ViewBag.DataType = type;
-            ViewBag.PassWithNull = pwn;
             return View("GreaterThan", model);
         }
 
         [HttpGet("lt/{type}")]
-        public IActionResult LessThan([FromRoute] string type, [FromQuery] bool pwn = false)
+        public IActionResult LessThan([FromRoute] string type)
         {
             object model = type.ToLowerInvariant() switch
             {
-                "date" => pwn ? new LessThan.DateModelWithPassOnNull() : new LessThan.DateModel(),
-                "int16" => pwn ? new LessThan.Int16ModelWithPassOnNull() : new LessThan.Int16Model(),
-                "time" => pwn ? new LessThan.TimeModelWithPassOnNull() : new LessThan.TimeModel(),
+                "date" => new LessThan.DateModel(),
+                "int16" => new LessThan.Int16Model(),
+                "time" => new LessThan.TimeModel(),
+                "datetime" => new LessThan.DateTimeModel(),
                 _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
             };
             ViewBag.DataType = type;
-            ViewBag.PassWithNull = pwn;
             return View("LessThan", model);
         }
 
         [HttpGet("ge2/{type}")]
-        public IActionResult GreaterOrEqualTo([FromRoute] string type, [FromQuery] bool pwn = false)
+        public IActionResult GreaterOrEqualTo([FromRoute] string type)
         {
             object model = type.ToLowerInvariant() switch
             {
-                "date" => pwn ? new GreaterThanOrEqualTo.DateModelWithPassNull() : new GreaterThanOrEqualTo.DateModel(),
-                "int16" => pwn ? new GreaterThanOrEqualTo.DateModelWithPassNull() : new GreaterThanOrEqualTo.Int16Model(),
-                "time" => pwn ? new GreaterThanOrEqualTo.DateModelWithPassNull() : new GreaterThanOrEqualTo.TimeModel(),
+                "date" => new GreaterThanOrEqualTo.DateModel(),
+                "int16" => new GreaterThanOrEqualTo.Int16Model(),
+                "time" => new GreaterThanOrEqualTo.TimeModel(),
+                "datetime" => new GreaterThanOrEqualTo.DateTimeModel(),
                 _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
             };
             ViewBag.DataType = type;
-            ViewBag.PassWithNull = pwn;
             return View("GreaterOrEqualTo", model);
         }
 
         [HttpGet("le2/{type}")]
-        public IActionResult LessOrEqualTo([FromRoute] string type, [FromQuery] bool pwn = false)
+        public IActionResult LessOrEqualTo([FromRoute] string type)
         {
             object model = type.ToLowerInvariant() switch
             {
-                "date" => pwn ? new LessThanOrEqualTo.DateModelWithPassNull() : new LessThanOrEqualTo.DateModel(),
-                "int16" => pwn ? new LessThanOrEqualTo.DateModelWithPassNull() : new LessThanOrEqualTo.Int16Model(),
-                "time" => pwn ? new LessThanOrEqualTo.DateModelWithPassNull() : new LessThanOrEqualTo.TimeModel(),
+                "date" => new LessThanOrEqualTo.DateModel(),
+                "int16" => new LessThanOrEqualTo.Int16Model(),
+                "time" => new LessThanOrEqualTo.TimeModel(),
+                "datetime" => new LessThanOrEqualTo.DateTimeModel(),
                 _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
             };
             ViewBag.DataType = type;
-            ViewBag.PassWithNull = pwn;
             return View("LessOrEqualTo", model);
         }
 

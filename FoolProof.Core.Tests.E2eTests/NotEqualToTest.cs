@@ -13,6 +13,8 @@ namespace FoolProof.Core.Tests.E2eTests
 
             protected override string Value2ValidationError => "Value2 must be not equal to Value1";
 
+            protected override string ValuePwnValidationError => "ValuePwn must be not equal to Value1";
+
             protected override string DataType => "string";
 
             protected override string GetNotValidValue()
@@ -20,14 +22,14 @@ namespace FoolProof.Core.Tests.E2eTests
                 return "Any value is a valid value.";
             }
 
-            protected override (string Value1, string Value2) GetValues2PassCompare()
+            protected override (string Value1, string Value2, string ValuePwn) GetValues2PassCompare()
             {
-                return ("Value one", "Value two");
+                return ("Value one", "Value two", "Value three");
             }
 
-            protected override (string Value1, string Value2) GetValues2FailsCompare()
+            protected override (string Value1, string Value2, string ValuePwn) GetValues2FailsCompare()
             {
-                return ("Value one", "Value one");
+                return ("Value one", "Value one", "Value one");
             }
 
             [Ignore]
@@ -44,18 +46,20 @@ namespace FoolProof.Core.Tests.E2eTests
                 var value = GetValues2PassCompare().Value1;
                 await ExpectValue1Empty();
                 await AssignValue2(value);
+                await AssignValuePwn(value);
 
                 await CallClientValidation();
                 await ExpectValidationSucceed();
 
                 await ResetForm();
                 await AssignValue2(value);
+                await AssignValuePwn(value);
 
                 await CallServerValidation();
                 await ExpectValidationSucceed();
             }
 
-            [CustomTestMethod("Value2 is Empty : Valid")]
+            [CustomTestMethod("Value2 and ValuePwn are Empty : Valid")]
             public override async Task Value2Empty()
             {
                 await LoadPage();
@@ -63,24 +67,27 @@ namespace FoolProof.Core.Tests.E2eTests
                 var value = GetValues2PassCompare().Value1;
                 await AssignValue1(value);
                 await ExpectValue2Empty();
+                await ExpectValuePwnEmpty();
 
                 await CallClientValidation();
                 await ExpectValidationSucceed();
 
                 await ResetForm();
                 await AssignValue1(value);
+                await ExpectValue2Empty();
+                await ExpectValuePwnEmpty();
 
                 await CallServerValidation();
                 await ExpectValidationSucceed();
             }
 
-            [CustomTestMethod("Value2 != Value1 : Valid")]
+            [CustomTestMethod("Value2 != Value1 != ValuePwn : Valid")]
             public override Task CompareValuesPass()
             {
                 return base.CompareValuesPass();
             }
 
-            [CustomTestMethod("Value1 == Value2 : Invalid")]
+            [CustomTestMethod("Value1 == Value2 == ValuePwn : Invalid")]
             public override Task CompareValuesFails()
             {
                 return base.CompareValuesFails();

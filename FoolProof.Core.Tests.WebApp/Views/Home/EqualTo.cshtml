@@ -1,11 +1,10 @@
 ﻿@{
-    var pwd = (bool?)ViewBag.PassWithNull ?? false;
     ViewData["Title"] = "FoolProof.Core Validation - EqualTo";
-    ViewData["ValidatorName"] = $"EqualTo Validator Attribute{(pwd ? " (Pass With Null)" : "")}";
+    ViewData["ValidatorName"] = $"EqualTo Validator Attribute";
 }
 
 <div class="d-flex flex-column gap-5">
     <div>
-        <partial name="_TwoFieldsForm" />
+        <partial name="_CompareFieldsForm" />
     </div>
 </div>
