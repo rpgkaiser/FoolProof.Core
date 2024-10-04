@@ -5,13 +5,6 @@
 
 name: '$(BuildDefinitionName) - $(Date:yyyy.MM.dd)$(Rev:.r)'
 
-trigger:
-  branches:
-    include:
-      - master
-      
-pr: none
-
 pool:
   vmImage: 'windows-latest'
 
@@ -19,7 +12,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  projectFolder: '$(DefaultWorkingDirectory)\FoolProof.Core.Tests.WebApp'
+  projectFolder: '$(System.DefaultWorkingDirectory)\FoolProof.Core.Tests.WebApp'
   publishProfile: '$(projectFolder)\Properties\PublishProfiles\Deploy To MonsterApps.pubxml'
 
 steps:
