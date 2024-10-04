@@ -31,10 +31,10 @@ steps:
     restoreSolution: '$(solution)'
 
 - task: DotNetCoreCLI@2
-    displayName: 'Publish Demo WebApp'
-    inputs:
-      command: 'publish'
-      publishWebProjects: false
-      projects: '$(projectFolder)/FoolProof.Core.Tests.E2eTests.WebApp.csproj'
-      arguments: -p:PublishProfile='$(publishProfile)' -p:Configuration='$(buildConfiguration)'
+  displayName: 'Publish Demo WebApp'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '$(projectFolder)/FoolProof.Core.Tests.E2eTests.WebApp.csproj'
+    arguments: -p:PublishProfile='$(publishProfile)' -p:Configuration='$(buildConfiguration)'
     
