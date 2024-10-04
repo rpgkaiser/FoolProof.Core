@@ -42,4 +42,5 @@ _New operator validators:_
 + Just add this line `services.AddFoolProof();` to your _ConfigureServices_ method on the _Startup_ class; this will register a new `IValidationAttributeAdapterProvider`.
 
 ##Example WebApp
+
 You can review a kind of DEMO app (the WebApp used to execute E2E tests) here: [E2E/Demo WebApp](http://rpgkaiser.github.io/foolproof.core "E2E/Demo WebApp URL")
