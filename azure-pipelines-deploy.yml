@@ -31,5 +31,5 @@ steps:
     projects: '$(projectFolder)\FoolProof.Core.Tests.E2eTests.WebApp.csproj'
     arguments: >
       -p:PublishProfileFullPath="$(publishProfile)"
+      -p:Password=$(publishPassword)
       -c "$(buildConfiguration)"
-    
