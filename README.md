@@ -43,4 +43,4 @@ _New operator validators:_
 
 ## Example WebApp
 
-You can review a kind of DEMO app (the WebApp used to execute E2E tests) here: [E2E/Demo WebApp](http://rpgkaiser.github.io/foolproof.core "E2E/Demo WebApp URL")
+You can review a kind of DEMO app (the WebApp used to execute E2E tests) here: [E2E/Demo WebApp](http://rpgkaiser.github.io/FoolProof.Core "E2E/Demo WebApp URL")
