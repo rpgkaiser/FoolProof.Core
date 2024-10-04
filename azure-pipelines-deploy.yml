@@ -35,6 +35,8 @@ steps:
   inputs:
     command: 'publish'
     publishWebProjects: false
-    projects: '$(projectFolder)/FoolProof.Core.Tests.E2eTests.WebApp.csproj'
-    arguments: -p:PublishProfile='$(publishProfile)' -p:Configuration='$(buildConfiguration)'
+    projects: '$(projectFolder)\FoolProof.Core.Tests.E2eTests.WebApp.csproj'
+    arguments: >
+      -p:PublishProfile='$(publishProfile)'
+      -c "$(buildConfiguration)"
     
