@@ -12,13 +12,13 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string ValuePwnValidationError => "ValuePwn must be greater than Value1";
 
-        [CustomTestMethod("Value2 > Value1 < ValuePwn : Valid")]
+        [CustomTestMethod("ValuePwn > Value2 > Value1 : Valid")]
         public override Task CompareValuesPass()
         {
             return base.CompareValuesPass();
         }
 
-        [CustomTestMethod("Value2 < Value1 < ValuePwn : Invalid")]
+        [CustomTestMethod("ValuePwn < Value2 < Value1 : Invalid")]
         public override Task CompareValuesFails()
         {
             return base.CompareValuesFails();

@@ -46,7 +46,14 @@
             await AssignValuePwn(invalidValue);
 
             await CallServerValidation();
-            await ExpectServerValidationFailed();
+            await ExpectValidationFailed(
+                value2ErrorMsg: Value2ValidationError,
+                valuePwnErrorMsg: ValuePwnValidationError,
+                alertValidationMsgs: [InvalidValue1ValidationError(invalidValue), 
+                    InvalidValue2ValidationError(invalidValue),
+                    InvalidValuePwnValidationError(invalidValue)
+                ]
+            );
         }
 
         [CustomTestMethod("Value1 is Empty : Invalid")]
@@ -60,14 +67,22 @@
             await AssignValuePwn(vals.ValuePwn);
 
             await CallClientValidation();
-            await ExpectClientValidationFailed();
+            await ExpectValidationFailed(
+                value2ErrorMsg: Value2ValidationError,
+                valuePwnErrorMsg: "",
+                alertValidationMsgs: "Model validation failed"
+            );
 
             await ResetForm();
             await AssignValue2(vals.Value2);
             await AssignValuePwn(vals.ValuePwn);
 
             await CallServerValidation();
-            await ExpectServerValidationFailed();
+            await ExpectValidationFailed(
+                value2ErrorMsg: Value2ValidationError,
+                valuePwnErrorMsg: "",
+                alertValidationMsgs: [Value2ValidationError]
+            );
         }
 
         [CustomTestMethod("Value2 is Empty : Invalid")]
@@ -81,14 +96,22 @@
             await AssignValuePwn(vals.ValuePwn);
 
             await CallClientValidation();
-            await ExpectClientValidationFailed();
+            await ExpectValidationFailed(
+                value2ErrorMsg: Value2ValidationError,
+                valuePwnErrorMsg: "",
+                alertValidationMsgs: "Model validation failed"
+            );
 
             await ResetForm();
             await AssignValue1(vals.Value1);
             await AssignValuePwn(vals.ValuePwn);
 
             await CallServerValidation();
-            await ExpectServerValidationFailed();
+            await ExpectValidationFailed(
+                value2ErrorMsg: Value2ValidationError,
+                valuePwnErrorMsg: "",
+                alertValidationMsgs: [Value2ValidationError]
+            );
         }
 
         [TestMethod]
@@ -122,7 +145,7 @@
             var (value1, value2, valuePwn) = GetValues2FailsCompare();
             await AssignValue1(value1);
             await AssignValue2(value2);
-            await AssignValue2(valuePwn);
+            await AssignValuePwn(valuePwn);
 
             await CallClientValidation();
             await ExpectClientValidationFailed();
@@ -131,13 +154,22 @@
 
             await AssignValue1(value1);
             await AssignValue2(value2);
-            await AssignValue2(valuePwn);
+            await AssignValuePwn(valuePwn);
 
             await CallServerValidation();
             await ExpectServerValidationFailed();
         }
 
         protected virtual string GetNotValidValue() => $"Not {DataType} value.";
+
+        protected virtual string InvalidValue1ValidationError(string invalidValue)
+            => $"The value '{invalidValue}' is not valid for Value1.";
+
+        protected virtual string InvalidValue2ValidationError(string invalidValue)
+            => $"The value '{invalidValue}' is not valid for Value2.";
+
+        protected virtual string InvalidValuePwnValidationError(string invalidValue)
+            => $"The value '{invalidValue}' is not valid for ValuePwn.";
 
         protected abstract (string Value1, string Value2, string ValuePwn) GetValues2PassCompare();
 

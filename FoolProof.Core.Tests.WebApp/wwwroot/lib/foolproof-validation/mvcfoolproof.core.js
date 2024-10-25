@@ -3,12 +3,12 @@
 var FoolProofCore = function () { };
 
 FoolProofCore.is = function (value1, operator, value2, passOnNull, dataType) {
-	passOnNull = (/true/i).test(passOnNull + "");
-    if (passOnNull) {
-        var isNullish = function (input) {
-            return input == null || input == undefined || input == "";
-        };
+	function isNullish (input) {
+        return input == null || input == undefined || input == "";
+    }
 
+    passOnNull = (/true/i).test(passOnNull + "");
+    if (passOnNull) {
         var value1nullish = isNullish(value1);
         var value2nullish = isNullish(value2);
 
@@ -84,8 +84,9 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull, dataType) {
 		value1 = getTime(value1);
 		value2 = getTime(value2);
 	}
-	else if (dataType && dataType !== DataTypes.string)
-		return false; //Provided values do not correspond with the specified data type
+	else if (dataType && dataType !== DataTypes.string
+			 && (!isNullish(value1) || !isNullish(value2)))
+		return false; //Some of the provided values do not correspond with the specified data type
 
     switch (operator) {
 		case "EqualTo":
