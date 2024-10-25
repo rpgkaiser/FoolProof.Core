@@ -2,15 +2,15 @@
 
 var FoolProofCore = function () { };
 
-FoolProofCore.is = function (value1, operator, value2, passOnNull, dataType) {
+FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataType) {
 	function isNullish (input) {
         return input == null || input == undefined || input == "";
     }
 
     passOnNull = (/true/i).test(passOnNull + "");
     if (passOnNull) {
-        var value1nullish = isNullish(value1);
-        var value2nullish = isNullish(value2);
+        var value1nullish = isNullish(compValue);
+        var value2nullish = isNullish(dependValue);
 
         if ((value1nullish && !value2nullish) || (value2nullish && !value1nullish))
             return true;
@@ -68,63 +68,63 @@ FoolProofCore.is = function (value1, operator, value2, passOnNull, dataType) {
 		return input !== false && input !== "false" && input !== 'False' && !!input;
 	};
 
-	if (isBool(value1) || isBool(value2)) {
-		value1 = getBool(value1);
-		value2 = getBool(value2);
+	if (isBool(compValue) || isBool(dependValue)) {
+		compValue = getBool(compValue);
+		dependValue = getBool(dependValue);
 	}
-	else if (isNumeric(value1) || isNumeric(value2)) {
-		value1 = parseFloat(value1);
-		value2 = parseFloat(value2);
+	else if (isNumeric(compValue) || isNumeric(dependValue)) {
+		compValue = parseFloat(compValue);
+		dependValue = parseFloat(dependValue);
 	}
-	else if (isDate(value1) || isDate(value2)) {
-		value1 = Date.parse(value1);
-		value2 = Date.parse(value2);
+	else if (isDate(compValue) || isDate(dependValue)) {
+		compValue = Date.parse(compValue);
+		dependValue = Date.parse(dependValue);
 	}
-	else if (isTime(value1) || isTime(value2)) {
-		value1 = getTime(value1);
-		value2 = getTime(value2);
+	else if (isTime(compValue) || isTime(dependValue)) {
+		compValue = getTime(compValue);
+		dependValue = getTime(dependValue);
 	}
 	else if (dataType && dataType !== DataTypes.string
-			 && (!isNullish(value1) || !isNullish(value2)))
+			 && (!isNullish(compValue) || !isNullish(dependValue)))
 		return false; //Some of the provided values do not correspond with the specified data type
 
     switch (operator) {
 		case "EqualTo":
-			return value1 == value2;
+			return compValue == dependValue;
 		case "NotEqualTo":
-			return value1 != value2;
+			return compValue != dependValue;
 		case "GreaterThan":
-			return value1 > value2;
+			return compValue > dependValue;
 		case "LessThan":
-			return value1 < value2;
+			return compValue < dependValue;
 		case "GreaterThanOrEqualTo":
-			return value1 >= value2;
+			return compValue >= dependValue;
 		case "LessThanOrEqualTo":
-			return value1 <= value2;
+			return compValue <= dependValue;
 		case "RegExMatch":
-			return value2 && (new RegExp(value2).test(value1));
+			return dependValue && (new RegExp(dependValue).test(compValue));
 		case "NotRegExMatch":
-			return value2 && !(new RegExp(value2).test(value1));
+			return dependValue && !(new RegExp(dependValue).test(compValue));
 		case "In":
 			try {
-				var valArr = JSON.parse(value2);
+				var valArr = JSON.parse(dependValue);
 				if (typeof (valArr) == "object")
 					for (var key in valArr)
-						if (valArr[key] == value1)
+						if (valArr[key] == compValue)
 							return true;
 			} catch (e) { }
 
-			return value1 == value2;
+			return compValue == dependValue;
 		case "NotIn":
 			try {
-				var valArr = JSON.parse(value2);
+				var valArr = JSON.parse(dependValue);
 				if (typeof (valArr) == "object")
 					for (var key in valArr)
-						if (valArr[key] == value1)
+						if (valArr[key] == compValue)
 							return false;
 			} catch (e) { }
 
-			return value1 != value2;
+			return compValue != dependValue;
     }
 
     return false;

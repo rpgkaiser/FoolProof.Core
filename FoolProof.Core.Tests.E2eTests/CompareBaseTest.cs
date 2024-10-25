@@ -114,6 +114,27 @@
             );
         }
 
+        [CustomTestMethod("ValuePwn is Empty : Valid")]
+        public virtual async Task ValuePwnEmpty()
+        {
+            await LoadPage();
+
+            var vals = GetValues2PassCompare();
+            await AssignValue1(vals.Value1);
+            await AssignValue2(vals.Value2);
+            await ExpectValuePwnEmpty();
+
+            await CallClientValidation();
+            await ExpectValidationSucceed();
+
+            await ResetForm();
+            await AssignValue1(vals.Value1);
+            await AssignValue2(vals.Value2);
+
+            await CallServerValidation();
+            await ExpectValidationSucceed();
+        }
+
         [TestMethod]
         public virtual async Task CompareValuesPass()
         {

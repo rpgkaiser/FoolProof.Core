@@ -157,10 +157,14 @@ namespace FoolProof.Core.Tests.E2eTests
         protected async Task CallServerValidation()
         {
             var serverValidationBtn = Page.GetByTestId($"btn-server");
-            await Page.RunAndWaitForResponseAsync(async () =>
-            {
-                await serverValidationBtn.ClickAsync();
-            }, resp => new Uri(resp.Url).GetLeftPart(UriPartial.Path).EndsWith("/validate"));
+            await Page.RunAndWaitForResponseAsync(
+                async () => {
+                    await serverValidationBtn.ClickAsync();
+                }, 
+                resp => resp.Ok 
+                        && string.Equals(resp.Request.Method, "POST", StringComparison.OrdinalIgnoreCase)
+                        && new Uri(resp.Url).GetLeftPart(UriPartial.Path).EndsWith("/validate")
+            );
         }
     }
 }
