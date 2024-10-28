@@ -20,3 +20,7 @@ body {
 .alert .alert-message p:last-child {
     margin-bottom: 0;
 }
+
+select[multiple].form-control {
+    height: 10rem;
+}

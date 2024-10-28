@@ -1,6 +1,6 @@
 ﻿namespace FoolProof.Core.Tests.E2eTests
 {
-    public abstract class CompareBaseTest : BasePageTest
+    public abstract class CompareBaseTest<TV1, TV2, TVPwn> : BasePageTest
     {
         protected abstract string DataType { get; }
 
@@ -8,7 +8,7 @@
 
         protected abstract string ValuePwnValidationError { get; }
 
-        [CustomTestMethod("Empty Values : Invalid")]
+        [CustomTestMethod("Empty Values : Valid")]
         public virtual async Task EmptyValues()
         {
             await LoadPage();
@@ -18,12 +18,12 @@
             await ExpectValuePwnEmpty();
 
             await CallClientValidation();
-            await ExpectClientValidationFailed();
+            await ExpectValidationSucceed();
 
             await ResetForm();
 
             await CallServerValidation();
-            await ExpectServerValidationFailed();
+            await ExpectValidationSucceed();
         }
 
         [CustomTestMethod("Not Valid Values : Invalid")]
@@ -192,9 +192,9 @@
         protected virtual string InvalidValuePwnValidationError(string invalidValue)
             => $"The value '{invalidValue}' is not valid for ValuePwn.";
 
-        protected abstract (string Value1, string Value2, string ValuePwn) GetValues2PassCompare();
+        protected abstract (TV1 Value1, TV2 Value2, TVPwn ValuePwn) GetValues2PassCompare();
 
-        protected abstract (string Value1, string Value2, string ValuePwn) GetValues2FailsCompare();
+        protected abstract (TV1 Value1, TV2 Value2, TVPwn ValuePwn) GetValues2FailsCompare();
 
         protected Task ExpectClientValidationFailed()
             => ExpectValidationFailed(
@@ -210,4 +210,7 @@
                     alertValidationMsgs: [Value2ValidationError, ValuePwnValidationError]
                 );
     }
+
+    public abstract class CompareBaseTest: CompareBaseTest<string, string, string>
+    { }
 }

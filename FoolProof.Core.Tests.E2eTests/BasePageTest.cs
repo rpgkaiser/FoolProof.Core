@@ -1,6 +1,9 @@
+using System.Collections;
 using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
+using Newtonsoft.Json.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FoolProof.Core.Tests.E2eTests
 {
@@ -18,18 +21,14 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected IPage Page { get; set; }
 
+        protected bool? UseInputTypes { get; set; } = false;
+
         [TestInitialize]
         public virtual async Task InitTest()
         {
             Browser = await Playwright.Chromium.LaunchAsync();
             Context = await Browser.NewContextAsync();
-            
             Page = await Context.NewPageAsync();
-            await Page.Context.AddCookiesAsync([ new Cookie {
-                Url = PageUri().AbsoluteUri,
-                Name = "UseInputTypes",
-                Value = "false"
-            } ]).ConfigureAwait(false);
         }
 
         [TestCleanup]
@@ -42,6 +41,14 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected virtual async Task LoadPage()
         {
+            await Page.Context.ClearCookiesAsync();
+            if (UseInputTypes.HasValue)
+                await Page.Context.AddCookiesAsync([ new Cookie {
+                    Url = PageUri().AbsoluteUri,
+                    Name = "UseInputTypes",
+                    Value = UseInputTypes.Value.ToString()
+                } ]);
+
             await Page.GotoAsync(PageUri().AbsoluteUri);
             await Expect(Page).ToHaveTitleAsync(PageTitleRegex());
         }
@@ -100,52 +107,62 @@ namespace FoolProof.Core.Tests.E2eTests
                     await Expect(validAlertDiv).ToContainTextAsync(msg);
         }
 
-        protected async Task AssignValue1(string value)
+        protected virtual async Task AssignValue(string inputSeltor, object? value)
+        {
+            var input = Page.Locator(inputSeltor);
+            if (value is string strVal)
+            {
+                await input.FillAsync(strVal);
+                await Expect(input).ToHaveValueAsync(strVal);
+            }
+            else if (value is IEnumerable vals)
+            {
+                var strVals = vals.Cast<object>().Select(o => ConvertToString(o)).ToArray();
+                await input.SelectOptionAsync(strVals);
+                await Expect(input).ToHaveValuesAsync(strVals);
+            }
+            else
+            {
+                strVal = ConvertToString(value);
+                await input.FillAsync(strVal);
+                await Expect(input).ToHaveValueAsync(strVal);
+            }
+        }
+
+        protected virtual Task AssignValue1(object? value)
+            => AssignValue("#Value1", value);
+
+        protected virtual async Task ExpectValue1Empty()
         {
             var textInput = Page.Locator("#Value1");
-            await textInput.FillAsync(value);
-            await Expect(textInput).ToHaveValueAsync(value);
-        }
-
-        protected async Task ExpectValue1Empty()
-        {
-            var textInput = Page.Locator("#Value1");
             await Expect(textInput).ToBeEmptyAsync();
         }
 
-        protected async Task AssignValue2(string value)
-        {
-            var textInput = Page.Locator("#Value2");
-            await textInput.FillAsync(value);
-            await Expect(textInput).ToHaveValueAsync(value);
-        }
+        protected virtual Task AssignValue2(object? value)
+            => AssignValue("#Value2", value);
 
-        protected async Task AssignValuePwn(string value)
-        {
-            var textInput = Page.Locator("#ValuePwn");
-            await textInput.FillAsync(value);
-            await Expect(textInput).ToHaveValueAsync(value);
-        }
-
-        protected async Task ExpectValue2Empty()
+        protected virtual async Task ExpectValue2Empty()
         {
             var textInput = Page.Locator("#Value2");
             await Expect(textInput).ToBeEmptyAsync();
         }
 
-        protected async Task ExpectValuePwnEmpty()
+        protected virtual Task AssignValuePwn(object? value)
+            => AssignValue("#ValuePwn", value);
+
+        protected virtual async Task ExpectValuePwnEmpty()
         {
             var textInput = Page.Locator("#ValuePwn");
             await Expect(textInput).ToBeEmptyAsync();
         }
 
-        protected async Task ResetForm()
+        protected virtual async Task ResetForm()
         {
             var resetFormBtn = Page.GetByTestId($"btn-reset");
             await resetFormBtn.ClickAsync();
-            await Expect(Page.Locator("#Value1")).ToBeEmptyAsync();
-            await Expect(Page.Locator("#Value2")).ToBeEmptyAsync();
-            await Expect(Page.Locator("#ValuePwn")).ToBeEmptyAsync();
+            await ExpectValue1Empty();
+            await ExpectValue2Empty();
+            await ExpectValuePwnEmpty();
         }
 
         protected async Task CallClientValidation()
@@ -165,6 +182,25 @@ namespace FoolProof.Core.Tests.E2eTests
                         && string.Equals(resp.Request.Method, "POST", StringComparison.OrdinalIgnoreCase)
                         && new Uri(resp.Url).GetLeftPart(UriPartial.Path).EndsWith("/validate")
             );
+        }
+
+        protected virtual string ConvertToString(object? value)
+        {
+            if (value is null)
+                return "";
+
+            return value switch
+            {
+                DateTime date => UseInputTypes ?? true 
+                                 ? date.ToString("yyyy-MM-ddThh:mm") 
+                                 : date.ToString("MM/dd/yyyy hh:mm"),
+                DateOnly date => UseInputTypes ?? true 
+                                 ? date.ToString("yyyy-MM-dd")
+                                 : date.ToString("MM/dd/yyyy"),
+                TimeSpan time => time.ToString(@"hh\:mm"),
+                TimeOnly time => time.ToString(@"hh\:mm"),
+                _ => value + ""
+            };
         }
     }
 }

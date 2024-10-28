@@ -8,14 +8,14 @@ namespace FoolProof.Core.Tests.UnitTests
         [TestMethod()]
         public void IsValid()
         {
-            var singModel = new In.SingleValueModel() {
+            var singModel = new In.SingleValueModel<object>() {
                 Value1 = "Text one",
                 Value2 = "Text one",
                 ValuePwn = "Text one"
             };
             Assert.IsTrue(singModel.IsValid(nameof(singModel.Value2)));
             Assert.IsTrue(singModel.IsValid(nameof(singModel.ValuePwn)));
-            singModel = new In.SingleValueModel() {
+            singModel = new In.SingleValueModel<object>() {
                 Value1 = 100,
                 Value2 = 100,
                 ValuePwn = 100
@@ -48,14 +48,14 @@ namespace FoolProof.Core.Tests.UnitTests
         [TestMethod()]
         public void IsNotValid()
         {
-            var singModel = new In.SingleValueModel() {
+            var singModel = new In.SingleValueModel<object>() {
                 Value1 = "Text one",
                 Value2 = "Text two",
                 ValuePwn = "Text three"
             };
             Assert.IsFalse(singModel.IsValid(nameof(singModel.Value2)));
             Assert.IsFalse(singModel.IsValid(nameof(singModel.ValuePwn)));
-            singModel = new In.SingleValueModel() {
+            singModel = new In.SingleValueModel<object>() {
                 Value1 = 100,
                 Value2 = 200,
                 ValuePwn = 300
@@ -88,7 +88,7 @@ namespace FoolProof.Core.Tests.UnitTests
         [TestMethod()]
         public void IsValidWithNulls()
         {
-            var singModel = new In.SingleValueModel() {
+            var singModel = new In.SingleValueModel<object>() {
                 Value1 = null,
                 Value2 = null,
                 ValuePwn = null
@@ -116,14 +116,14 @@ namespace FoolProof.Core.Tests.UnitTests
         [TestMethod()]
         public void WithValue1Null()
         {
-            var singModel = new In.SingleValueModel() {
+            var singModel = new In.SingleValueModel<object>() {
                 Value1 = null,
                 Value2 = "Text two",
                 ValuePwn = "Text three"
             };
             Assert.IsFalse(singModel.IsValid(nameof(singModel.Value2)));
             Assert.IsTrue(singModel.IsValid(nameof(singModel.ValuePwn)));
-            singModel = new In.SingleValueModel() {
+            singModel = new In.SingleValueModel<object>() {
                 Value1 = null,
                 Value2 = 200,
                 ValuePwn = 300
@@ -151,7 +151,7 @@ namespace FoolProof.Core.Tests.UnitTests
         [TestMethod()]
         public void IsNotValidWithValue2Null()
         {
-            var singModel = new In.SingleValueModel()
+            var singModel = new In.SingleValueModel<object>()
             {
                 Value1 = "Text one",
                 Value2 = null,
@@ -159,7 +159,7 @@ namespace FoolProof.Core.Tests.UnitTests
             };
             Assert.IsFalse(singModel.IsValid(nameof(singModel.Value2)));
             Assert.IsTrue(singModel.IsValid(nameof(singModel.ValuePwn)));
-            singModel = new In.SingleValueModel()
+            singModel = new In.SingleValueModel<object>()
             {
                 Value1 = 100,
                 Value2 = null,
@@ -195,7 +195,7 @@ namespace FoolProof.Core.Tests.UnitTests
         [TestMethod()]
         public void IsValidWithValuePwnNull()
         {
-            var singModel = new In.SingleValueModel()
+            var singModel = new In.SingleValueModel<object>()
             {
                 Value1 = "Text one",
                 Value2 = "Text one",
@@ -203,7 +203,7 @@ namespace FoolProof.Core.Tests.UnitTests
             };
             Assert.IsTrue(singModel.IsValid(nameof(singModel.Value2)));
             Assert.IsTrue(singModel.IsValid(nameof(singModel.ValuePwn)));
-            singModel = new In.SingleValueModel()
+            singModel = new In.SingleValueModel<object>()
             {
                 Value1 = 100,
                 Value2 = 100,

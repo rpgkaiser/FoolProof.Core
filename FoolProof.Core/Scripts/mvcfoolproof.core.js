@@ -57,6 +57,7 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 
 		return input && Date.parse(new Date().toLocaleDateString() + ' ' + input);
 	};
+
 	var getTime = function (input) {
 		var parsedDate = Date.parse(new Date().toLocaleDateString() + ' ' + input);
 		return input && parsedDate
@@ -68,63 +69,111 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 		return input !== false && input !== "false" && input !== 'False' && !!input;
 	};
 
-	if (isBool(compValue) || isBool(dependValue)) {
-		compValue = getBool(compValue);
-		dependValue = getBool(dependValue);
-	}
-	else if (isNumeric(compValue) || isNumeric(dependValue)) {
-		compValue = parseFloat(compValue);
-		dependValue = parseFloat(dependValue);
-	}
-	else if (isDate(compValue) || isDate(dependValue)) {
-		compValue = Date.parse(compValue);
-		dependValue = Date.parse(dependValue);
-	}
-	else if (isTime(compValue) || isTime(dependValue)) {
-		compValue = getTime(compValue);
-		dependValue = getTime(dependValue);
-	}
-	else if (dataType && dataType !== DataTypes.string
-			 && (!isNullish(compValue) || !isNullish(dependValue)))
-		return false; //Some of the provided values do not correspond with the specified data type
+	function convertValue(input, force) {
+		if (isBool(input))
+			return getBool(input);
 
-    switch (operator) {
+		if (isNumeric(input))
+			return parseFloat(input);
+
+		if (isDate(input))
+			return Date.parse(input);
+
+		if (isTime(input))
+			return getTime(input);
+
+		if (!dataType || dataType === DataTypes.string)
+			return input;
+
+		return force || !isNullish(input) //Invalid value for the given data type
+				? undefined 
+				: input;
+	}
+
+	switch (operator) {
 		case "EqualTo":
+			if (isNullish(compValue) && isNullish(dependValue))
+				return true;
+
+			compValue = convertValue(compValue, !!dataType);
+			dependValue = convertValue(dependValue, !!dataType);
+			if (compValue === undefined || dependValue === undefined)
+				return false; //A value do not correspond with the provided data type
+
 			return compValue == dependValue;
 		case "NotEqualTo":
+			compValue = convertValue(compValue, !!dataType);
+			dependValue = convertValue(dependValue, !!dataType);
+			if (compValue === undefined || dependValue === undefined)
+				return false; //A value do not correspond with the provided data type
+
 			return compValue != dependValue;
 		case "GreaterThan":
+			compValue = convertValue(compValue, !!dataType);
+			dependValue = convertValue(dependValue, !!dataType);
+			if (compValue === undefined || dependValue === undefined)
+				return false; //A value do not correspond with the provided data type
+
 			return compValue > dependValue;
 		case "LessThan":
+			compValue = convertValue(compValue, !!dataType);
+			dependValue = convertValue(dependValue, !!dataType);
+			if (compValue === undefined || dependValue === undefined)
+				return false; //A value do not correspond with the provided data type
+
 			return compValue < dependValue;
 		case "GreaterThanOrEqualTo":
+			if (isNullish(compValue) && isNullish(dependValue))
+				return true;
+
+			compValue = convertValue(compValue, !!dataType);
+			dependValue = convertValue(dependValue, !!dataType);
+			if (compValue === undefined || dependValue === undefined)
+				return false; //A value do not correspond with the provided data type
+
 			return compValue >= dependValue;
 		case "LessThanOrEqualTo":
+			if (isNullish(compValue) && isNullish(dependValue))
+				return true;
+
+			compValue = convertValue(compValue, !!dataType);
+			dependValue = convertValue(dependValue, !!dataType);
+			if (compValue === undefined || dependValue === undefined)
+				return false; //A value do not correspond with the provided data type
+
 			return compValue <= dependValue;
 		case "RegExMatch":
 			return dependValue && (new RegExp(dependValue).test(compValue));
 		case "NotRegExMatch":
 			return dependValue && !(new RegExp(dependValue).test(compValue));
 		case "In":
-			try {
-				var valArr = JSON.parse(dependValue);
-				if (typeof (valArr) == "object")
-					for (var key in valArr)
-						if (valArr[key] == compValue)
-							return true;
-			} catch (e) { }
-
-			return compValue == dependValue;
+			if (isNullish(compValue) && isNullish(dependValue))
+				return true;
 		case "NotIn":
-			try {
-				var valArr = JSON.parse(dependValue);
-				if (typeof (valArr) == "object")
-					for (var key in valArr)
-						if (valArr[key] == compValue)
-							return false;
-			} catch (e) { }
+			compValue = convertValue(compValue, !!dataType);
+			if (compValue === undefined)
+				return false; //The compare value do not correspond with the provided data type
 
-			return compValue != dependValue;
+			if (typeof (dependValue) === "string") {
+				try { dependValue = JSON.parse(dependValue); }
+				catch (e) {}
+			}
+
+			if (Array.isArray(dependValue)) {
+				for (var key in dependValue) {
+					var currVal = convertValue(dependValue[key], !!dataType);
+					if (compValue == currVal)
+						return operator == "In" ? true : false;
+				}
+
+				return operator == "In" ? false : true;
+			}
+			
+			dependValue = convertValue(dependValue, !!dataType);
+			if (dependValue === undefined)
+				return false; //The dependant value do not correspond with the provided data type
+
+			return operator == "In" ? compValue == dependValue : compValue != dependValue;
     }
 
     return false;

@@ -1,0 +1,23 @@
+﻿@model IEnumerable<Int16>
+
+@{
+    var listItems = Enumerable.Range(1, 10).Select(d => new SelectListItem {
+        Value = d.ToString(),
+        Text = d.ToString(),
+        Selected = Model != null && Model.Any(v => v == d)
+    }).ToList();
+
+    var multiple = (bool?)ViewBag.MultiSelect ?? (bool?)ViewData["MultiSelect"] ?? true;
+    if (multiple)
+    {
+        @Html.ListBoxFor(model => model, listItems, new { @class = "form-control", placeholder = "" })
+    }
+    else
+    {
+        listItems.Insert(0, new() {
+            Text = "Select Value",
+            Value = ""
+        });
+        @Html.DropDownListFor(model => model, listItems, new { @class = "form-control", placeholder = "" })
+    }
+}

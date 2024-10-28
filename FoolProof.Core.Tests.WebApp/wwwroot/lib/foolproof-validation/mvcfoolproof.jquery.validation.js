@@ -12,12 +12,9 @@ FoolProofCore.registerValidators = function(jQuery) {
         var operator = params["operator"];
         var passOnNull = params["passonnull"];
         var dataType = params["datatype"];
-        var dependentValue = document.getElementById(dependentProperty).value;
+        var dependentValue = jQuery(document.getElementById(dependentProperty)).val();
 
-        if (FoolProofCore.is(value, operator, dependentValue, passOnNull, dataType))
-            return true;
-
-        return false;
+        return FoolProofCore.is(value, operator, dependentValue, passOnNull, dataType);
     });
 
     jQuery.validator.addMethod("requiredif", function(value, element, params) {
@@ -32,7 +29,7 @@ FoolProofCore.registerValidators = function(jQuery) {
         if (dependentPropertyElement.length > 1) {
             for (var index = 0; index != dependentPropertyElement.length; index++)
                 if (dependentPropertyElement[index]["checked"]) {
-                    dependentValue = dependentPropertyElement[index].value;
+                    dependentValue = jQuery(dependentPropertyElement[index]).val();
                     break;
                 }
 
@@ -40,7 +37,7 @@ FoolProofCore.registerValidators = function(jQuery) {
                 dependentValue = false
         }
         else
-            dependentValue = dependentPropertyElement[0].value;
+            dependentValue = jQuery(dependentPropertyElement[0]).val();
 
         if (FoolProofCore.is(dependentValue, operator, dependentTestValue, undefined, dataType)) {
             if (pattern == null) {
@@ -58,7 +55,7 @@ FoolProofCore.registerValidators = function(jQuery) {
 
     jQuery.validator.addMethod("requiredifempty", function(value, element, params) {
         var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
-        var dependentValue = document.getElementById(dependentProperty).value;
+        var dependentValue = jQuery(document.getElementById(dependentProperty)).val();
 
         if (dependentValue == null || dependentValue.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') == "") {
             if (value != null && value.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "")
@@ -72,7 +69,7 @@ FoolProofCore.registerValidators = function(jQuery) {
 
     jQuery.validator.addMethod("requiredifnotempty", function(value, element, params) {
         var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
-        var dependentValue = document.getElementById(dependentProperty).value;
+        var dependentValue = jQuery("#" + dependentProperty).val();
 
         if (dependentValue != null && dependentValue.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "") {
             if (value != null && value.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "")

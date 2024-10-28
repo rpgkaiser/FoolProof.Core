@@ -4,19 +4,23 @@ namespace FoolProof.Core.Tests.Models
 {
     public class In
     {
-        public class SingleValueModel : ValidationModelBase<InAttribute>
+        public class SingleValueModel<T> : ValidationModelBase<InAttribute>
         {
-            public object? Value1 { get; set; }
+            [DataType("StringList")]
+            public T? Value1 { get; set; }
 
+            [DataType(DataType.Text)]
             [In(nameof(Value1))]
-            public object? Value2 { get; set; }
+            public T? Value2 { get; set; }
 
+            [DataType(DataType.Text)]
             [In(nameof(Value1), PassOnNull = true)]
-            public object? ValuePwn { get; set; }
+            public T? ValuePwn { get; set; }
         }
 
         public class DateTimeListModel : ValidationModelBase<InAttribute>
         {
+            [DataType("DateTimeList")]
             public IEnumerable<DateTime>? Value1 { get; set; }
 
             [DataType(DataType.DateTime)]
@@ -30,6 +34,7 @@ namespace FoolProof.Core.Tests.Models
 
         public class In16ListModel : ValidationModelBase<InAttribute>
         {
+            [DataType("Int16List")]
             public IEnumerable<Int16>? Value1 { get; set; }
 
             [In(nameof(Value1))]

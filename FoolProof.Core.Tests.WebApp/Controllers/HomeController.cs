@@ -85,6 +85,21 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
             return View("LessOrEqualTo", model);
         }
 
+        [HttpGet("in/{type}")]
+        public IActionResult In([FromRoute] string type)
+        {
+            object model = type.ToLowerInvariant() switch
+            {
+                "single" => new In.SingleValueModel<string>(),
+                "datetime" => new In.DateTimeListModel(),
+                "int16" => new In.In16ListModel(),
+                _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
+            };
+            ViewBag.DataType = type;
+            ViewBag.MultiSelect = type.ToLowerInvariant() != "single";
+            return View("In", model);
+        }
+
         [HttpPost("validate")]
         public async Task<JsonResult> Save([FromQuery]string modelTypeName)
         {
@@ -106,10 +121,13 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
         {
             base.OnActionExecuted(context);
 
-            ViewBag.UseInputTypes = Request.Cookies.TryGetValue("UseInputTypes", out var cookie)
-                                    ? bool.TryParse(cookie, out var useInputTypes)
-                                        && useInputTypes
-                                    : (bool?)null;
+            ViewBag.UseInputTypes = Request.Query.TryGetValue("__useInputTypes__", out var vals)
+                                    && bool.TryParse(vals.FirstOrDefault(), out var useInputTypes)
+                                    ? useInputTypes
+                                    : Request.Cookies.TryGetValue("UseInputTypes", out var cookie)
+                                      && bool.TryParse(cookie, out useInputTypes)
+                                      ? useInputTypes
+                                      : (bool?)null;
         }
     }
 }

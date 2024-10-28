@@ -13,6 +13,24 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string ValuePwnValidationError => "ValuePwn must be less than Value1";
 
+        [CustomTestMethod("Empty Values : Invalid")]
+        public override async Task EmptyValues()
+        {
+            await LoadPage();
+
+            await ExpectValue1Empty();
+            await ExpectValue2Empty();
+            await ExpectValuePwnEmpty();
+
+            await CallClientValidation();
+            await ExpectClientValidationFailed();
+
+            await ResetForm();
+
+            await CallServerValidation();
+            await ExpectServerValidationFailed();
+        }
+
         [CustomTestMethod("ValuePwn < Value2 < Value1 : Valid")]
         public override Task CompareValuesPass()
         {

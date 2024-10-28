@@ -32,6 +32,24 @@ namespace FoolProof.Core.Tests.E2eTests
                 return ("Value one", "Value one", "Value one");
             }
 
+            [CustomTestMethod("Empty Values : Invalid")]
+            public override async Task EmptyValues()
+            {
+                await LoadPage();
+
+                await ExpectValue1Empty();
+                await ExpectValue2Empty();
+                await ExpectValuePwnEmpty();
+
+                await CallClientValidation();
+                await ExpectClientValidationFailed();
+
+                await ResetForm();
+
+                await CallServerValidation();
+                await ExpectServerValidationFailed();
+            }
+
             [Ignore]
             public override Task InvalidValues()
             {
