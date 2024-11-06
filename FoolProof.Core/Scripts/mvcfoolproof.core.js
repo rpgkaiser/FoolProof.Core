@@ -90,6 +90,33 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 				: input;
 	}
 
+	function verifyInclusion() {
+		compValue = convertValue(compValue, !!dataType);
+		if (compValue === undefined)
+			return false; //The compare value do not correspond with the provided data type
+
+		if (typeof (dependValue) === "string") {
+			try { dependValue = JSON.parse(dependValue); }
+			catch (e) {}
+		}
+
+		if (Array.isArray(dependValue)) {
+			for (var key in dependValue) {
+				var currVal = convertValue(dependValue[key], !!dataType);
+				if (compValue == currVal)
+					return operator == "In" ? true : false;
+			}
+
+			return operator == "In" ? false : true;
+		}
+			
+		dependValue = convertValue(dependValue, !!dataType);
+		if (dependValue === undefined)
+			return false; //The dependant value do not correspond with the provided data type
+
+		return operator == "In" ? compValue == dependValue : compValue != dependValue;
+	}
+
 	switch (operator) {
 		case "EqualTo":
 			if (isNullish(compValue) && isNullish(dependValue))
@@ -149,31 +176,13 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 		case "In":
 			if (isNullish(compValue) && isNullish(dependValue))
 				return true;
+
+			return verifyInclusion();
 		case "NotIn":
-			compValue = convertValue(compValue, !!dataType);
-			if (compValue === undefined)
-				return false; //The compare value do not correspond with the provided data type
+			if (isNullish(compValue) && !isNullish(dependValue))
+				return true;
 
-			if (typeof (dependValue) === "string") {
-				try { dependValue = JSON.parse(dependValue); }
-				catch (e) {}
-			}
-
-			if (Array.isArray(dependValue)) {
-				for (var key in dependValue) {
-					var currVal = convertValue(dependValue[key], !!dataType);
-					if (compValue == currVal)
-						return operator == "In" ? true : false;
-				}
-
-				return operator == "In" ? false : true;
-			}
-			
-			dependValue = convertValue(dependValue, !!dataType);
-			if (dependValue === undefined)
-				return false; //The dependant value do not correspond with the provided data type
-
-			return operator == "In" ? compValue == dependValue : compValue != dependValue;
+			return verifyInclusion();
     }
 
     return false;

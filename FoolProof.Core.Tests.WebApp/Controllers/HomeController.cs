@@ -100,6 +100,21 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
             return View("In", model);
         }
 
+        [HttpGet("notin/{type}")]
+        public IActionResult NotIn([FromRoute] string type)
+        {
+            object model = type.ToLowerInvariant() switch
+            {
+                "single" => new NotIn.SingleValueModel<string>(),
+                "datetime" => new NotIn.DateTimeListModel(),
+                "int16" => new NotIn.In16ListModel(),
+                _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
+            };
+            ViewBag.DataType = type;
+            ViewBag.MultiSelect = type.ToLowerInvariant() != "single";
+            return View("NotIn", model);
+        }
+
         [HttpPost("validate")]
         public async Task<JsonResult> Save([FromQuery]string modelTypeName)
         {

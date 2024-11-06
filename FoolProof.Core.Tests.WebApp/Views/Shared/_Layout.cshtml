@@ -165,6 +165,28 @@
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:;" role="button" aria-expanded="false">
+                                NotIn
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.NotIn)" asp-route-type="Single">
+                                        Single Value
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.NotIn)" asp-route-type="DateTime">
+                                        DateTime
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.NotIn)" asp-route-type="Int16">
+                                        Int16
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>
