@@ -7,7 +7,8 @@ namespace FoolProof.Core
 {
     public enum ClientDataType
     {
-        String = 0,
+        Auto = 0,
+        String,
         Number,
         Bool,
         Date,
@@ -21,7 +22,7 @@ namespace FoolProof.Core
 
         public bool PassOnNull { get; set; }
 
-        public ClientDataType? DataType { get; set; }
+        public ClientDataType DataType { get; set; }
 
         private OperatorMetadata _metadata;
 
@@ -40,7 +41,9 @@ namespace FoolProof.Core
 
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            var dataTypeStr = (DataType ?? IsAttribute.GetDataType(modelMetadata.ModelType)).ToString();
+            var dataTypeStr = (DataType == ClientDataType.Auto 
+                                ? IsAttribute.GetDataType(modelMetadata.ModelType)
+                                : DataType).ToString();
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
                 new KeyValuePair<string, object>("PassOnNull", PassOnNull),
