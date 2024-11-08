@@ -9,20 +9,13 @@ namespace FoolProof.Core
     [AttributeUsage(AttributeTargets.Property)]
     public abstract class ModelAwareValidationAttribute : ValidationAttribute
     {
-        public override string FormatErrorMessage(string name)
+        protected ModelAwareValidationAttribute() : this("{0} is invalid.")
         {
-            if (string.IsNullOrEmpty(ErrorMessageResourceName) && string.IsNullOrEmpty(ErrorMessage))
-            {
-                ErrorMessage = DefaultErrorMessage;
-            }
-
-            return base.FormatErrorMessage(name);
         }
 
-        public virtual string DefaultErrorMessage
-        {
-            get { return "{0} is invalid."; }
-        }
+		protected ModelAwareValidationAttribute(string defaultMessage) : base(defaultMessage)
+		{
+		}
 
         public abstract bool IsValid(object value, object container);
 

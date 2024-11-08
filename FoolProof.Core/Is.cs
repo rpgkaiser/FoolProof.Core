@@ -27,7 +27,7 @@ namespace FoolProof.Core
         private OperatorMetadata _metadata;
 
         public IsAttribute(Operator @operator, string dependentProperty)
-            : base(dependentProperty)
+            : base(dependentProperty, "{0} must be {2} {1}.")
         {
             Operator = @operator;
             PassOnNull = false;
@@ -60,10 +60,10 @@ namespace FoolProof.Core
             return _metadata.IsValid(value, dependentValue);
         }
 
-        public override string DefaultErrorMessage
-        {
-            get { return "{0} must be " + _metadata.ErrorMessage + " {1}."; }
-        }
+		public override string FormatErrorMessage(string name)
+		{
+			return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty, _metadata.ErrorMessage);
+		}
 
         public static ClientDataType GetDataType(Type valueType)
         {
