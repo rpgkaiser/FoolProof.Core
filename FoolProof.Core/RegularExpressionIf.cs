@@ -9,7 +9,7 @@ namespace FoolProof.Core
         public string Pattern { get; set; }
 
         public RegularExpressionIfAttribute(string pattern, string dependentProperty, Operator @operator, object dependentValue)
-            : base(dependentProperty, @operator, dependentValue, "{0} must be in the format of {3} due to {1} being {3} {2}")
+            : base(dependentProperty, @operator, dependentValue, "{0} must be in the format of {3} due to {1} being {4} {2}")
         {
             Pattern = pattern;
             DataType = ClientDataType.String;
