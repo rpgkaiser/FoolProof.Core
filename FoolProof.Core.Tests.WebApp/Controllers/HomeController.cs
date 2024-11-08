@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FoolProof.Core.Tests.E2eTests.WebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -85,9 +86,26 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
             ViewBag.DataType = type;
             ViewBag.PassWithNull = pwn;
             return View("LessOrEqualTo", model);
+		}
+
+		[HttpGet("complexmodel")]
+        public IActionResult ComplexModel()
+        {
+            return View("ComplexModel", new PersonalInfo());
         }
 
-        [HttpPost("validate")]
+		[HttpPost("complexmodel")]
+		public IActionResult ComplexModel(PersonalInfo? vm)
+		{
+            if (ModelState.IsValid)
+            {
+                ViewBag.SuccessMessage = "Validation succeeded";
+			}
+
+			return View("ComplexModel", vm);
+		}
+
+		[HttpPost("validate")]
         public async Task<JsonResult> Save([FromQuery]string modelTypeName)
         {
             var modelType = typeof(EqualTo).Assembly.GetType(modelTypeName)

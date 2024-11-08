@@ -4,7 +4,7 @@
     ViewData["ValidatorName"] = "Complex Model Validation";
 }
 
-<form asp-action="Save" method="post" class="d-flex flex-column gap-4">
+<form method="post" class="d-flex flex-column gap-4">
     @if (!string.IsNullOrWhiteSpace(ViewBag.SuccessMessage))
     {
         <div class="alert alert-success alert-dismissible m-4">
