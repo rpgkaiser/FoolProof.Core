@@ -37,7 +37,7 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Models
         [DataType(DataType.PhoneNumber)]
         public string? PhoneNumber { get; set; }
 
-        [RequiredIfEmpty(nameof(BirthDate))]
+        [RequiredIfEmpty(nameof(BirthDate), ErrorMessage = "Please specify your age or birthdate.")]
         [Range(1, 200)]
         public int? Age { get; set; }
 
@@ -48,20 +48,20 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Models
         [DataType(DataType.Date)]
         [RequiredIfNotEmpty(nameof(BirthDate))]
         [RequiredIf(nameof(Education), Operator.EqualTo, EducationalLevel.Elementary)]
-        [GreaterThan(nameof(BirthDate))]
-        [LessThan(nameof(HighScoolGraduationDate))]
+        [GreaterThan(nameof(BirthDate), PassOnNull = true)]
+        [LessThan(nameof(HighScoolGraduationDate), PassOnNull = true)]
         public DateTime? ElementaryScoolGraduationDate { get; set; }
 
         [DataType(DataType.Date)]
         [RequiredIfEmpty(nameof(ElementaryScoolGraduationDate))]
         [RequiredIf(nameof(Education), Operator.EqualTo, EducationalLevel.High)]
-        [GreaterThan(nameof(ElementaryScoolGraduationDate))]
+        [GreaterThan(nameof(ElementaryScoolGraduationDate), PassOnNull = true)]
         public DateTime? HighScoolGraduationDate { get; set; }
 
         [DataType(DataType.Date)]
         [RequiredIfEmpty(nameof(HighScoolGraduationDate))]
         [RequiredIf(nameof(Age), Operator.GreaterThan, 18)]
-        [GreaterThan(nameof(HighScoolGraduationDate))]
+        [GreaterThan(nameof(HighScoolGraduationDate), PassOnNull = true)]
         public DateTime? CollegeGraduationDate { get; set; }
     }
 }

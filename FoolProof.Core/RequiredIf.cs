@@ -11,16 +11,21 @@ namespace FoolProof.Core
 
         public object DependentValue { get; private set; }
 
-        public ClientDataType? DataType { get; set; }
+        public ClientDataType DataType { get; set; }
 
         protected OperatorMetadata Metadata { get; private set; }
-        
-        public RequiredIfAttribute(string dependentProperty, Operator @operator, object dependentValue)
-            : base(dependentProperty)
+
+		public RequiredIfAttribute(string dependentProperty, Operator @operator, object dependentValue, string defaultMessage)
+			: base(dependentProperty, defaultMessage)
+		{
+			Operator = @operator;
+			DependentValue = dependentValue;
+			Metadata = OperatorMetadata.Get(Operator);
+		}
+
+		public RequiredIfAttribute(string dependentProperty, Operator @operator, object dependentValue)
+            : this(dependentProperty, @operator, dependentValue, "{0} is required due to {1} being {3} {2}")
         {
-            Operator = @operator;
-            DependentValue = dependentValue;
-            Metadata = OperatorMetadata.Get(Operator);
         }
 
         public RequiredIfAttribute(string dependentProperty, object dependentValue)
@@ -28,10 +33,7 @@ namespace FoolProof.Core
 
         public override string FormatErrorMessage(string name)
         {
-            if (string.IsNullOrEmpty(ErrorMessageResourceName) && string.IsNullOrEmpty(ErrorMessage))
-                ErrorMessage = DefaultErrorMessage;
-
-            return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty, DependentValue);
+            return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty, DependentValue, Metadata.ErrorMessage);
         }
 
         public override string ClientTypeName
@@ -41,7 +43,9 @@ namespace FoolProof.Core
 
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            var dataTypeStr = (DataType ?? IsAttribute.GetDataType(modelMetadata.ModelType)).ToString();
+            var dataTypeStr = (DataType == ClientDataType.Auto 
+                                ? IsAttribute.GetDataType(modelMetadata.ModelType)
+                                : DataType).ToString();
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
                 new KeyValuePair<string, object>("DependentValue", DependentValue),
@@ -56,11 +60,6 @@ namespace FoolProof.Core
                 return value != null && !string.IsNullOrEmpty(value.ToString().Trim());
 
             return true;
-        }
-
-        public override string DefaultErrorMessage
-        {
-            get { return "{0} is required due to {1} being " + Metadata.ErrorMessage + " {2}"; }
         }
     }
 }

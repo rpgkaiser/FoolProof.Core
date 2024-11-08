@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FoolProof.Core.Tests.E2eTests.WebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -12,82 +13,127 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
         public IActionResult Index() => View();
 
         [HttpGet("eq2")]
-        public IActionResult EqualTo([FromQuery] bool pwn = false)
+        public IActionResult EqualTo()
         {
-            object model = pwn ? new EqualTo.ModelWithPassOnNull() : new EqualTo.Model();
-            ViewBag.PassWithNull = pwn;
+            object model = new EqualTo.Model();
             return View("EqualTo", model);
         }
 
         [HttpGet("neq2")]
-        public IActionResult NotEqualTo([FromQuery] bool pwn = false)
+        public IActionResult NotEqualTo()
         {
-            object model = pwn ? new NotEqualTo.ModelWithPassOnNull() : new NotEqualTo.Model();
-            ViewBag.PassWithNull = pwn;
+            object model = new NotEqualTo.Model();
             return View("NotEqualTo", model);
         }
 
         [HttpGet("gt/{type}")]
-        public IActionResult GreaterThan([FromRoute] string type, [FromQuery] bool pwn = false)
+        public IActionResult GreaterThan([FromRoute] string type)
         {
             object model = type.ToLowerInvariant() switch
             {
-                "date" => pwn ? new GreaterThan.DateModelWithPassOnNull() : new GreaterThan.DateModel(),
-                "int16" => pwn ? new GreaterThan.Int16ModelWithPassOnNull() : new GreaterThan.Int16Model(),
-                "time" => pwn ? new GreaterThan.TimeModelWithPassOnNull() : new GreaterThan.TimeModel(),
+                "date" => new GreaterThan.DateModel(),
+                "int16" => new GreaterThan.Int16Model(),
+                "time" => new GreaterThan.TimeModel(),
+                "datetime" => new GreaterThan.DateTimeModel(),
                 _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
             };
             ViewBag.DataType = type;
-            ViewBag.PassWithNull = pwn;
             return View("GreaterThan", model);
         }
 
         [HttpGet("lt/{type}")]
-        public IActionResult LessThan([FromRoute] string type, [FromQuery] bool pwn = false)
+        public IActionResult LessThan([FromRoute] string type)
         {
             object model = type.ToLowerInvariant() switch
             {
-                "date" => pwn ? new LessThan.DateModelWithPassOnNull() : new LessThan.DateModel(),
-                "int16" => pwn ? new LessThan.Int16ModelWithPassOnNull() : new LessThan.Int16Model(),
-                "time" => pwn ? new LessThan.TimeModelWithPassOnNull() : new LessThan.TimeModel(),
+                "date" => new LessThan.DateModel(),
+                "int16" => new LessThan.Int16Model(),
+                "time" => new LessThan.TimeModel(),
+                "datetime" => new LessThan.DateTimeModel(),
                 _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
             };
             ViewBag.DataType = type;
-            ViewBag.PassWithNull = pwn;
             return View("LessThan", model);
         }
 
         [HttpGet("ge2/{type}")]
-        public IActionResult GreaterOrEqualTo([FromRoute] string type, [FromQuery] bool pwn = false)
+        public IActionResult GreaterOrEqualTo([FromRoute] string type)
         {
             object model = type.ToLowerInvariant() switch
             {
-                "date" => pwn ? new GreaterThanOrEqualTo.DateModelWithPassNull() : new GreaterThanOrEqualTo.DateModel(),
-                "int16" => pwn ? new GreaterThanOrEqualTo.DateModelWithPassNull() : new GreaterThanOrEqualTo.Int16Model(),
-                "time" => pwn ? new GreaterThanOrEqualTo.DateModelWithPassNull() : new GreaterThanOrEqualTo.TimeModel(),
+                "date" => new GreaterThanOrEqualTo.DateModel(),
+                "int16" => new GreaterThanOrEqualTo.Int16Model(),
+                "time" => new GreaterThanOrEqualTo.TimeModel(),
+                "datetime" => new GreaterThanOrEqualTo.DateTimeModel(),
                 _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
             };
             ViewBag.DataType = type;
-            ViewBag.PassWithNull = pwn;
             return View("GreaterOrEqualTo", model);
         }
 
         [HttpGet("le2/{type}")]
-        public IActionResult LessOrEqualTo([FromRoute] string type, [FromQuery] bool pwn = false)
+        public IActionResult LessOrEqualTo([FromRoute] string type)
         {
             object model = type.ToLowerInvariant() switch
             {
-                "date" => pwn ? new LessThanOrEqualTo.DateModelWithPassNull() : new LessThanOrEqualTo.DateModel(),
-                "int16" => pwn ? new LessThanOrEqualTo.DateModelWithPassNull() : new LessThanOrEqualTo.Int16Model(),
-                "time" => pwn ? new LessThanOrEqualTo.DateModelWithPassNull() : new LessThanOrEqualTo.TimeModel(),
+                "date" => new LessThanOrEqualTo.DateModel(),
+                "int16" => new LessThanOrEqualTo.Int16Model(),
+                "time" => new LessThanOrEqualTo.TimeModel(),
+                "datetime" => new LessThanOrEqualTo.DateTimeModel(),
                 _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
             };
             ViewBag.DataType = type;
-            ViewBag.PassWithNull = pwn;
             return View("LessOrEqualTo", model);
         }
 
-        [HttpPost("validate")]
+        [HttpGet("in/{type}")]
+        public IActionResult In([FromRoute] string type)
+        {
+            object model = type.ToLowerInvariant() switch
+            {
+                "single" => new In.SingleValueModel<string>(),
+                "datetime" => new In.DateTimeListModel(),
+                "int16" => new In.In16ListModel(),
+                _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
+            };
+            ViewBag.DataType = type;
+            ViewBag.MultiSelect = type.ToLowerInvariant() != "single";
+            return View("In", model);
+        }
+
+        [HttpGet("notin/{type}")]
+        public IActionResult NotIn([FromRoute] string type)
+        {
+            object model = type.ToLowerInvariant() switch
+            {
+                "single" => new NotIn.SingleValueModel<string>(),
+                "datetime" => new NotIn.DateTimeListModel(),
+                "int16" => new NotIn.In16ListModel(),
+                _ => throw new HttpRequestException("Unsupported data type", null, System.Net.HttpStatusCode.BadRequest)
+            };
+            ViewBag.DataType = type;
+            ViewBag.MultiSelect = type.ToLowerInvariant() != "single";
+            return View("NotIn", model);
+		}
+
+		[HttpGet("complexmodel")]
+        public IActionResult ComplexModel()
+        {
+            return View("ComplexModel", new PersonalInfo());
+        }
+
+		[HttpPost("complexmodel")]
+		public IActionResult ComplexModel(PersonalInfo? vm)
+		{
+            if (ModelState.IsValid)
+            {
+                ViewBag.SuccessMessage = "Validation succeeded";
+			}
+
+			return View("ComplexModel", vm);
+		}
+
+		[HttpPost("validate")]
         public async Task<JsonResult> Save([FromQuery]string modelTypeName)
         {
             var modelType = typeof(EqualTo).Assembly.GetType(modelTypeName)
@@ -108,10 +154,13 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
         {
             base.OnActionExecuted(context);
 
-            ViewBag.UseInputTypes = Request.Cookies.TryGetValue("UseInputTypes", out var cookie)
-                                    ? bool.TryParse(cookie, out var useInputTypes)
-                                        && useInputTypes
-                                    : (bool?)null;
+            ViewBag.UseInputTypes = Request.Query.TryGetValue("__useInputTypes__", out var vals)
+                                    && bool.TryParse(vals.FirstOrDefault(), out var useInputTypes)
+                                    ? useInputTypes
+                                    : Request.Cookies.TryGetValue("UseInputTypes", out var cookie)
+                                      && bool.TryParse(cookie, out useInputTypes)
+                                      ? useInputTypes
+                                      : (bool?)null;
         }
     }
 }

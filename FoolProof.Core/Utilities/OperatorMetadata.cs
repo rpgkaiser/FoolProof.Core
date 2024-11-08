@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -132,10 +133,8 @@ namespace FoolProof.Core
 						ErrorMessage = "in",
 						IsValid = (value, dependentValue) => {
 							var eqOperMtd = Get(Operator.EqualTo);
-							if(dependentValue is object[] valueList)
-								return valueList.Any(val => eqOperMtd.IsValid(value, val));
-
-							return eqOperMtd.IsValid(value, dependentValue);
+                            var valueList = GetValueList(dependentValue);
+							return valueList.Any(val => eqOperMtd.IsValid(value, val));
 						}
 					}
 				},
@@ -145,14 +144,23 @@ namespace FoolProof.Core
 						ErrorMessage = "not in",
 						IsValid = (value, dependentValue) => {
 							var eqOperMtd = Get(Operator.EqualTo);
-							if(dependentValue is object[] valueList)
-								return valueList.All(val => !eqOperMtd.IsValid(value, val));
-
-							return !eqOperMtd.IsValid(value, dependentValue);
+                            var valueList = GetValueList(dependentValue);
+                            return valueList.All(val => !eqOperMtd.IsValid(value, val));
 						}
 					}
 				}
 			};
+        }
+
+        private static IEnumerable<object> GetValueList(object value)
+        {
+            if (value is string)
+                return new[] { value as string };
+
+            if(value is IEnumerable valueList)
+                return valueList.Cast<object>();
+
+            return new object[] { value };
         }
     }
 }

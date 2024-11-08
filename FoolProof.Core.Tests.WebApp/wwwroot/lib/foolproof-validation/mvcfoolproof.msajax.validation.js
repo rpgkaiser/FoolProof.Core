@@ -12,8 +12,15 @@ Sys.Mvc.ValidatorRegistry.validators["is"] = function(rule) {
         var passOnNull = rule.ValidationParameters["passonnull"];
         var dataType = rule.ValidationParameters["datatype"];
         var dependentProperty = FoolProofCore.getId(context.fieldContext.elements[0], rule.ValidationParameters["dependentproperty"]);
-        var dependentValue = document.getElementById(dependentProperty).value;
-
+        var dependentElement = document.getElementById(dependentProperty);
+        var dependentValue = dependentElement.value;
+        if (dependentElement.type == "select-multiple") {
+            dependentValue = [];
+            var selOpts = dependentElement.selectedOptions;
+            for (var i = 0; i < selOpts.length; i++)
+                dependentValue.push(selOpts[i]);
+        }
+        
         if (FoolProofCore.is(value, operator, dependentValue, passOnNull, dataType))
             return true;
 

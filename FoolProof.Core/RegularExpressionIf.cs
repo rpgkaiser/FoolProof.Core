@@ -9,7 +9,7 @@ namespace FoolProof.Core
         public string Pattern { get; set; }
 
         public RegularExpressionIfAttribute(string pattern, string dependentProperty, Operator @operator, object dependentValue)
-            : base(dependentProperty, @operator, dependentValue)
+            : base(dependentProperty, @operator, dependentValue, "{0} must be in the format of {3} due to {1} being {4} {2}")
         {
             Pattern = pattern;
             DataType = ClientDataType.String;
@@ -36,15 +36,7 @@ namespace FoolProof.Core
 
         public override string FormatErrorMessage(string name)
         {
-            if (string.IsNullOrEmpty(ErrorMessageResourceName) && string.IsNullOrEmpty(ErrorMessage))
-                ErrorMessage = DefaultErrorMessage;
-
-            return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty, DependentValue, Pattern);
-        }
-
-        public override string DefaultErrorMessage
-        {
-            get { return "{0} must be in the format of {3} due to {1} being " + Metadata.ErrorMessage + " {2}"; }
+            return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty, DependentValue, Pattern, Metadata.ErrorMessage);
         }
     }
 }

@@ -11,24 +11,20 @@ namespace FoolProof.Core
         public string DependentProperty { get; private set; }
         public string DependentPropertyDisplayName { get; set; }
 
-        public ContingentValidationAttribute(string dependentProperty)
+        public ContingentValidationAttribute(string dependentProperty) : this(dependentProperty, "{0} is invalid due to {1}.")
+        {
+        }
+
+        public ContingentValidationAttribute(string dependentProperty, string defaultMessage) : base(defaultMessage)
         {
             DependentProperty = dependentProperty;
         }
         
         public override string FormatErrorMessage(string name)
         {
-            if (string.IsNullOrEmpty(ErrorMessageResourceName) && string.IsNullOrEmpty(ErrorMessage))
-                ErrorMessage = DefaultErrorMessage;
-            
             return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty);
         }
 
-        public override string DefaultErrorMessage
-        {
-            get { return "{0} is invalid due to {1}."; }
-        }
-        
         public override bool IsValid(object value, object container)
         {
             return IsValid(value, GetDependentPropertyValue(container), container);

@@ -1,0 +1,31 @@
+﻿@model IEnumerable<DateTime>
+
+@{
+    var listItems = new[] { 
+        "01/01/2001 01:01",
+        "03/03/2003 03:05",
+        "05/05/2005 05:05",
+        "07/07/2007 07:07",
+        "09/09/2009 09:09",
+        "11/11/2011 11:11",
+        "12/12/2012 12:12"
+    }.Select(d => new SelectListItem {
+        Value = d,
+        Text = d,
+        Selected = Model != null && Model.Any(v => string.Equals(v.ToString("dd/MM/yyyy hh:mm"), d, StringComparison.OrdinalIgnoreCase))
+    }).ToList();
+
+    var multiple = (bool?)ViewBag.MultiSelect ?? (bool?)ViewData["MultiSelect"] ?? true;
+    if (multiple)
+    {
+        @Html.ListBoxFor(model => model, listItems, new { @class = "form-control", placeholder = "" })
+    }
+    else
+    {
+        listItems.Insert(0, new() {
+            Text = "Select Value",
+            Value = ""
+        });
+        @Html.DropDownListFor(model => model, listItems, new { @class = "form-control", placeholder = "" })
+    }
+}

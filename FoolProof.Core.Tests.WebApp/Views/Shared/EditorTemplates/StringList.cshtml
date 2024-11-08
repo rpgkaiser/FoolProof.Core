@@ -1,0 +1,36 @@
+﻿@using System.Collections;
+@model IEnumerable
+
+@{
+    var modelList = Model == null ? Enumerable.Empty<object>() : Model.Cast<object>();
+    var listItems = new[] { 
+        "Value one",
+        "Value two",
+        "Value three",
+        "Value four",
+        "Value five",
+        "Value six",
+        "Value seven",
+        "Value eight",
+        "Value nine",
+        "Value ten"
+    }.Select(d => new SelectListItem {
+        Value = d,
+        Text = d,
+        Selected = modelList.Any(v => string.Equals(v?.ToString(), d, StringComparison.OrdinalIgnoreCase))
+    }).ToList();
+
+    var multiple = (bool?)ViewBag.MultiSelect ?? (bool?)ViewData["MultiSelect"] ?? true;
+    if(multiple)
+    {
+        @Html.ListBoxFor(model => model, listItems, new { @class = "form-control", placeholder = "" })
+    }
+    else
+    {
+        listItems.Insert(0, new() {
+            Text = "Select Value",
+            Value = ""
+        });
+        @Html.DropDownListFor(model => model, listItems, new { @class = "form-control", placeholder = "" })
+    }
+}

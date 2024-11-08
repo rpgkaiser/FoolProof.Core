@@ -7,7 +7,8 @@ namespace FoolProof.Core
 {
     public enum ClientDataType
     {
-        String = 0,
+        Auto = 0,
+        String,
         Number,
         Bool,
         Date,
@@ -21,12 +22,12 @@ namespace FoolProof.Core
 
         public bool PassOnNull { get; set; }
 
-        public ClientDataType? DataType { get; set; }
+        public ClientDataType DataType { get; set; }
 
         private OperatorMetadata _metadata;
 
         public IsAttribute(Operator @operator, string dependentProperty)
-            : base(dependentProperty)
+            : base(dependentProperty, "{0} must be {2} {1}.")
         {
             Operator = @operator;
             PassOnNull = false;
@@ -40,7 +41,9 @@ namespace FoolProof.Core
 
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            var dataTypeStr = (DataType ?? IsAttribute.GetDataType(modelMetadata.ModelType)).ToString();
+            var dataTypeStr = (DataType == ClientDataType.Auto 
+                                ? IsAttribute.GetDataType(modelMetadata.ModelType)
+                                : DataType).ToString();
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
                 new KeyValuePair<string, object>("PassOnNull", PassOnNull),
@@ -57,10 +60,10 @@ namespace FoolProof.Core
             return _metadata.IsValid(value, dependentValue);
         }
 
-        public override string DefaultErrorMessage
-        {
-            get { return "{0} must be " + _metadata.ErrorMessage + " {1}."; }
-        }
+		public override string FormatErrorMessage(string name)
+		{
+			return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty, _metadata.ErrorMessage);
+		}
 
         public static ClientDataType GetDataType(Type valueType)
         {
