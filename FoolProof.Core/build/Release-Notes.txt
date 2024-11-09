@@ -1,7 +1,5 @@
-- Dropped support for **.Net Framework 4.7.2** and **Net Standard 2.0**.
-- Added support for **.Net 8**
-- Added build target to copy required JavaScript files to the static assets folder (**wwwroot**).
-- Improved handling of **Date**, **DateTime** and **Time** values in client-side validation, to use **Date.parse* method; this will enforce the use of the date and time format according to the preferred locale.
-- Added new parameter to client-side validation methods, to define the data type to convert values before validation.
-- Added new property to **Comparison Validators** (descendant from **IsAttribute** or **RequiredIfAttribute**) to define the data type to use (**String**, **Number**, **Bool**, **Date**, **Time** or **DateTime**) in client-side validation. 
-  If no value is provided for the **DataType** property, the data type is determined according to the **Type** of the **model property** (the property with the attribute).
+- Use a default Enum value instead of a nullable Enum, for the `DataType` property.
+- Improve data type handling for the client-side validation.
+- Fix client-side validation logic for `In` and `NotIn` validators.
+- Use constructor-based default messages, instead of a property.
+- Improve Unit and E2E tests.
