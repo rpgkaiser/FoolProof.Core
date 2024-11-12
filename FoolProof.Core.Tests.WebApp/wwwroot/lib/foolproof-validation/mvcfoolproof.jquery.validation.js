@@ -80,6 +80,30 @@ FoolProofCore.registerValidators = function(jQuery) {
 
         return false;
     });
+
+    jQuery.validator.addMethod("predicate", function(value, element, params) {
+        var logicalOper = params["logicaloperator"];
+        if (!logicalOper) {
+            var methodName = params["method"].toLowerCase();
+            var methodParams = params["params"];
+            return jQuery.validator.methods[methodName](value, element, methodParams);
+        }
+
+        var leftPart = params["leftpart"];
+        var rightPart = params["rightpart"];
+
+        switch (logicalOper.toLowerCase()) {
+            case "not":
+                var validMethod = jQuery.validator.methods.predicate;
+                return !validMethod(value, element, leftPart);
+            case "and":
+                var validMethod = jQuery.validator.methods.predicate;
+                return validMethod(value, element, leftPart) && validMethod(value, element, rightPart);
+            case "or":
+                var validMethod = jQuery.validator.methods.predicate;
+                return validMethod(value, element, leftPart) || validMethod(value, element, rightPart);
+        }
+    });
 };
 
 (FoolProofCore.registerValidators)(jQuery);

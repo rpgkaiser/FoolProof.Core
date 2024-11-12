@@ -46,3 +46,11 @@ $Unob.adapters.add("requiredifnotempty", ["dependentproperty"], function(options
         dependentproperty: options.params.dependentproperty
     });
 });
+
+$Unob.adapters.add("predicate", ["logicalOperator", "leftPart", "rightPart"], function(options) {
+    setValidationValues(options, "predicate", {
+        logicaloperator: options.params.logicalOperator,
+        leftpart: JSON.parse(options.params.leftPart),
+        rightpart: options.params.rightPart ? JSON.parse(options.params.rightPart) : null
+    });
+});

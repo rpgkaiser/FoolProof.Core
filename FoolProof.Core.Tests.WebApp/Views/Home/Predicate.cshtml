@@ -1,0 +1,70 @@
+﻿@model Predicate.Model
+
+@{
+    ViewData["ValidatorName"] = "Complex Predicate Validation";
+}
+
+<form method="post" class="d-flex flex-column gap-4"
+      novalidate
+      asp-action="@nameof(HomeController.Save)"
+      asp-controller="Home"
+      asp-route-modelTypeName="@(Model.GetType().FullName)">
+    <div data-testid="valid-alert" class="alert alert-success alert-dismissible valid-alert" style='display: none;'>
+        <button type="button" class="btn-close" onclick="$(this).parent().fadeOut();"></button>
+        <span class="alert-message">
+        </span>
+    </div>
+
+    <div class="d-flex flex-wrap gap-4 align-items-center justify-content-between">
+        <div class="form-floating flex-fill">
+            <input asp-for="Value1" class="form-control" placeholder="" />
+            <label>Value 1</label>
+            <span class="text-danger" asp-validation-for="Value1"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input asp-for="Value2" class="form-control" placeholder="" />
+            <label>Value 2</label>
+            <span class="text-danger" asp-validation-for="Value2"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input asp-for="Value3" class="form-control" placeholder="" />
+            <label>Value 3</label>
+            <span class="text-danger" asp-validation-for="Value3"></span>
+        </div>
+        <div class="form-floating flex-fill">
+            <input asp-for="Value4" class="form-control" placeholder="" />
+            <label>Value 4</label>
+            <span class="text-danger" asp-validation-for="Value4"></span>
+        </div>
+    </div>
+    <div class="form-floating flex-fill">
+        <input asp-for="Value5" class="form-control" placeholder="" />
+        <label>Value 5</label>
+        <small>
+            Valid if:
+            (<strong>Value 5</strong> <span class="oper">=</span> <i>Value 1</i>) <span class="oper">OR</span> ((<i>Value 2</i> <span class="oper">&lt;</span> <strong>Value 5</strong> <span class="oper">&lt;</span> <i>Value 3</i>) <span class="oper">OR NOT</span>(<strong>Value 5</strong> <span class="oper">=</span> <i>Value 4</i>))
+        </small>
+        <span class="text-danger" asp-validation-for="Value5"></span>
+    </div>
+    <div class="form-floating flex-fill">
+        <input asp-for="Value6" class="form-control" placeholder="" />
+        <label>Value 6</label>
+        <small>
+            Valid if:
+            <span class="oper">NOT</span>(<strong>Value 6</strong> <span class="oper">=</span> <i>Value 1</i>) <span class="oper">AND</span> (((<strong>Value 6</strong> <span class="oper">&lt;=</span> <i>Value 2</i>) <span class="oper">OR</span> (<strong>Value 6</strong> <span class="oper">&gt;=</span> <i>Value 3</i>)) <span class="oper">AND NOT</span>(<i>Value 5</i> <span class="oper">&lt;</span> <strong>Value 6</strong> <span class="oper">&lt;</span> <i>Value 4</i>))
+        </small>
+        <span class="text-danger" asp-validation-for="Value6"></span>
+    </div>
+    <div class="d-flex flex-row gap-4 align-items-center justify-content-center">
+        <button data-testid="btn-reset" type="button" class="btn btn-outline-secondary btn-lg btn-reset">
+            Reset
+        </button>
+        <button data-testid="btn-client" type="button" class="btn btn-outline-info btn-lg btn-validate">
+            Validate on Client
+        </button>
+        <button data-testid="btn-server" type="button" class="btn btn-outline-primary btn-lg btn-validate"
+                data-server-validate="true">
+            Submit for Validation
+        </button>
+    </div>
+</form>

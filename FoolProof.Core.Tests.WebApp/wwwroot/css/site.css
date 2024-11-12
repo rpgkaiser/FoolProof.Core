@@ -24,3 +24,7 @@ body {
 select[multiple].form-control {
     height: 10rem;
 }
+
+span.oper {
+    color: blue;
+}

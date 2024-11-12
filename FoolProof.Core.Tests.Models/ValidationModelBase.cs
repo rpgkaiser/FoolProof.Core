@@ -1,10 +1,14 @@
 ﻿namespace FoolProof.Core.Tests.Models
 {
-    public abstract class ValidationModelBase<T> where T: ContingentValidationAttribute
+    public abstract class ValidationModelBase<T> where T: ModelAwareValidationAttribute
     {
         public T GetAttribute(string property) 
         {
-            return (T)this.GetType().GetProperty(property)!.GetCustomAttributes(typeof(T), false)[0];
+            var custmAttrs = this.GetType().GetProperty(property)!.GetCustomAttributes(false);
+            return custmAttrs
+                    .Where(ca => typeof(ModelAwareValidationAttribute).IsAssignableFrom(ca.GetType()))
+                    .OfType<T>()
+                    .First();
         }
 
         public bool IsValid(string property) 
