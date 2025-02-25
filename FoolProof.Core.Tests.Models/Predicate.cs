@@ -6,6 +6,9 @@ namespace FoolProof.Core.Tests.Models
     {
         public class Model : ValidationModelBase<ModelAwareValidationAttribute>
         {
+            [ModelPredicate(ErrorMessage = "Model predicate validation failed.")]
+            public int TopModelValidation { get; set; }
+
             public int? Value1 { get; set; }
 
             public int? Value2 { get; set; }
@@ -14,14 +17,14 @@ namespace FoolProof.Core.Tests.Models
 
             public int? Value4 { get; set; }
 
-            [OrPredicate<
+            [Or<
                 EqualToAttribute, 
-                OrPredicateAttribute<
-                    AndPredicateAttribute<
+                OrAttribute<
+                    AndAttribute<
                         GreaterThanAttribute, 
                         LessThanAttribute
                     >,
-                    NotPredicateAttribute<EqualToAttribute>
+                    NotAttribute<EqualToAttribute>
                 >
              >( // Value5 == Value1 || ((Value5 > Value2 && Value5 < Value3) || !(Value5 == Value4))
                 new object[] { nameof(Value1) },
@@ -41,26 +44,48 @@ namespace FoolProof.Core.Tests.Models
             public int? Value6 { get; set; }
 
             // !(Value6 == Value1) && ((Value6 <= Value2 || Value6 >= Value3) && !(Value6 < Value5 && Value6 > Value4))
-            public class CustomPredicateAttribute: AndPredicateAttribute
+            public class CustomPredicateAttribute: AndAttribute
             {
                 public CustomPredicateAttribute()
                     : base(
-                        new NotPredicateAttribute(
+                        new NotAttribute(
                             new EqualToAttribute(nameof(Value1))
                         ),
-                        new AndPredicateAttribute(
-                            new OrPredicateAttribute(
+                        new AndAttribute(
+                            new OrAttribute(
                                 new LessThanOrEqualToAttribute(nameof(Value2)),
                                 new GreaterThanOrEqualToAttribute(nameof(Value3))
                             ),
-                            new NotPredicateAttribute(
-                                new AndPredicateAttribute(
+                            new NotAttribute(
+                                new AndAttribute(
                                     new LessThanAttribute(nameof(Value4)),
                                     new GreaterThanAttribute(nameof(Value5))
                                 )
                             )
                         )
                     ) { }
+            }
+
+            // !(Value1 == Value2) || ((Value3 <= Value4 && Value5 >= Value6) || !(Value1 < Value2 && Value2 > Value3))
+            public class ModelPredicateAttribute : OrAttribute
+            {
+                public ModelPredicateAttribute()
+                    : base(
+                        new NotAttribute(
+                            new EqualToAttribute(nameof(Value2), null, nameof(Value1))
+                        ),
+                        new OrAttribute(
+                            new AndAttribute(
+                                new LessThanOrEqualToAttribute(nameof(Value4), null, nameof(Value3)),
+                                new GreaterThanOrEqualToAttribute(nameof(Value6), null, nameof(Value5))
+                            ),
+                            new AndAttribute(
+                                new LessThanAttribute(nameof(Value2), null, nameof(Value1)),
+                                new GreaterThanAttribute(nameof(Value3), null, nameof(Value2))
+                            )
+                        )
+                    )
+                { }
             }
         }
     }

@@ -1,5 +1,3 @@
-- Use a default Enum value instead of a nullable Enum, for the `DataType` property.
-- Improve data type handling for the client-side validation.
-- Fix client-side validation logic for `In` and `NotIn` validators.
-- Use constructor-based default messages, instead of a property.
-- Improve Unit and E2E tests.
+- New validation attributes (**AndPredicateAttribute**, **OrPredicateAttribute** and **NotPredicateAttribute**) to support complex validation rules through boolean predicates.
+- Client side support for the *predicates* validators (jQuery validation only).
+- Support for model-wise validation rules (using *predicate* validators and `TargetPropertyName`).

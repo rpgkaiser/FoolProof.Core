@@ -10,13 +10,14 @@ namespace FoolProof.Core
 
 		IAttributeAdapter IValidationAttributeAdapterProvider.GetAttributeAdapter(
 			ValidationAttribute attribute,
-			IStringLocalizer stringLocalizer)
+			IStringLocalizer stringLocalizer
+        )
 		{
 			IAttributeAdapter adapter;
 			if (attribute is ModelAwareValidationAttribute modelAwareValidAttrb)
 				adapter = new FoolProofValidationAdapter(modelAwareValidAttrb, stringLocalizer);
 			else
-				adapter = GetAttributeAdapter(attribute, stringLocalizer);
+				adapter = base.GetAttributeAdapter(attribute, stringLocalizer);
 
 			return adapter;
 		}

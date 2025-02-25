@@ -34,6 +34,29 @@ namespace FoolProof.Core
             _metadata = OperatorMetadata.Get(Operator);
         }
 
+        public IsAttribute(
+            Operator @operator, 
+            string dependentProperty, 
+            string defaultMessage
+        ) : base(dependentProperty, defaultMessage ?? "{0} must be {2} {1}.")
+        {
+            Operator = @operator;
+            PassOnNull = false;
+            _metadata = OperatorMetadata.Get(Operator);
+        }
+
+        public IsAttribute(
+            Operator @operator, 
+            string dependentProperty, 
+            string defaultMessage, 
+            string targetPropName
+        ) : base(dependentProperty, defaultMessage ?? "{0} must be {2} {1}.", targetPropName)
+        {
+            Operator = @operator;
+            PassOnNull = false;
+            _metadata = OperatorMetadata.Get(Operator);
+        }
+
         public override string ClientTypeName
         {
             get { return "Is"; }

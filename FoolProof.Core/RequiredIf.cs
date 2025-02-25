@@ -15,21 +15,58 @@ namespace FoolProof.Core
 
         protected OperatorMetadata Metadata { get; private set; }
 
-		public RequiredIfAttribute(string dependentProperty, Operator @operator, object dependentValue, string defaultMessage)
-			: base(dependentProperty, defaultMessage)
-		{
-			Operator = @operator;
-			DependentValue = dependentValue;
-			Metadata = OperatorMetadata.Get(Operator);
-		}
+        public RequiredIfAttribute(
+            string dependentProperty, 
+            Operator @operator, 
+            object dependentValue
+        ) : this(dependentProperty, @operator, dependentValue, "{0} is required due to {1} being {3} {2}")
+        {}
 
-		public RequiredIfAttribute(string dependentProperty, Operator @operator, object dependentValue)
-            : this(dependentProperty, @operator, dependentValue, "{0} is required due to {1} being {3} {2}")
+        public RequiredIfAttribute(
+            string dependentProperty,
+            Operator @operator,
+            object dependentValue,
+            string defaultMessage
+        ) : base(dependentProperty, defaultMessage ?? "{0} is required due to {1} being {3} {2}")
         {
+            Operator = @operator;
+            DependentValue = dependentValue;
+            Metadata = OperatorMetadata.Get(Operator);
         }
 
-        public RequiredIfAttribute(string dependentProperty, object dependentValue)
-            : this(dependentProperty, Operator.EqualTo, dependentValue) { }
+        public RequiredIfAttribute(
+            string dependentProperty,
+            Operator @operator,
+            object dependentValue,
+            string defaultMessage,
+            string targetPropName
+        ) : base(dependentProperty, defaultMessage ?? "{0} is required due to {1} being {3} {2}", targetPropName)
+        {
+            Operator = @operator;
+            DependentValue = dependentValue;
+            Metadata = OperatorMetadata.Get(Operator);
+        }
+
+        public RequiredIfAttribute(
+            string dependentProperty, 
+            object dependentValue
+        ) : this(dependentProperty, Operator.EqualTo, dependentValue) 
+        {}
+
+        public RequiredIfAttribute(
+            string dependentProperty,
+            object dependentValue,
+            string defaultMessage
+        ) : this(dependentProperty, Operator.EqualTo, dependentValue, defaultMessage)
+        { }
+
+        public RequiredIfAttribute(
+            string dependentProperty,
+            object dependentValue,
+            string defaultMessage,
+            string targetPropName
+        ) : this(dependentProperty, Operator.EqualTo, dependentValue, defaultMessage, targetPropName)
+        { }
 
         public override string FormatErrorMessage(string name)
         {

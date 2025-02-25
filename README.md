@@ -1,8 +1,8 @@
 ## Migration to asp.net core of the [MVC Foolproof Validation](https://codeplexarchive.org/project/foolproof) library. 
 
-This library add many new validation attributes to your toolbox.
+This library add many validation attributes to your toolbox.
 
-_Operator validators:_
+**Operator validators:**
 + Is
 + EqualTo
 + NotEqualTo
@@ -11,24 +11,30 @@ _Operator validators:_
 + GreaterThanOrEqualTo
 + LessThanOrEqualTo
 
-
-*Improved required validators:*
-+ RequiredIf
-+ RequiredIfNot
-+ RequiredIfTrue
-+ RequiredIfFalse
-+ RequiredIfEmpty
-+ RequiredIfNotEmpty
-+ RequiredIfRegExMatch
-+ RequiredIfNotRegExMatch
-
-See full library documentation here: [https://codeplexarchive.org/project/foolproof](https://codeplexarchive.org/project/foolproof)
+**Improved required validators:**
++ RequiredIf              (*field* required if *dependant* satisfy condition)
++ RequiredIfNot           (*field* required if *dependant* doesn't satisfy condition)
++ RequiredIfTrue          (*field* required if *dependant* value is true)
++ RequiredIfFalse         (*field* required if *dependant* value is false)
++ RequiredIfEmpty         (*field* required if *dependant* has no value)
++ RequiredIfNotEmpty      (*field* required if *dependant* has value)
++ RequiredIfRegExMatch    (*field* required if *dependant* match regex)
++ RequiredIfNotRegExMatch (*field* required if *dependant* doesn't match regex)
++ RegularExpressionIf     (*field* must match regex if *dependant* satisfy condition)
 
 ### New features added:
 
-_New operator validators:_
-+ In
-+ NotIn
+**New operator validators:**
++ In (*field* must be in *dependant*)
++ NotIn (*field* must not be in *dependant*)
+
+**New predicate validators:** Predicate validators will allow you to create complex validation rules (logical predicates), 
+combining other validators (inlcuding the predicate ones).
++ Not(_predicate_)
++ And(_predicate1_, _predicate2_) 
++ Or(_predicate1_, _predicate2_)
+_preciate_ could be any of the existing validator, inlcuding the predicate ones, so you can recursively combine validators 
+to build any logical predicate.
 
 **_All the validators are available for client side validation as well._**
 
@@ -43,4 +49,9 @@ _New operator validators:_
 
 ## Example WebApp
 
-You can review a kind of DEMO app (the WebApp used to execute E2E tests) here: [E2E/Demo WebApp](http://rpgkaiser.github.io/FoolProof.Core "E2E/Demo WebApp URL")
+You can review a kind of DEMO app (the WebApp used to execute the E2E tests) here: [E2E/Demo WebApp](http://rpgkaiser.github.io/FoolProof.Core "E2E/Demo WebApp URL")
+
+## Model-wise validation rules
+
+One important feature is the ability to specify a _TargetPropertyName_ in the validators, so, model-wise validation rules can
+be created using the _Predicate_ validators. Take a look at the [predicate page](http://foolproofcore.tryasp.net/predicate) in the example app.

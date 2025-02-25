@@ -9,6 +9,7 @@ namespace FoolProof.Core
     public abstract class ContingentValidationAttribute : ModelAwareValidationAttribute
     {
         public string DependentProperty { get; private set; }
+
         public string DependentPropertyDisplayName { get; set; }
 
         public ContingentValidationAttribute(string dependentProperty) : this(dependentProperty, "{0} is invalid due to {1}.")
@@ -19,7 +20,13 @@ namespace FoolProof.Core
         {
             DependentProperty = dependentProperty;
         }
-        
+
+        public ContingentValidationAttribute(string dependentProperty, string defaultMessage, string targetPropertyName) 
+            : base(defaultMessage, targetPropertyName)
+        {
+            DependentProperty = dependentProperty;
+        }
+
         public override string FormatErrorMessage(string name)
         {
             return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty);
@@ -27,7 +34,7 @@ namespace FoolProof.Core
 
         public override bool IsValid(object value, object container)
         {
-            return IsValid(value, GetDependentPropertyValue(container), container);
+            return IsValid(value, GetPropertyValue(DependentProperty, container), container);
         }
 
         public abstract bool IsValid(object value, object dependentValue, object container);
@@ -37,21 +44,6 @@ namespace FoolProof.Core
 		{
 			return base.GetClientValidationParameters(modelMetadata)
 				.Union(new[] { new KeyValuePair<string, object>("DependentProperty", DependentProperty) });
-		}
-
-		private object GetDependentPropertyValue(object container)
-		{
-			var currentType = container.GetType();
-			var value = container;
-
-			foreach (string propertyName in DependentProperty.Split('.'))
-			{
-				var property = currentType.GetProperty(propertyName);
-				value = property.GetValue(value, null);
-				currentType = property.PropertyType;
-			}
-
-			return value;
 		}
 	}
 }

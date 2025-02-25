@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
@@ -9,21 +10,20 @@ using Microsoft.Extensions.Localization;
 
 namespace FoolProof.Core
 {
-	public class FoolProofValidationAdapter : AttributeAdapterBase<ModelAwareValidationAttribute>
+    public class FoolProofValidationAdapter : AttributeAdapterBase<ModelAwareValidationAttribute>
     {
         public FoolProofValidationAdapter(ModelAwareValidationAttribute attribute, IStringLocalizer stringLocalizer)
             : base(attribute, stringLocalizer) { }
 
 		public override void AddValidation(ClientModelValidationContext context)
 		{
-			if (Attribute is ContingentValidationAttribute)
+			if (Attribute is ContingentValidationAttribute contingAttr)
 			{
-				var attribute = Attribute as ContingentValidationAttribute;
-				var otherPropertyInfo = context.ModelMetadata.ContainerType.GetProperty(attribute.DependentProperty);
+				var otherPropertyInfo = context.ModelMetadata.ContainerType.GetProperty(contingAttr.DependentProperty);
 
 				var displayName = GetMetaDataDisplayName(otherPropertyInfo);
 				if (displayName != null)
-					attribute.DependentPropertyDisplayName = displayName;
+					contingAttr.DependentPropertyDisplayName = displayName;
 			}
 
 			var validName = Attribute.ClientTypeName.ToLowerInvariant();
@@ -48,32 +48,20 @@ namespace FoolProof.Core
 		}
 
 
-		private string GetAttributeDisplayName(PropertyInfo property)
+		protected virtual string GetAttributeDisplayName(PropertyInfo property)
         {
-            var atts = property.GetCustomAttributes(typeof(DisplayAttribute), true);
-
-            if (atts.Length == 0)
-                return null;
-
-            return (atts[0] as DisplayAttribute).GetName();
+            var result = property.GetCustomAttributes<DisplayAttribute>(true).FirstOrDefault()?.GetName()
+                         ?? property.GetCustomAttributes<DisplayNameAttribute>(true).FirstOrDefault()?.DisplayName;
+            return result;
         }
 
-        private string GetMetaDataDisplayName(PropertyInfo property)
+        protected virtual string GetMetaDataDisplayName(PropertyInfo property)
         {
-            var atts = property.DeclaringType.GetCustomAttributes(
-                typeof(ModelMetadataTypeAttribute), true);
+            var attrs = property.DeclaringType.GetCustomAttributes<ModelMetadataTypeAttribute>(true);
+            if (attrs.Any())
+                property = attrs.First().MetadataType.GetProperty(property.Name) ?? property;
 
-            if (atts.Length == 0)
-                return GetAttributeDisplayName(property); 
-            
-            var metaAttr = atts[0] as ModelMetadataTypeAttribute;
-            
-            var metaProperty = metaAttr.MetadataType.GetProperty(property.Name);
-            
-            if (metaProperty == null)
-                return null;
-
-            return GetAttributeDisplayName(metaProperty);
+            return GetAttributeDisplayName(property);
         }
     }
 }

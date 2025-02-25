@@ -15,6 +15,14 @@
         </span>
     </div>
 
+    <div>
+        <div>
+            Model wise validation:
+            <span class="oper">NOT</span> (<i>Value 1</i> <span class="oper">=</span> <i>Value 2</i>) <span class="oper">OR</span> (<i>Value 3</i> <span class="oper">&lt;=</span> <i>Value 4</i> <span class="oper">AND</span> <i>Value 5</i> <span class="oper">&gt;=</span> <i>Value 6</i>) <span class="oper">OR </span>(<i>Value 1</i> <span class="oper">&lt;</span> <i>Value 2</i> <span class="oper">AND</span> <i>Value 2</i> <span class="oper">&gt;</span> <i>Value 3</i>)
+        </div>
+        <input type="hidden" asp-for="TopModelValidation" />
+        <span class="text-danger" asp-validation-for="TopModelValidation"></span>
+    </div>
     <div class="d-flex flex-wrap gap-4 align-items-center justify-content-between">
         <div class="form-floating flex-fill">
             <input asp-for="Value1" class="form-control" placeholder="" />

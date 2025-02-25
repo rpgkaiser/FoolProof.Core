@@ -114,7 +114,7 @@ namespace FoolProof.Core
                     {
                         ErrorMessage = "a match to",
                         IsValid = (value, dependentValue) => {
-                            return Regex.Match((value ?? "").ToString(), dependentValue.ToString()).Success;
+                            return Regex.IsMatch((value ?? "").ToString(), dependentValue.ToString());
                         }
                     }
                 },
@@ -123,7 +123,7 @@ namespace FoolProof.Core
                     {
                         ErrorMessage = "not a match to",
                         IsValid = (value, dependentValue) => {
-                            return !Regex.Match((value ?? "").ToString(), dependentValue.ToString()).Success;
+                            return !Regex.IsMatch((value ?? "").ToString(), dependentValue.ToString());
                         }
                     }
                 },

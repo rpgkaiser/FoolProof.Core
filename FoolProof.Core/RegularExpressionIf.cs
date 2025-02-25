@@ -8,15 +8,45 @@ namespace FoolProof.Core
     {
         public string Pattern { get; set; }
 
-        public RegularExpressionIfAttribute(string pattern, string dependentProperty, Operator @operator, object dependentValue)
-            : base(dependentProperty, @operator, dependentValue, "{0} must be in the format of {3} due to {1} being {4} {2}")
+        public RegularExpressionIfAttribute(
+            string pattern, 
+            string dependentProperty, 
+            Operator @operator, 
+            object dependentValue
+        ) : base(dependentProperty, @operator, dependentValue, "{0} must be in the format of {3} due to {1} being {4} {2}")
         {
             Pattern = pattern;
             DataType = ClientDataType.String;
         }
 
-        public RegularExpressionIfAttribute(string pattern, string dependentProperty, object dependentValue)
-            : this(pattern, dependentProperty, Operator.EqualTo, dependentValue) { }
+        public RegularExpressionIfAttribute(
+            string pattern,
+            string dependentProperty,
+            Operator @operator,
+            object dependentValue,
+            string defaultMessage,
+            string targetPropName
+        ) : base(dependentProperty, @operator, dependentValue, defaultMessage ?? "{0} must be in the format of {3} due to {1} being {4} {2}", targetPropName)
+        {
+            Pattern = pattern;
+            DataType = ClientDataType.String;
+        }
+
+        public RegularExpressionIfAttribute(
+            string pattern, 
+            string dependentProperty, 
+            object dependentValue
+        ) : this(pattern, dependentProperty, Operator.EqualTo, dependentValue) 
+        { }
+
+        public RegularExpressionIfAttribute(
+            string pattern, 
+            string dependentProperty, 
+            object dependentValue,
+            string defaultMessage,
+            string targetPropName
+        ) : this(pattern, dependentProperty, Operator.EqualTo, dependentValue, defaultMessage, targetPropName) 
+        { }
 
         public override bool IsValid(object value, object dependentValue, object container)
         {

@@ -8,6 +8,13 @@ FoolProofCore.registerValidators = function(jQuery) {
         throw "You must load jquery library before this.";
 
     jQuery.validator.addMethod("is", function(value, element, params) {
+        var targPropName = params["targetpropertyname"];
+        if (targPropName) {
+            var propId = FoolProofCore.getId(element, targPropName);
+            element = document.getElementById(propId);
+            value = jQuery(element).val();
+        }
+
         var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
         var operator = params["operator"];
         var passOnNull = params["passonnull"];
@@ -18,6 +25,13 @@ FoolProofCore.registerValidators = function(jQuery) {
     });
 
     jQuery.validator.addMethod("requiredif", function(value, element, params) {
+        var targPropName = params["targetpropertyname"];
+        if (targPropName) {
+            var propId = FoolProofCore.getId(element, targPropName);
+            element = document.getElementById(propId);
+            value = jQuery(element).val();
+        }
+
         var dependentProperty = FoolProofCore.getName(element, params["dependentproperty"]);
         var dependentTestValue = params["dependentvalue"];
         var operator = params["operator"];
@@ -54,6 +68,13 @@ FoolProofCore.registerValidators = function(jQuery) {
     });
 
     jQuery.validator.addMethod("requiredifempty", function(value, element, params) {
+        var targPropName = params["targetpropertyname"];
+        if (targPropName) {
+            var propId = FoolProofCore.getId(element, targPropName);
+            element = document.getElementById(propId);
+            value = jQuery(element).val();
+        }
+
         var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
         var dependentValue = jQuery(document.getElementById(dependentProperty)).val();
 
@@ -68,6 +89,13 @@ FoolProofCore.registerValidators = function(jQuery) {
     });
 
     jQuery.validator.addMethod("requiredifnotempty", function(value, element, params) {
+        var targPropName = params["targetpropertyname"];
+        if (targPropName) {
+            var propId = FoolProofCore.getId(element, targPropName);
+            element = document.getElementById(propId);
+            value = jQuery(element).val();
+        }
+
         var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
         var dependentValue = jQuery("#" + dependentProperty).val();
 
@@ -81,7 +109,7 @@ FoolProofCore.registerValidators = function(jQuery) {
         return false;
     });
 
-    jQuery.validator.addMethod("predicate", function(value, element, params) {
+    jQuery.validator.addMethod("predicate", function (value, element, params) {
         var logicalOper = params["logicaloperator"];
         if (!logicalOper) {
             var methodName = params["method"].toLowerCase();

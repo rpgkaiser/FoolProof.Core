@@ -189,11 +189,27 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 };
 
 FoolProofCore.getId = function (element, dependentPropety) {
-    var pos = element.id.lastIndexOf("_") + 1;
-    return element.id.substr(0, pos) + dependentPropety.replace(/\./g, "_");
+    var prefixAttr = element.attributes.getNamedItem("data-model-prefix");
+    var prefix = prefixAttr ? prefixAttr.value : null;
+    if (!prefix) {
+        var pos = element.id.lastIndexOf("_") + 1;
+        prefix = element.id.substr(0, pos)
+    }
+    else if (!prefix.endsWith("_"))
+        prefix += "_";
+
+    return prefix + dependentPropety.replace(/\./g, "_");
 };
 
 FoolProofCore.getName = function (element, dependentPropety) {
-    var pos = element.name.lastIndexOf(".") + 1;
-    return element.name.substr(0, pos) + dependentPropety;
+    var prefixAttr = element.attributes.getNamedItem("data-model-prefix");
+    var prefix = prefixAttr ? prefixAttr.value : null;
+    if (!prefix) {
+        var pos = element.id.lastIndexOf(".") + 1;
+        prefix = element.id.substr(0, pos)
+    }
+    else if (!prefix.endsWith("_"))
+        prefix += ".";
+
+    return prefix + dependentPropety;
 };
