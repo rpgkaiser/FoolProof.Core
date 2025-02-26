@@ -13,17 +13,7 @@
 
   <ItemGroup>
     <Folder Include="Helpers\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="wwwroot\lib\foolproof-validation\mvcfoolproof.core.js">
-      <PackagePath>contentFiles\Scripts\</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-    <Content Update="wwwroot\lib\foolproof-validation\mvcfoolproof.jquery.validation.js">
-      <PackagePath>contentFiles\Scripts\</PackagePath>
-      <Pack>true</Pack>
-    </Content>
+    <Folder Include="wwwroot\lib\foolproof-validation\" />
   </ItemGroup>
 
 </Project>

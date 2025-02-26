@@ -3,11 +3,11 @@
 if (!FoolProofCore)
     throw "You must load the mvcfoolproof.core.js script before this.";
 
-FoolProofCore.registerValidators = function(jQuery) {
+FoolProofCore.registerValidators = function (jQuery) {
     if (!jQuery)
         throw "You must load jquery library before this.";
 
-    jQuery.validator.addMethod("is", function(value, element, params) {
+    jQuery.validator.addMethod("is", function (value, element, params) {
         var targPropName = params["targetpropertyname"];
         if (targPropName) {
             var propId = FoolProofCore.getId(element, targPropName);
@@ -24,7 +24,7 @@ FoolProofCore.registerValidators = function(jQuery) {
         return FoolProofCore.is(value, operator, dependentValue, passOnNull, dataType);
     });
 
-    jQuery.validator.addMethod("requiredif", function(value, element, params) {
+    jQuery.validator.addMethod("requiredif", function (value, element, params) {
         var targPropName = params["targetpropertyname"];
         if (targPropName) {
             var propId = FoolProofCore.getId(element, targPropName);
@@ -67,7 +67,7 @@ FoolProofCore.registerValidators = function(jQuery) {
         return false;
     });
 
-    jQuery.validator.addMethod("requiredifempty", function(value, element, params) {
+    jQuery.validator.addMethod("requiredifempty", function (value, element, params) {
         var targPropName = params["targetpropertyname"];
         if (targPropName) {
             var propId = FoolProofCore.getId(element, targPropName);
@@ -88,7 +88,7 @@ FoolProofCore.registerValidators = function(jQuery) {
         return false;
     });
 
-    jQuery.validator.addMethod("requiredifnotempty", function(value, element, params) {
+    jQuery.validator.addMethod("requiredifnotempty", function (value, element, params) {
         var targPropName = params["targetpropertyname"];
         if (targPropName) {
             var propId = FoolProofCore.getId(element, targPropName);

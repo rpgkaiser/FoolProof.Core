@@ -9,11 +9,11 @@ namespace FoolProof.Core
     public enum LogicalOperator
     {
         And,
-        Or, 
+        Or,
         Not
     }
 
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
     public abstract class PredicateAttribute : ModelAwareValidationAttribute
     {
         protected PredicateAttribute(

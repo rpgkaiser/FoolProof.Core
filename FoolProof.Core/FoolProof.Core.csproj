@@ -18,8 +18,8 @@
 	</PropertyGroup>
 
 	<Target Name="PackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec">
-		<ReadLinesFromFile File="./Build/Release-Notes.txt" >
-			<Output TaskParameter="Lines" ItemName="ReleaseNoteLines"/>
+		<ReadLinesFromFile File="./Build/Release-Notes.txt">
+			<Output TaskParameter="Lines" ItemName="ReleaseNoteLines" />
 		</ReadLinesFromFile>
 		<PropertyGroup>
 			<PackageReleaseNotes>
@@ -47,5 +47,9 @@
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="XCOPY /Y &quot;$(ProjectDir)Scripts\*.js&quot; &quot;$(ProjectDir)..\FoolProof.Core.Tests.WebApp\wwwroot\lib\foolproof-validation\&quot;" />
+    </Target>
 	
 </Project>

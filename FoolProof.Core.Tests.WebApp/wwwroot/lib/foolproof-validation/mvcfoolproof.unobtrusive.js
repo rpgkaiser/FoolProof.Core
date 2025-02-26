@@ -13,7 +13,7 @@ var setValidationValues = function(options, ruleName, value) {
     }
 };
 
-var $Unob = $.validator.unobtrusive;
+var $Unob = jQuery.validator.unobtrusive;
 
 $Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull", "datatype"], function(options) {
     setValidationValues(options, "is", {
@@ -26,15 +26,14 @@ $Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull", "dataty
 });
 
 $Unob.adapters.add("requiredif", ["dependentproperty", "dependentvalue", "operator", "pattern", "datatype"], function(options) {
-    var value = {
+    setValidationValues(options, "requiredif", {
         targetPropertyName: options.params.targetPropertyName,
         dependentproperty: options.params.dependentproperty,
         dependentvalue: options.params.dependentvalue,
         operator: options.params.operator,
         pattern: options.params.pattern,
         datatype: options.params.datatype
-    };
-    setValidationValues(options, "requiredif", value);
+    });
 });
 
 $Unob.adapters.add("requiredifempty", ["dependentproperty"], function(options) {
@@ -59,3 +58,27 @@ $Unob.adapters.add("predicate", ["logicalOperator", "leftPart", "rightPart"], fu
         rightpart: options.params.rightPart ? JSON.parse(options.params.rightPart) : null
     });
 });
+
+//Hack for model-wise validation to work:
+//jQuery unobtrusive validation expects a name field for each validable element.
+(function ($) {
+    function elementsHack() {
+        $("[data-model-validation=true]").each(function () {
+            this.name = this.name || $(this).attr("name");
+            this.form = $(this).closest("form")[0];
+        });
+    }
+
+    new MutationObserver(function(mutations) {
+        elementsHack();
+    }).observe(document, { childList: true });
+
+    elementsHack();
+
+    //By default jQuery validation only validate "editable" elements.
+    var prevElements = $.validator.prototype.elements;
+    $.validator.prototype.elements = function () {
+        var $defElems = prevElements.call(this);
+        return $defElems.add($("[data-model-validation=true]", this.currentForm));
+    };
+})(jQuery);

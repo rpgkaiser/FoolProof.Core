@@ -4,11 +4,9 @@ namespace FoolProof.Core.Tests.Models
 {
     public class Predicate
     {
+        [ModelPredicate(ErrorMessage = "Model predicate validation failed.")]
         public class Model : ValidationModelBase<ModelAwareValidationAttribute>
         {
-            [ModelPredicate(ErrorMessage = "Model predicate validation failed.")]
-            public int TopModelValidation { get; set; }
-
             public int? Value1 { get; set; }
 
             public int? Value2 { get; set; }
