@@ -35,19 +35,6 @@ namespace FoolProof.Core
         }
 
         public RequiredIfAttribute(
-            string dependentProperty,
-            Operator @operator,
-            object dependentValue,
-            string defaultMessage,
-            string targetPropName
-        ) : base(dependentProperty, defaultMessage ?? "{0} is required due to {1} being {3} {2}", targetPropName)
-        {
-            Operator = @operator;
-            DependentValue = dependentValue;
-            Metadata = OperatorMetadata.Get(Operator);
-        }
-
-        public RequiredIfAttribute(
             string dependentProperty, 
             object dependentValue
         ) : this(dependentProperty, Operator.EqualTo, dependentValue) 
@@ -58,14 +45,6 @@ namespace FoolProof.Core
             object dependentValue,
             string defaultMessage
         ) : this(dependentProperty, Operator.EqualTo, dependentValue, defaultMessage)
-        { }
-
-        public RequiredIfAttribute(
-            string dependentProperty,
-            object dependentValue,
-            string defaultMessage,
-            string targetPropName
-        ) : this(dependentProperty, Operator.EqualTo, dependentValue, defaultMessage, targetPropName)
         { }
 
         public override string FormatErrorMessage(string name)

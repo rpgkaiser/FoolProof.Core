@@ -17,15 +17,5 @@ namespace FoolProof.Core
         {
             DataType = ClientDataType.String;
         }
-
-        public RequiredIfNotRegExMatchAttribute(
-            string dependentValue, 
-            string pattern,
-            string defaultMessage,
-            string targetPropName
-        ) : base(dependentValue, Operator.NotRegExMatch, pattern, defaultMessage, targetPropName)
-        {
-            DataType = ClientDataType.String;
-        }
     }
 }

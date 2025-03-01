@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace FoolProof.Core
 {
@@ -17,12 +18,6 @@ namespace FoolProof.Core
 		{
 		}
 
-        protected ModelAwareValidationAttribute(string defaultMessage, string targetPropertyName) 
-            : base(defaultMessage ?? "{0} is invalid.")
-        {
-            TargetPropertyName = targetPropertyName;
-        }
-
         public abstract bool IsValid(object value, object container);
 
         public virtual string ClientTypeName
@@ -30,9 +25,12 @@ namespace FoolProof.Core
             get { return this.GetType().Name.Replace("Attribute", ""); }
         }
 
-        public virtual string TargetPropertyName { get; set; }
+        public virtual Dictionary<string, object> ClientValidationParameters(ClientModelValidationContext validationContext)
+        {
+            return ClientValidationParameters(validationContext.ModelMetadata);
+        }
 
-        public Dictionary<string, object> ClientValidationParameters(ModelMetadata modelMetadata)
+        public virtual Dictionary<string, object> ClientValidationParameters(ModelMetadata modelMetadata)
         {
             return GetClientValidationParameters(modelMetadata)
                    .ToDictionary(kv => kv.Key.ToLower(), kv => kv.Value);
@@ -41,9 +39,6 @@ namespace FoolProof.Core
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (!string.IsNullOrWhiteSpace(TargetPropertyName))
-                value = GetPropertyValue(TargetPropertyName, validationContext.ObjectInstance);
-
             return IsValid(value, validationContext.ObjectInstance) 
                     ? ValidationResult.Success 
                     : new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
@@ -51,12 +46,7 @@ namespace FoolProof.Core
 
         protected virtual IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            var clientParams = new List<KeyValuePair<string, object>>();
-            
-            if (!string.IsNullOrWhiteSpace(TargetPropertyName))
-                clientParams.Add(new KeyValuePair<string, object>("TargetPropertyName", TargetPropertyName));
-
-            return clientParams;
+            return Enumerable.Empty<KeyValuePair<string, object>>();
         }
 
         protected virtual object GetPropertyValue(string propertyName, object container)

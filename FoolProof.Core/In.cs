@@ -10,11 +10,5 @@ namespace FoolProof.Core
             string dependentProperty, 
             string defaultMessage
         ) : base(Operator.In, dependentProperty, defaultMessage) { }
-
-        public InAttribute(
-            string dependentProperty,
-            string defaultMessage,
-            string targetPropName
-        ) : base(Operator.In, dependentProperty, defaultMessage, targetPropName) { }
     }
 }

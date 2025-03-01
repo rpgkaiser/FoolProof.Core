@@ -19,7 +19,7 @@
     <div>
         <div>
             Model wise validation:
-            <span class="oper">NOT</span> (<i>Value 1</i> <span class="oper">=</span> <i>Value 2</i>) <span class="oper">OR</span> (<i>Value 3</i> <span class="oper">&lt;=</span> <i>Value 4</i> <span class="oper">AND</span> <i>Value 5</i> <span class="oper">&gt;=</span> <i>Value 6</i>) <span class="oper">OR </span>(<i>Value 1</i> <span class="oper">&lt;</span> <i>Value 2</i> <span class="oper">AND</span> <i>Value 2</i> <span class="oper">&gt;</span> <i>Value 3</i>)
+            <span class="oper">NOT</span> (<i>Value 1</i> <span class="oper">range</span> [<i>10</i> - <i>20</i>]) <span class="oper">OR</span> (<i>Value 3</i> <span class="oper">&lt;=</span> <i>Value 4</i> <span class="oper">AND</span> <i>Value 5</i> <span class="oper">&gt;=</span> <i>Value 6</i>) <span class="oper">OR </span>(<i>Value 1</i> <span class="oper">&lt;</span> <i>Value 2</i> <span class="oper">AND</span> <i>Value 2</i> <span class="oper">&gt;</span> <i>Value 3</i>)
         </div>
         @Html.ModelValidation(htmlAttributes: new { @class = "text-danger"})
     </div>

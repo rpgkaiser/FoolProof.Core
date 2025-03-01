@@ -16,14 +16,5 @@ namespace FoolProof.Core
         {
             DataType = ClientDataType.Bool;
         }
-
-        public RequiredIfTrueAttribute(
-            string dependentProperty, 
-            string defaultMessage, 
-            string targetPropName
-        ) : base(dependentProperty, Operator.EqualTo, true, defaultMessage, targetPropName)
-        {
-            DataType = ClientDataType.Bool;
-        }
     }
 }

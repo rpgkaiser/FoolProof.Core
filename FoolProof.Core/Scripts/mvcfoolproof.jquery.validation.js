@@ -8,13 +8,6 @@ FoolProofCore.registerValidators = function (jQuery) {
         throw "You must load jquery library before this.";
 
     jQuery.validator.addMethod("is", function (value, element, params) {
-        var targPropName = params["targetpropertyname"];
-        if (targPropName) {
-            var propId = FoolProofCore.getId(element, targPropName);
-            element = document.getElementById(propId);
-            value = jQuery(element).val();
-        }
-
         var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
         var operator = params["operator"];
         var passOnNull = params["passonnull"];
@@ -25,13 +18,6 @@ FoolProofCore.registerValidators = function (jQuery) {
     });
 
     jQuery.validator.addMethod("requiredif", function (value, element, params) {
-        var targPropName = params["targetpropertyname"];
-        if (targPropName) {
-            var propId = FoolProofCore.getId(element, targPropName);
-            element = document.getElementById(propId);
-            value = jQuery(element).val();
-        }
-
         var dependentProperty = FoolProofCore.getName(element, params["dependentproperty"]);
         var dependentTestValue = params["dependentvalue"];
         var operator = params["operator"];
@@ -68,13 +54,6 @@ FoolProofCore.registerValidators = function (jQuery) {
     });
 
     jQuery.validator.addMethod("requiredifempty", function (value, element, params) {
-        var targPropName = params["targetpropertyname"];
-        if (targPropName) {
-            var propId = FoolProofCore.getId(element, targPropName);
-            element = document.getElementById(propId);
-            value = jQuery(element).val();
-        }
-
         var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
         var dependentValue = jQuery(document.getElementById(dependentProperty)).val();
 
@@ -89,13 +68,6 @@ FoolProofCore.registerValidators = function (jQuery) {
     });
 
     jQuery.validator.addMethod("requiredifnotempty", function (value, element, params) {
-        var targPropName = params["targetpropertyname"];
-        if (targPropName) {
-            var propId = FoolProofCore.getId(element, targPropName);
-            element = document.getElementById(propId);
-            value = jQuery(element).val();
-        }
-
         var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
         var dependentValue = jQuery("#" + dependentProperty).val();
 
@@ -114,23 +86,61 @@ FoolProofCore.registerValidators = function (jQuery) {
         if (!logicalOper) {
             var methodName = params["method"].toLowerCase();
             var methodParams = params["params"];
-            return jQuery.validator.methods[methodName](value, element, methodParams);
+            return jQuery.validator.methods[methodName].apply(this, [value, element, methodParams]);
         }
 
-        var leftPart = params["leftpart"];
-        var rightPart = params["rightpart"];
+        var operands = params["operands"];
+        if (!Array.isArray(operands))
+            operands = [operand];
 
+        var validMethod = jQuery.validator.methods.predicate;
+        var self = this;
         switch (logicalOper.toLowerCase()) {
             case "not":
-                var validMethod = jQuery.validator.methods.predicate;
-                return !validMethod(value, element, leftPart);
+                var operandValid = validMethod.apply(self, [value, element, operands[0]]);
+                return !operandValid;
             case "and":
-                var validMethod = jQuery.validator.methods.predicate;
-                return validMethod(value, element, leftPart) && validMethod(value, element, rightPart);
+                var falseOperand = operands.find(function (operand) { return !validMethod.apply(self, [value, element, operand]) });
+                return falseOperand == undefined;
             case "or":
-                var validMethod = jQuery.validator.methods.predicate;
-                return validMethod(value, element, leftPart) || validMethod(value, element, rightPart);
+                var trueOperand = operands.find(function (operand) { return validMethod.apply(self, [value, element, operand]) });
+                return trueOperand != undefined;
         }
+    });
+
+    jQuery.validator.addMethod("isvalid", function (value, element, params) {
+        function prepareParams(methodName, methodParams) {
+            if (methodName == 'range' || methodName == 'rangelength') {
+                if (methodParams['min'])
+                    methodParams['min'] = methodParams[0] = Number(methodParams['min']);
+                if (methodParams['max'])
+                    methodParams['max'] = methodParams[1] = Number(methodParams['max']);
+            }
+            else {
+                var numMethods = ["length", "minlength", "maxlength", "min", "max", "step"];
+                if (numMethods.indexOf(methodName) != -1)
+                    for (var i = 0; i < numMethods.length; i++) {
+                        if (methodParams[numMethods[i]])
+                            methodParams[numMethods[i]] = Number(methodParams[numMethods[i]]);
+                    }
+            }
+        }
+
+        var modelPropName = params["modelpropertyname"];
+        if (modelPropName) {
+            var elemId = FoolProofCore.getId(element, modelPropName);
+            element = document.getElementById(elemId);
+            value = jQuery(element).val();
+        }
+
+        var validationParams = params["validationparams"];
+        var methodName = validationParams["method"].toLowerCase();
+        var validMethod = jQuery.validator.methods[methodName];
+
+        var methodParams = validationParams["params"];
+        prepareParams(methodName, methodParams);
+
+        return validMethod.apply(this, [value, element, methodParams]);
     });
 };
 

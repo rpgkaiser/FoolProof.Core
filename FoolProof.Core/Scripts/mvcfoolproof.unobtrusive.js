@@ -17,7 +17,6 @@ var $Unob = jQuery.validator.unobtrusive;
 
 $Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull", "datatype"], function(options) {
     setValidationValues(options, "is", {
-        targetPropertyName: options.params.targetPropertyName,
         dependentproperty: options.params.dependentproperty,
         operator: options.params.operator,
         passonnull: options.params.passonnull,
@@ -27,7 +26,6 @@ $Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull", "dataty
 
 $Unob.adapters.add("requiredif", ["dependentproperty", "dependentvalue", "operator", "pattern", "datatype"], function(options) {
     setValidationValues(options, "requiredif", {
-        targetPropertyName: options.params.targetPropertyName,
         dependentproperty: options.params.dependentproperty,
         dependentvalue: options.params.dependentvalue,
         operator: options.params.operator,
@@ -38,24 +36,28 @@ $Unob.adapters.add("requiredif", ["dependentproperty", "dependentvalue", "operat
 
 $Unob.adapters.add("requiredifempty", ["dependentproperty"], function(options) {
     setValidationValues(options, "requiredifempty", {
-        targetPropertyName: options.params.targetPropertyName,
         dependentproperty: options.params.dependentproperty
     });
 });
 
 $Unob.adapters.add("requiredifnotempty", ["dependentproperty"], function(options) {
     setValidationValues(options, "requiredifnotempty", {
-        targetPropertyName: options.params.targetPropertyName,
         dependentproperty: options.params.dependentproperty
     });
 });
 
-$Unob.adapters.add("predicate", ["logicalOperator", "leftPart", "rightPart"], function(options) {
+$Unob.adapters.add("predicate", ["logicalOperator", "operands"], function(options) {
     setValidationValues(options, "predicate", {
         targetPropertyName: options.params.targetPropertyName,
         logicaloperator: options.params.logicalOperator,
-        leftpart: JSON.parse(options.params.leftPart),
-        rightpart: options.params.rightPart ? JSON.parse(options.params.rightPart) : null
+        operands: JSON.parse(options.params.operands)
+    });
+});
+
+$Unob.adapters.add("isvalid", ["modelPropertyName", "validationParams"], function(options) {
+    setValidationValues(options, "isvalid", {
+        modelPropertyName: options.params.modelPropertyName,
+        validationParams: JSON.parse(options.params.validationParams)
     });
 });
 

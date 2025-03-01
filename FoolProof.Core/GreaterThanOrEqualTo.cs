@@ -10,11 +10,5 @@ namespace FoolProof.Core
             string dependentProperty, 
             string defaultMessage
         ) : base(Operator.GreaterThanOrEqualTo, dependentProperty, defaultMessage) { }
-
-        public GreaterThanOrEqualToAttribute(
-            string dependentProperty,
-            string defaultMessage,
-            string targetPropName
-        ) : base(Operator.GreaterThanOrEqualTo, dependentProperty, defaultMessage, targetPropName) { }
     }
 }

@@ -10,11 +10,5 @@ namespace FoolProof.Core
             string dependentProperty, 
             string defultMessage
         ) : base(Operator.NotEqualTo, dependentProperty, defultMessage) { }
-
-        public NotEqualToAttribute(
-            string dependentProperty, 
-            string defultMessage, 
-            string targetPropName
-        ) : base(Operator.NotEqualTo, dependentProperty, defultMessage, targetPropName) { }
     }
 }

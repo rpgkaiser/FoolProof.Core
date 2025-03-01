@@ -26,8 +26,10 @@ namespace FoolProof.Core
 
         private OperatorMetadata _metadata;
 
-        public IsAttribute(Operator @operator, string dependentProperty)
-            : base(dependentProperty, "{0} must be {2} {1}.")
+        public IsAttribute(
+            Operator @operator, 
+            string dependentProperty
+        ) : base(dependentProperty, "{0} must be {2} {1}.")
         {
             Operator = @operator;
             PassOnNull = false;
@@ -39,18 +41,6 @@ namespace FoolProof.Core
             string dependentProperty, 
             string defaultMessage
         ) : base(dependentProperty, defaultMessage ?? "{0} must be {2} {1}.")
-        {
-            Operator = @operator;
-            PassOnNull = false;
-            _metadata = OperatorMetadata.Get(Operator);
-        }
-
-        public IsAttribute(
-            Operator @operator, 
-            string dependentProperty, 
-            string defaultMessage, 
-            string targetPropName
-        ) : base(dependentProperty, defaultMessage ?? "{0} must be {2} {1}.", targetPropName)
         {
             Operator = @operator;
             PassOnNull = false;

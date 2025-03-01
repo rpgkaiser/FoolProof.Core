@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoolProof.Core.Tests.Models
 {
@@ -15,10 +16,13 @@ namespace FoolProof.Core.Tests.Models
 
             public int? Value4 { get; set; }
 
-            [Or<
+            [Or
+            <
                 EqualToAttribute, 
-                OrAttribute<
-                    AndAttribute<
+                OrAttribute
+                <
+                    AndAttribute
+                    <
                         GreaterThanAttribute, 
                         LessThanAttribute
                     >,
@@ -70,16 +74,31 @@ namespace FoolProof.Core.Tests.Models
                 public ModelPredicateAttribute()
                     : base(
                         new NotAttribute(
-                            new EqualToAttribute(nameof(Value2), null, nameof(Value1))
+                            new IsValidAttribute(
+                                nameof(Value1),
+                                new RangeAttribute(10, 20)
+                            )
                         ),
                         new OrAttribute(
                             new AndAttribute(
-                                new LessThanOrEqualToAttribute(nameof(Value4), null, nameof(Value3)),
-                                new GreaterThanOrEqualToAttribute(nameof(Value6), null, nameof(Value5))
+                                new IsValidAttribute(
+                                    nameof(Value3),
+                                    new LessThanOrEqualToAttribute(nameof(Value4))
+                                ),
+                                new IsValidAttribute(
+                                    nameof(Value5),
+                                    new GreaterThanOrEqualToAttribute(nameof(Value6))
+                                )
                             ),
                             new AndAttribute(
-                                new LessThanAttribute(nameof(Value2), null, nameof(Value1)),
-                                new GreaterThanAttribute(nameof(Value3), null, nameof(Value2))
+                                new IsValidAttribute(
+                                    nameof(Value1),
+                                    new LessThanAttribute(nameof(Value2))
+                                ),
+                                new IsValidAttribute(
+                                    nameof(Value2),
+                                    new GreaterThanAttribute(nameof(Value3))
+                                )
                             )
                         )
                     )

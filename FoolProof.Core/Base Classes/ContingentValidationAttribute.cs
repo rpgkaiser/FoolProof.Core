@@ -21,12 +21,6 @@ namespace FoolProof.Core
             DependentProperty = dependentProperty;
         }
 
-        public ContingentValidationAttribute(string dependentProperty, string defaultMessage, string targetPropertyName) 
-            : base(defaultMessage, targetPropertyName)
-        {
-            DependentProperty = dependentProperty;
-        }
-
         public override string FormatErrorMessage(string name)
         {
             return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty);
