@@ -17,7 +17,8 @@ namespace FoolProof.Core
 
 		public override void AddValidation(ClientModelValidationContext context)
 		{
-			if (Attribute is ContingentValidationAttribute contingAttr)
+			if (Attribute is ContingentValidationAttribute contingAttr 
+                && !string.IsNullOrWhiteSpace(contingAttr.DependentProperty))
 			{
 				var otherPropertyInfo = context.ModelMetadata.ContainerType.GetProperty(contingAttr.DependentProperty);
 

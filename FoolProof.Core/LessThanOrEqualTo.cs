@@ -11,4 +11,15 @@ namespace FoolProof.Core
             string defaultMessage
         ) : base(Operator.LessThanOrEqualTo, dependentProperty, defaultMessage) { }
     }
+
+    public class LessThanOrEqualToAttribute<T> : IsAttribute<T>
+    {
+        public LessThanOrEqualToAttribute(T dependentValue)
+            : base(Operator.LessThanOrEqualTo, dependentValue) { }
+
+        public LessThanOrEqualToAttribute(
+            T dependentValue,
+            string defaultMessage
+        ) : base(Operator.LessThanOrEqualTo, dependentValue, defaultMessage) { }
+    }
 }

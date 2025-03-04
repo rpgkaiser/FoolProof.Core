@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FoolProof.Core
@@ -28,7 +30,8 @@ namespace FoolProof.Core
 
         public override bool IsValid(object value, object container)
         {
-            return IsValid(value, GetPropertyValue(DependentProperty, container), container);
+            var dependentValue = GetPropertyValue(DependentProperty, container);
+            return IsValid(value, dependentValue, container);
         }
 
         public abstract bool IsValid(object value, object dependentValue, object container);
@@ -36,8 +39,10 @@ namespace FoolProof.Core
 
 		protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
 		{
-			return base.GetClientValidationParameters(modelMetadata)
-				.Union(new[] { new KeyValuePair<string, object>("DependentProperty", DependentProperty) });
+            var clientParams = new Dictionary<string, object>() {
+                { "DependentProperty", DependentProperty }
+            };  
+            return base.GetClientValidationParameters(modelMetadata).Union(clientParams);
 		}
 	}
 }

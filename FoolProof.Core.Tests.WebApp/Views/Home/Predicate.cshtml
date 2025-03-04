@@ -19,49 +19,102 @@
     <div>
         <div>
             Model wise validation:
-            <span class="oper">NOT</span> (<i>Value 1</i> <span class="oper">range</span> [<i>10</i> - <i>20</i>]) <span class="oper">OR</span> (<i>Value 3</i> <span class="oper">&lt;=</span> <i>Value 4</i> <span class="oper">AND</span> <i>Value 5</i> <span class="oper">&gt;=</span> <i>Value 6</i>) <span class="oper">OR </span>(<i>Value 1</i> <span class="oper">&lt;</span> <i>Value 2</i> <span class="oper">AND</span> <i>Value 2</i> <span class="oper">&gt;</span> <i>Value 3</i>)
+            (<strong>3</strong> <span class="oper"><=</span> <i>FirstName.Length</i> <span class="oper"><=</span> <strong>50</strong> 
+             <span class="oper">Or</span> 
+             <strong>5</strong> <span class="oper"><=</span> <i>LastName.Length</i> <span class="oper"><=</span> <strong>20</strong>)
+            && (<i>Email</i> <strong>Is Valid</strong>)
+            && (<i>Age</i> <span class="oper">In Range</span> <strong>[5, 120]</strong>)
+            && (<i>Age</i> <span class="oper">&gt;</span> <i>Years Of Study</i>)
         </div>
         @Html.ModelValidation(htmlAttributes: new { @class = "text-danger"})
     </div>
     <div class="d-flex flex-wrap gap-4 align-items-center justify-content-between">
         <div class="form-floating flex-fill">
-            <input asp-for="Value1" class="form-control" placeholder="" />
-            <label>Value 1</label>
-            <span class="text-danger" asp-validation-for="Value1"></span>
+            <input asp-for="FirstName" class="form-control" placeholder="" />
+            <label>First Name</label>
+            <span class="text-danger" asp-validation-for="FirstName"></span>
         </div>
         <div class="form-floating flex-fill">
-            <input asp-for="Value2" class="form-control" placeholder="" />
-            <label>Value 2</label>
-            <span class="text-danger" asp-validation-for="Value2"></span>
+            <input asp-for="LastName" class="form-control" placeholder="" />
+            <label>Last Name</label>
+            <span class="text-danger" asp-validation-for="LastName"></span>
         </div>
         <div class="form-floating flex-fill">
-            <input asp-for="Value3" class="form-control" placeholder="" />
-            <label>Value 3</label>
-            <span class="text-danger" asp-validation-for="Value3"></span>
+            <input asp-for="Email" class="form-control" placeholder="" />
+            <label>Email</label>
+            <span class="text-danger" asp-validation-for="Email"></span>
         </div>
         <div class="form-floating flex-fill">
-            <input asp-for="Value4" class="form-control" placeholder="" />
-            <label>Value 4</label>
-            <span class="text-danger" asp-validation-for="Value4"></span>
+            <input asp-for="Age" class="form-control" placeholder="" />
+            <label>Age</label>
+            <span class="text-danger" asp-validation-for="Age"></span>
         </div>
     </div>
     <div class="form-floating flex-fill">
-        <input asp-for="Value5" class="form-control" placeholder="" />
-        <label>Value 5</label>
-        <small>
-            Valid if:
-            (<strong>Value 5</strong> <span class="oper">=</span> <i>Value 1</i>) <span class="oper">OR</span> ((<i>Value 2</i> <span class="oper">&lt;</span> <strong>Value 5</strong> <span class="oper">&lt;</span> <i>Value 3</i>) <span class="oper">OR NOT</span>(<strong>Value 5</strong> <span class="oper">=</span> <i>Value 4</i>))
-        </small>
-        <span class="text-danger" asp-validation-for="Value5"></span>
+        <input asp-for="YearsOfStudy" class="form-control" placeholder="" />
+        <label asp-for="YearsOfStudy">Years Of Study</label>
+        <span class="text-danger" asp-validation-for="YearsOfStudy"></span>
     </div>
     <div class="form-floating flex-fill">
-        <input asp-for="Value6" class="form-control" placeholder="" />
-        <label>Value 6</label>
+        <div class="form-check">
+            <input asp-for="ElementarySchool" type="checkbox" class="form-check-input" placeholder="" />
+            <label asp-for="ElementarySchool" class="form-check-label">Elementary School Completed</label>
+        </div>
         <small>
             Valid if:
-            <span class="oper">NOT</span>(<strong>Value 6</strong> <span class="oper">=</span> <i>Value 1</i>) <span class="oper">AND</span> (((<strong>Value 6</strong> <span class="oper">&lt;=</span> <i>Value 2</i>) <span class="oper">OR</span> (<strong>Value 6</strong> <span class="oper">&gt;=</span> <i>Value 3</i>)) <span class="oper">AND NOT</span>(<i>Value 5</i> <span class="oper">&lt;</span> <strong>Value 6</strong> <span class="oper">&lt;</span> <i>Value 4</i>))
+            <i>Value</i> <strong>Is False</strong> <span class="oper">OR</span> <i>Year Of Study</i> <span class="oper">&gt;=</span> <strong>6</strong>
         </small>
-        <span class="text-danger" asp-validation-for="Value6"></span>
+        <span class="text-danger" asp-validation-for="ElementarySchool"></span>
+    </div>
+    <div class="form-floating flex-fill">
+        <div class="form-check">
+            <input asp-for="HighSchool" type="checkbox" class="form-check-input" placeholder="" />
+            <label asp-for="HighSchool" class="form-check-label">High School Completed</label>
+        </div>
+        <small>
+            Valid if:
+            <i>Value</i> <strong>Is False</strong> <span class="oper">OR</span> (<i>Elementary School</i> <strong>Is True</strong> <span class="oper">And</span> <i>Year Of Study</i> <span class="oper">&gt;=</span> <strong>10</strong>)
+        </small>
+        <span class="text-danger" asp-validation-for="HighSchool"></span>
+    </div>
+    <div class="form-floating flex-fill">
+        <div class="form-check">
+            <input asp-for="University" type="checkbox" class="form-check-input" placeholder="" />
+            <label asp-for="University" class="form-check-label">University degree</label>
+        </div>
+        <small>
+            Valid if:
+            <i>Value</i> <strong>Is False</strong> <span class="oper">OR</span> (<i>High School</i> <strong>Is True</strong> <span class="oper">And</span> <i>Year Of Study</i> <span class="oper">&gt;=</span> <strong>14</strong>)
+        </small>
+        <span class="text-danger" asp-validation-for="University"></span>
+    </div>
+    <div class="form-floating flex-fill">
+        <select asp-for="Country" class="form-select w-auto">
+            <option>Choose country</option>
+            <option value="US">USA</option>
+            <option value="ES">Spain</option>
+            <option value="CU">Cuba</option>
+        </select>
+        <label asp-for="Country" class="form-label">Country</label>
+        <span class="text-danger" asp-validation-for="Country"></span>
+    </div>
+    <div class="form-floating flex-fill">
+        <input asp-for="PhoneNumber" class="form-control w-25" placeholder="" />
+        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+        <small>
+            Valid if:
+            <i>Value</i> <strong>Is Emty</strong> 
+            <span class="oper">OR</span> 
+            (<i>Country</i> <span class="oper">=</span> <strong>US</strong>
+            <span class="oper">AND</span> <i>Phone Number</i> <span class="oper">Match</span> <strong>+1 and other 10 digits</strong>)
+            <span class="oper">OR</span>
+            (<i>Country</i> <span class="oper">=</span> <strong>ES</strong>
+            <span class="oper">AND</span> <i>Phone Number</i> <span class="oper">Match</span> <strong>+34 and other 9 digits</strong>)
+            <span class="oper">OR</span>
+            (<i>Country</i> <span class="oper">=</span> <strong>CU</strong>
+            <span class="oper">AND</span> <i>Phone Number</i> <span class="oper">Match</span> <strong>+53 and other 8 digits</strong>)
+        </small>
+        <span class="text-danger" asp-validation-for="PhoneNumber"></span>
     </div>
     <div class="d-flex flex-row gap-4 align-items-center justify-content-center">
         <button data-testid="btn-reset" type="button" class="btn btn-outline-secondary btn-lg btn-reset">

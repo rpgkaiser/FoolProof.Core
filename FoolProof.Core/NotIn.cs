@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace FoolProof.Core
 {
     public class NotInAttribute : IsAttribute
@@ -10,5 +12,16 @@ namespace FoolProof.Core
             string dependentProperty, 
             string defaultMessage
         ) : base(Operator.NotIn, dependentProperty) { }
+    }
+
+    public class NotInAttribute<T> : IsAttribute<T[]>
+    {
+        public NotInAttribute(params T[] dependentValues)
+            : base(Operator.NotIn, dependentValues ?? Array.Empty<T>()) { }
+
+        public NotInAttribute(
+            string defaultMessage,
+            params T[] dependentValues
+        ) : base(Operator.NotIn, dependentValues ?? Array.Empty<T>(), defaultMessage) { }
     }
 }

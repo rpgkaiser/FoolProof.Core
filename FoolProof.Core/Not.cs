@@ -1,19 +1,21 @@
-﻿namespace FoolProof.Core
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FoolProof.Core
 {
     public class NotAttribute : PredicateAttribute
     {
         public NotAttribute(
-            ModelAwareValidationAttribute operand
+            ValidationAttribute operand
         ) : this(operand, "{0} is invalid") { }
 
         public NotAttribute(
-            ModelAwareValidationAttribute operand,
+            ValidationAttribute operand,
             string defaultMessage
         ) : base(LogicalOperator.Not, defaultMessage, operand) { }
     }
 
     public class NotAttribute<OPT> : NotAttribute
-        where OPT : ModelAwareValidationAttribute
+        where OPT : ValidationAttribute
     {
         protected NotAttribute(
             OPT operand
@@ -26,11 +28,11 @@
 
         public NotAttribute(
             params object[] constParams
-        ) : this(CreateOperand<OPT>(constParams), "{0} is invalid") { }
+        ) : this("{0} is invalid", constParams) { }
 
         public NotAttribute(
             string defaultMessage,
             params object[] constParams
-        ) : base(CreateOperand<OPT>(constParams), defaultMessage) { }
+        ) : this(CreateOperand<OPT>(constParams), defaultMessage) { }
     }
 }

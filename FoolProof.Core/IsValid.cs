@@ -19,10 +19,6 @@ namespace FoolProof.Core
         public T Validator { get; set; }
 
         public IsValidAttribute(
-            T validationRule
-        ) : this(null, validationRule, "{0} is invalid") { }
-
-        public IsValidAttribute(
             string modelPropName,
             T validationRule
         ) : this(modelPropName, validationRule, "{0} is invalid") { }
@@ -33,84 +29,42 @@ namespace FoolProof.Core
             string defaultMessage
         ) : base(defaultMessage) 
         {
-            this.ModelPropertyName = modelPropName;
-            this.Validator = validator;
+            this.ModelPropertyName = modelPropName ?? throw new ArgumentNullException(nameof(modelPropName));
+            this.Validator = validator ?? throw new ArgumentNullException(nameof(validator));
         }
-
-        public IsValidAttribute(
-            params object[] validatorParams
-        ) : this(null, Activator.CreateInstance(typeof(T), validatorParams) as T, "{0} is invalid") { }
 
         public IsValidAttribute(
             string modelPropName,
             params object[] validatorParams
-        ) : this(modelPropName, Activator.CreateInstance(typeof(T), validatorParams) as T, "{0} is invalid") { }
+        ) : this(modelPropName, validatorParams, "{0} is invalid") { }
 
         public IsValidAttribute(
             string modelPropName,
             object[] validatorParams,
             string defaultMessage
-        ) : this(modelPropName, Activator.CreateInstance(typeof(T), validatorParams) as T, defaultMessage) 
-        {
-            this.ModelPropertyName = modelPropName;
-        }
+        ) : this(modelPropName, Activator.CreateInstance(typeof(T), validatorParams) as T, defaultMessage) { }
 
         public override string ClientTypeName => "IsValid";
 
         public override bool IsValid(object value, object container)
         {
-            if(!string.IsNullOrWhiteSpace(ModelPropertyName))
-                value = GetPropertyValue(ModelPropertyName, container);
-
-            return Validator is ModelAwareValidationAttribute modelValidator
-                    ? modelValidator.IsValid(value, container)
-                    : Validator.IsValid(value);
+            value = GetPropertyValue(ModelPropertyName, container);
+            return PredicateAttribute.IsValid(Validator, value, container);
         }
 
         public override Dictionary<string, object> ClientValidationParameters(ClientModelValidationContext validationContext)
         {
             var clientParams = base.ClientValidationParameters(validationContext.ModelMetadata);
-            
-            if(!string.IsNullOrWhiteSpace(ModelPropertyName))
-                clientParams.Add("modelpropertyname", ModelPropertyName);
+            clientParams.Add("modelpropertyname", ModelPropertyName);
 
-            string validMethod = "";
-            Dictionary<string, object> validParams = new Dictionary<string, object>();
-            if (Validator is ModelAwareValidationAttribute modelValidator)
-            {
-                validMethod = modelValidator.ClientTypeName.ToLowerInvariant(); 
-                validParams = modelValidator.ClientValidationParameters(validationContext.ModelMetadata);
-            }
-            else
-            {
-                var modelPropMetadata = validationContext.MetadataProvider.GetMetadataForProperty(validationContext.ModelMetadata.ModelType, ModelPropertyName);
-                var validContext = new ClientModelValidationContext(
-                    validationContext.ActionContext,
-                    modelPropMetadata,
-                    validationContext.MetadataProvider,
-                    new Dictionary<string, string>()
-                );
-                var adapterProvider = validationContext.ActionContext.HttpContext.RequestServices.GetService<IValidationAttributeAdapterProvider>();
-                var stringLocalizer = validationContext.ActionContext.HttpContext.RequestServices.GetService<IStringLocalizer>();
-                var attrAdapter = adapterProvider.GetAttributeAdapter(Validator, stringLocalizer);
-                attrAdapter.AddValidation(validContext);
-
-                validMethod = validContext.Attributes.Where(at => at.Key.StartsWith("data-val-"))
-                              .OrderBy(at => at.Key.Length)
-                              .FirstOrDefault()
-                              .Key["data-val-".Length..]
-                              .ToLowerInvariant();
-                var paramsPrefix = $"data-val-{validMethod}-";
-                validParams = validContext.Attributes.Where(at => at.Key.StartsWith(paramsPrefix))
-                              .ToDictionary(
-                                  x => x.Key[paramsPrefix.Length..], 
-                                  x => x.Value as object
-                              );
-            }
-
+            var modelPropMetadata = validationContext.MetadataProvider.GetMetadataForProperty(
+                validationContext.ModelMetadata.ContainerType ?? validationContext.ModelMetadata.ModelType, 
+                ModelPropertyName
+            );
+            var validParams = PredicateAttribute.GetClientParams(Validator, validationContext, modelPropMetadata);
             clientParams.Add("validationparams", new {
-                method = validMethod.ToLowerInvariant(),
-                @params = validParams
+                method = validParams.Method.ToLowerInvariant(),
+                @params = validParams.Params
             });
 
             return clientParams;

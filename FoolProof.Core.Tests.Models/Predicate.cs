@@ -5,100 +5,168 @@ namespace FoolProof.Core.Tests.Models
 {
     public class Predicate
     {
-        [ModelPredicate(ErrorMessage = "Model predicate validation failed.")]
+        [ModelPredicate(ErrorMessage = "Personal information validation failed.")]
         public class Model : ValidationModelBase<ModelAwareValidationAttribute>
         {
-            public int? Value1 { get; set; }
+            [Required]
+            public string? FirstName { get; set; }
 
-            public int? Value2 { get; set; }
+            [Required]
+            public string? LastName { get; set; }
 
-            public int? Value3 { get; set; }
+            [Required]
+            public string? Email { get; set; }
 
-            public int? Value4 { get; set; }
+            [Required]
+            public int? Age { get; set; }
 
-            [Or
-            <
-                EqualToAttribute, 
-                OrAttribute
-                <
-                    AndAttribute
-                    <
-                        GreaterThanAttribute, 
-                        LessThanAttribute
-                    >,
-                    NotAttribute<EqualToAttribute>
-                >
-             >( // Value5 == Value1 || ((Value5 > Value2 && Value5 < Value3) || !(Value5 == Value4))
-                new object[] { nameof(Value1) },
+            [Required]
+            public int? YearsOfStudy { get; set; }
+
+            // !Value || YearsOfStudy >= 6
+            [Or<IsFalseAttribute, IsValidAttribute<IsAttribute<int>>>(
+                null,
+                new object[] { 
+                    nameof(YearsOfStudy), 
+                    new object[] { 
+                        Operator.GreaterThanOrEqualTo,
+                        6
+                    } 
+                },
+                "Years of study do not cover the elementary school duration."
+            )]
+            public bool ElementarySchool { get; set; }
+
+            // !Value || (ElementarySchool && YearsOfStudy >= 10)
+            [Or<IsFalseAttribute, AndAttribute<IsValidAttribute<IsTrueAttribute>, IsValidAttribute<IsAttribute<int>>>>(
+                null,
                 new object[] {
                     new object[] {
-                        new object[] { nameof(Value2) },
-                        new object[] { nameof(Value3) }
+                        nameof(ElementarySchool)
                     },
                     new object[] {
-                        new object[] { nameof(Value4) }
+                        nameof(YearsOfStudy),
+                        new object[] {
+                            Operator.GreaterThanOrEqualTo,
+                            10
+                        }
                     }
-                }
+                },
+                "No elementary school or years of study do not cover the high school duration."
             )]
-            public int? Value5 { get; set; }
+            public bool HighSchool { get; set; }
 
-            [CustomPredicate]
-            public int? Value6 { get; set; }
+            // !Value || (HighSchool && YearsOfStudy >= 14)
+            [Or<IsFalseAttribute, AndAttribute<IsValidAttribute<IsTrueAttribute>, IsValidAttribute<IsAttribute<int>>>>(
+                null,
+                new object[] {
+                    new object[] {
+                        nameof(HighSchool)
+                    },
+                    new object[] {
+                        nameof(YearsOfStudy),
+                        new object[] {
+                            Operator.GreaterThanOrEqualTo,
+                            14
+                        }
+                    }
+                },
+                "No high school or years of study do not cover the university duration."
+            )]
+            public bool University { get; set; }
 
-            // !(Value6 == Value1) && ((Value6 <= Value2 || Value6 >= Value3) && !(Value6 < Value5 && Value6 > Value4))
-            public class CustomPredicateAttribute: AndAttribute
-            {
-                public CustomPredicateAttribute()
-                    : base(
-                        new NotAttribute(
-                            new EqualToAttribute(nameof(Value1))
-                        ),
-                        new AndAttribute(
-                            new OrAttribute(
-                                new LessThanOrEqualToAttribute(nameof(Value2)),
-                                new GreaterThanOrEqualToAttribute(nameof(Value3))
-                            ),
-                            new NotAttribute(
-                                new AndAttribute(
-                                    new LessThanAttribute(nameof(Value4)),
-                                    new GreaterThanAttribute(nameof(Value5))
-                                )
-                            )
-                        )
-                    ) { }
-            }
+            public string? Country { get; set; }
 
-            // !(Value1 == Value2) || ((Value3 <= Value4 && Value5 >= Value6) || !(Value1 < Value2 && Value2 > Value3))
-            public class ModelPredicateAttribute : OrAttribute
+            // !Value || (HighSchool && YearsOfStudy >= 14)
+            [Or<
+                IsEmptyAttribute, 
+                AndAttribute<
+                    IsValidAttribute<EqualToAttribute<string>>, 
+                    IsValidAttribute<RegularExpressionAttribute>
+                >,
+                AndAttribute<
+                    IsValidAttribute<EqualToAttribute<string>>,
+                    IsValidAttribute<RegularExpressionAttribute>
+                >,
+                AndAttribute<
+                    IsValidAttribute<EqualToAttribute<string>>,
+                    IsValidAttribute<RegularExpressionAttribute>
+                >
+             >(
+                null,
+                new object[] {
+                    new object[] {
+                        nameof(Country),
+                        new object[]{ "US" }
+                    },
+                    new object[] {
+                        nameof(PhoneNumber),
+                        new object[] { @"^\s*\+1\s*(\d\s*){10,}$" }
+                    },
+                    "Phone numbers in USA starts with +1"
+                },
+                new object[] {
+                    new object[] {
+                        nameof(Country),
+                        new object[]{ "ES" }
+                    },
+                    new object[] {
+                        nameof(PhoneNumber),
+                        new object[] { @"^\s*\+34\s*(\d\s*){9,}$" }
+                    },
+                    "Phone numbers in Spain starts with +53"
+                },
+                new object[] {
+                    new object[] {
+                        nameof(Country),
+                        new object[]{ "CU" }
+                    },
+                    new object[] {
+                        nameof(PhoneNumber),
+                        new object[] { @"^\s*\+53\s*(\d\s*){8,}$" }
+                    },
+                    "Phone numbers in Cuba starts with +53"
+                },
+                "Invalid international phone number format."
+            )]
+            [Phone]
+            public string? PhoneNumber { get; set; }
+
+            // (1 <= FirstName.Length <= 50 || 1 <= LastName.Length <= 50) && (Email Is Valid) && (Age In Range [5, 120])
+            public class ModelPredicateAttribute : AndAttribute
             {
                 public ModelPredicateAttribute()
                     : base(
-                        new NotAttribute(
-                            new IsValidAttribute(
-                                nameof(Value1),
-                                new RangeAttribute(10, 20)
-                            )
-                        ),
                         new OrAttribute(
                             new AndAttribute(
                                 new IsValidAttribute(
-                                    nameof(Value3),
-                                    new LessThanOrEqualToAttribute(nameof(Value4))
+                                    nameof(FirstName),
+                                    new MinLengthAttribute(3)
                                 ),
                                 new IsValidAttribute(
-                                    nameof(Value5),
-                                    new GreaterThanOrEqualToAttribute(nameof(Value6))
+                                    nameof(FirstName),
+                                    new MaxLengthAttribute(50)
                                 )
                             ),
-                            new AndAttribute(
-                                new IsValidAttribute(
-                                    nameof(Value1),
-                                    new LessThanAttribute(nameof(Value2))
-                                ),
-                                new IsValidAttribute(
-                                    nameof(Value2),
-                                    new GreaterThanAttribute(nameof(Value3))
-                                )
+                            new IsValidAttribute(
+                                nameof(LastName),
+                                new StringLengthAttribute(20) { 
+                                    MinimumLength = 5
+                                }
+                            )
+                        ),
+                        new IsValidAttribute(
+                            nameof(Email),
+                            new EmailAddressAttribute()
+                        ),
+                        new IsValidAttribute(
+                            nameof(Age),
+                            new RangeAttribute(5, 120)
+                        ),
+                        new IsValidAttribute(
+                            nameof(Age),
+                            new GreaterThanAttribute(
+                                nameof(YearsOfStudy)
                             )
                         )
                     )

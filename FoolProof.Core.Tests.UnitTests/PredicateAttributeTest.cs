@@ -6,42 +6,131 @@ namespace FoolProof.Core.Tests.UnitTests
     public partial class PredicateAttributeTest
     {
         [TestMethod()]
-        public void IsValid()
+        public void IsElementaryValid()
         {
             var model = new Predicate.Model() { 
-                Value1 = 10, 
-                Value2 = 20,
-                Value3 = 30,
-                Value4 = 40,
-                Value5 = 10,
-                Value6 = 50,
+                FirstName = "Joe", 
+                LastName = "Doe",
+                Email = "joe.doe@server.com",
+                Age = 40,
+                YearsOfStudy = 6,
+                ElementarySchool = true,
+                HighSchool = true,
+                University = true
             };
-            Assert.IsTrue(model.IsValid(nameof(model.Value5)));
-
-            model.Value5 = 25;
-            Assert.IsTrue(model.IsValid(nameof(model.Value5)));
+            Assert.IsTrue(model.IsValid(nameof(model.ElementarySchool)));
         }
 
         [TestMethod()]
-        public void IsNotValid()
+        public void IsElementaryNotValid()
         {
-            var model = new Predicate.Model() { 
-                Value1 = 10, 
-                Value2 = 20,
-                Value3 = 30,
-                Value4 = 40,
-                Value5 = 40,
-                Value6 = 10
+            var model = new Predicate.Model() {
+                FirstName = "Joe",
+                LastName = "Doe",
+                Email = "joe.doe@server.com",
+                Age = 40,
+                YearsOfStudy = 3,
+                ElementarySchool = true,
+                HighSchool = true,
+                University = true
             };
-            Assert.IsFalse(model.IsValid(nameof(model.Value5)));
+            Assert.IsFalse(model.IsValid(nameof(model.ElementarySchool)));
         }
 
         [TestMethod()]
-        public void WithNulls()
+        public void IsHihValid()
         {
-            var model = new Predicate.Model() { };
-            Assert.IsTrue(model.IsValid(nameof(model.Value5)));
-            Assert.IsFalse(model.IsValid(nameof(model.Value6)));
-        }    
+            var model = new Predicate.Model() {
+                FirstName = "Joe",
+                LastName = "Doe",
+                Email = "joe.doe@server.com",
+                Age = 40,
+                YearsOfStudy = 10,
+                ElementarySchool = true,
+                HighSchool = true,
+                University = true
+            };
+            Assert.IsTrue(model.IsValid(nameof(model.HighSchool)));
+        }
+
+        [TestMethod()]
+        public void IsHighNotValid()
+        {
+            var model = new Predicate.Model() {
+                FirstName = "Joe",
+                LastName = "Doe",
+                Email = "joe.doe@server.com",
+                Age = 40,
+                YearsOfStudy = 5,
+                ElementarySchool = true,
+                HighSchool = true,
+                University = true
+            };
+            Assert.IsFalse(model.IsValid(nameof(model.HighSchool)));
+        }
+
+        [TestMethod()]
+        public void IsUniversityValid()
+        {
+            var model = new Predicate.Model() {
+                FirstName = "Joe",
+                LastName = "Doe",
+                Email = "joe.doe@server.com",
+                Age = 40,
+                YearsOfStudy = 14,
+                ElementarySchool = true,
+                HighSchool = true,
+                University = true
+            };
+            Assert.IsTrue(model.IsValid(nameof(model.University)));
+        }
+
+        [TestMethod()]
+        public void IsUniversityNotValid()
+        {
+            var model = new Predicate.Model() {
+                FirstName = "Joe",
+                LastName = "Doe",
+                Email = "joe.doe@server.com",
+                Age = 40,
+                YearsOfStudy = 10,
+                ElementarySchool = true,
+                HighSchool = true,
+                University = true
+            };
+            Assert.IsFalse(model.IsValid(nameof(model.University)));
+        }
+
+        [TestMethod()]
+        public void IsModelValid()
+        {
+            var model = new Predicate.Model() {
+                FirstName = "Joe",
+                LastName = "Doe",
+                Email = "joe.doe@server.com",
+                Age = 40,
+                YearsOfStudy = 16,
+                ElementarySchool = true,
+                HighSchool = true,
+                University = true
+            };
+            Assert.IsTrue(model.IsModelValid());
+        }
+
+        [TestMethod()]
+        public void IsModelNotValid()
+        {
+            var model = new Predicate.Model() {
+                FirstName = "",
+                LastName = "",
+                Email = "joe.doe.com",
+                Age = 40,
+                YearsOfStudy = 3,
+                ElementarySchool = true,
+                HighSchool = true,
+                University = true
+            };
+            Assert.IsFalse(model.IsModelValid());
+        }
     }
 }

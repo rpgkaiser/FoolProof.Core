@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.Localization;
 
@@ -19,7 +20,7 @@ namespace FoolProof.Core
 			else
 				adapter = base.GetAttributeAdapter(attribute, stringLocalizer);
 
-			return adapter;
+			return adapter ?? throw new InvalidOperationException($"No attribute adapter found for: '{attribute.GetType().Name}'.");
 		}
 	}
 }
