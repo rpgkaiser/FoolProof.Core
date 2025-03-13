@@ -103,7 +103,7 @@ namespace FoolProof.Core.Tests.Models
                         nameof(PhoneNumber),
                         new object[] { @"^\s*\+1\s*(\d\s*){10,}$" }
                     },
-                    "Phone numbers in USA starts with +1"
+                    "Phone numbers in USA starts with +1 and at least 10 more digits."
                 },
                 new object[] {
                     new object[] {
@@ -114,7 +114,7 @@ namespace FoolProof.Core.Tests.Models
                         nameof(PhoneNumber),
                         new object[] { @"^\s*\+34\s*(\d\s*){9,}$" }
                     },
-                    "Phone numbers in Spain starts with +53"
+                    "Phone numbers in Spain starts with +34 and at least 9 more digits."
                 },
                 new object[] {
                     new object[] {
@@ -125,7 +125,7 @@ namespace FoolProof.Core.Tests.Models
                         nameof(PhoneNumber),
                         new object[] { @"^\s*\+53\s*(\d\s*){8,}$" }
                     },
-                    "Phone numbers in Cuba starts with +53"
+                    "Phone numbers in Cuba starts with +53 and at least 8 more digits."
                 },
                 "Invalid international phone number format."
             )]

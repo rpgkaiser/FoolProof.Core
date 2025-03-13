@@ -11,9 +11,7 @@ function isObject(value, pureOnly) {
 function getElementValue(element) {
     var $elem = jQuery(element);
     var result = $elem.val();
-    if ($elem.is("select"))
-        result = $elem.find("option:checked").val();
-    else if ($elem.is("[type=checkbox],[type=radio]"))
+    if ($elem.is("[type=checkbox],[type=radio]"))
         result = $elem.filter(":checked").val();
 
     return result;

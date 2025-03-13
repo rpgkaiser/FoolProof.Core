@@ -9,10 +9,6 @@ namespace FoolProof.Core.Tests.UnitTests
         public void IsElementaryValid()
         {
             var model = new Predicate.Model() { 
-                FirstName = "Joe", 
-                LastName = "Doe",
-                Email = "joe.doe@server.com",
-                Age = 40,
                 YearsOfStudy = 6,
                 ElementarySchool = true,
                 HighSchool = true,
@@ -25,10 +21,6 @@ namespace FoolProof.Core.Tests.UnitTests
         public void IsElementaryNotValid()
         {
             var model = new Predicate.Model() {
-                FirstName = "Joe",
-                LastName = "Doe",
-                Email = "joe.doe@server.com",
-                Age = 40,
                 YearsOfStudy = 3,
                 ElementarySchool = true,
                 HighSchool = true,
@@ -41,10 +33,6 @@ namespace FoolProof.Core.Tests.UnitTests
         public void IsHihValid()
         {
             var model = new Predicate.Model() {
-                FirstName = "Joe",
-                LastName = "Doe",
-                Email = "joe.doe@server.com",
-                Age = 40,
                 YearsOfStudy = 10,
                 ElementarySchool = true,
                 HighSchool = true,
@@ -57,10 +45,6 @@ namespace FoolProof.Core.Tests.UnitTests
         public void IsHighNotValid()
         {
             var model = new Predicate.Model() {
-                FirstName = "Joe",
-                LastName = "Doe",
-                Email = "joe.doe@server.com",
-                Age = 40,
                 YearsOfStudy = 5,
                 ElementarySchool = true,
                 HighSchool = true,
@@ -73,10 +57,6 @@ namespace FoolProof.Core.Tests.UnitTests
         public void IsUniversityValid()
         {
             var model = new Predicate.Model() {
-                FirstName = "Joe",
-                LastName = "Doe",
-                Email = "joe.doe@server.com",
-                Age = 40,
                 YearsOfStudy = 14,
                 ElementarySchool = true,
                 HighSchool = true,
@@ -89,10 +69,6 @@ namespace FoolProof.Core.Tests.UnitTests
         public void IsUniversityNotValid()
         {
             var model = new Predicate.Model() {
-                FirstName = "Joe",
-                LastName = "Doe",
-                Email = "joe.doe@server.com",
-                Age = 40,
                 YearsOfStudy = 10,
                 ElementarySchool = true,
                 HighSchool = true,
@@ -131,6 +107,42 @@ namespace FoolProof.Core.Tests.UnitTests
                 University = true
             };
             Assert.IsFalse(model.IsModelValid());
+        }
+
+        [TestMethod()]
+        public void IsPhoneNumberValid()
+        {
+            var model = new Predicate.Model() {
+                Country = "US",
+                PhoneNumber = "+13053054436"
+            };
+            Assert.IsTrue(model.IsValid(nameof(model.PhoneNumber)));
+
+            model.Country = "ES";
+            model.PhoneNumber = "+34643771134";
+            Assert.IsTrue(model.IsValid(nameof(model.PhoneNumber)));
+
+            model.Country = "CU";
+            model.PhoneNumber = "+5330522451";
+            Assert.IsTrue(model.IsValid(nameof(model.PhoneNumber)));
+        }
+
+        [TestMethod()]
+        public void IsPhoneNumberNotValid()
+        {
+            var model = new Predicate.Model() {
+                Country = "US",
+                PhoneNumber = "+230530544"
+            };
+            Assert.IsFalse(model.IsValid(nameof(model.PhoneNumber)));
+
+            model.Country = "ES";
+            model.PhoneNumber = "+354643771";
+            Assert.IsFalse(model.IsValid(nameof(model.PhoneNumber)));
+
+            model.Country = "CU";
+            model.PhoneNumber = "+8330522";
+            Assert.IsFalse(model.IsValid(nameof(model.PhoneNumber)));
         }
     }
 }
