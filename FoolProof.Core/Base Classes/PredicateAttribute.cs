@@ -61,7 +61,10 @@ namespace FoolProof.Core
         {
             var clientParams = base.ClientValidationParameters(validationContext);
             clientParams.Add("logicaloperator", Operator.ToString());
-            clientParams.Add("operands", Operands.Select(op => GetClientParams(op, validationContext)).ToArray());
+
+            var opClientParams = Operands.Select(op => GetClientParams(op, validationContext))
+                                 .Where(op => op is not null);
+            clientParams.Add("operands", opClientParams.ToArray());
             return clientParams;
         }
 
@@ -87,7 +90,11 @@ namespace FoolProof.Core
                 );
                 var adapterProvider = validationContext.ActionContext.HttpContext.RequestServices.GetService<IValidationAttributeAdapterProvider>();
                 var stringLocalizer = validationContext.ActionContext.HttpContext.RequestServices.GetService<IStringLocalizer>();
+                
                 var attrAdapter = adapterProvider.GetAttributeAdapter(operand, stringLocalizer);
+                if (attrAdapter is null)
+                    return null;
+
                 attrAdapter.AddValidation(validContext);
 
                 var validMethod = validContext.Attributes.Where(at => at.Key.StartsWith("data-val-"))

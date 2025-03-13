@@ -3,6 +3,11 @@
 if (!FoolProofCore)
     throw "You must load the mvcfoolproof.core.js script before this.";
 
+function isObject(value, pureOnly) {
+    return !!value && typeof value === 'object'
+           && (!pureOnly || Object.getPrototypeOf(value).isPrototypeOf(Object));
+}
+
 function getElementValue(element) {
     var $elem = jQuery(element);
     var result = $elem.val();
@@ -153,9 +158,13 @@ FoolProofCore.registerValidators = function (jQuery) {
             return result;
         }
 
-        var operands = params["operands"];
+        var operands = params["operands"] || [];
         if (!Array.isArray(operands))
-            operands = [operand];
+            operands = [operands];
+
+        operands = operands.filter(function (value, indx) { return isObject(value); });
+        if (!operands.length)
+            return true;
 
         var caller = this;
         switch (logicalOper.toLowerCase()) {
@@ -183,7 +192,11 @@ FoolProofCore.registerValidators = function (jQuery) {
             value = getElementValue(element);
         }
 
-        var result = callValidation(value, element, params["validationparams"], this);
+        var validParams = params["validationparams"];
+        if (!isObject(validParams))
+            return true;
+
+        var result = callValidation(value, element, validParams, this);
         return result;
     });
 };

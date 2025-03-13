@@ -55,17 +55,24 @@ namespace FoolProof.Core
         public override Dictionary<string, object> ClientValidationParameters(ClientModelValidationContext validationContext)
         {
             var clientParams = base.ClientValidationParameters(validationContext.ModelMetadata);
-            clientParams.Add("modelpropertyname", ModelPropertyName);
-
+            
             var modelPropMetadata = validationContext.MetadataProvider.GetMetadataForProperty(
                 validationContext.ModelMetadata.ContainerType ?? validationContext.ModelMetadata.ModelType, 
                 ModelPropertyName
             );
-            var validParams = PredicateAttribute.GetClientParams(Validator, validationContext, modelPropMetadata);
-            clientParams.Add("validationparams", new {
-                method = validParams.Method.ToLowerInvariant(),
-                @params = validParams.Params
-            });
+
+            if (modelPropMetadata is not null)
+            {
+                var validParams = PredicateAttribute.GetClientParams(Validator, validationContext, modelPropMetadata);
+                if (validParams is not null)
+                {
+                    clientParams.Add("modelpropertyname", ModelPropertyName);
+                    clientParams.Add("validationparams", new {
+                        method = validParams.Method.ToLowerInvariant(),
+                        @params = validParams.Params
+                    });
+                }
+            }
 
             return clientParams;
         }

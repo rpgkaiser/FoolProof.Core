@@ -19,12 +19,14 @@
     <div>
         <div>
             Model wise validation:
-            (<strong>3</strong> <span class="oper"><=</span> <i>FirstName.Length</i> <span class="oper"><=</span> <strong>50</strong> 
-             <span class="oper">Or</span> 
-             <strong>5</strong> <span class="oper"><=</span> <i>LastName.Length</i> <span class="oper"><=</span> <strong>20</strong>)
-            && (<i>Email</i> <strong>Is Valid</strong>)
-            && (<i>Age</i> <span class="oper">In Range</span> <strong>[5, 120]</strong>)
-            && (<i>Age</i> <span class="oper">&gt;</span> <i>Years Of Study</i>)
+            <small>
+                (<strong>3</strong> <span class="oper"><=</span> <i>FirstName.Length</i> <span class="oper"><=</span> <strong>50</strong> 
+                 <span class="oper">Or</span> 
+                 <strong>5</strong> <span class="oper"><=</span> <i>LastName.Length</i> <span class="oper"><=</span> <strong>20</strong>)
+                && (<i>Email</i> <strong>Is Valid</strong>)
+                && (<i>Age</i> <span class="oper">In Range</span> <strong>[5, 120]</strong>)
+                && (<i>Age</i> <span class="oper">&gt;</span> <i>Years Of Study</i>)
+            </small>
         </div>
         @Html.ModelValidation(htmlAttributes: new { @class = "text-danger"})
     </div>
@@ -60,10 +62,12 @@
             <input asp-for="ElementarySchool" type="checkbox" class="form-check-input" placeholder="" />
             <label asp-for="ElementarySchool" class="form-check-label">Elementary School Completed</label>
         </div>
-        <small>
+        <div>
             Valid if:
-            <i>Value</i> <strong>Is False</strong> <span class="oper">OR</span> <i>Year Of Study</i> <span class="oper">&gt;=</span> <strong>6</strong>
-        </small>
+            <small>
+                <i>Value</i> <strong>Is False</strong> <span class="oper">OR</span> <i>Year Of Study</i> <span class="oper">&gt;=</span> <strong>6</strong>
+            </small>
+        </div>
         <span class="text-danger" asp-validation-for="ElementarySchool"></span>
     </div>
     <div class="form-floating flex-fill">
@@ -71,10 +75,12 @@
             <input asp-for="HighSchool" type="checkbox" class="form-check-input" placeholder="" />
             <label asp-for="HighSchool" class="form-check-label">High School Completed</label>
         </div>
-        <small>
+        <div>
             Valid if:
-            <i>Value</i> <strong>Is False</strong> <span class="oper">OR</span> (<i>Elementary School</i> <strong>Is True</strong> <span class="oper">And</span> <i>Year Of Study</i> <span class="oper">&gt;=</span> <strong>10</strong>)
-        </small>
+            <small>
+                <i>Value</i> <strong>Is False</strong> <span class="oper">OR</span> (<i>Elementary School</i> <strong>Is True</strong> <span class="oper">And</span> <i>Year Of Study</i> <span class="oper">&gt;=</span> <strong>10</strong>)
+            </small>
+        </div>
         <span class="text-danger" asp-validation-for="HighSchool"></span>
     </div>
     <div class="form-floating flex-fill">
@@ -82,10 +88,12 @@
             <input asp-for="University" type="checkbox" class="form-check-input" placeholder="" />
             <label asp-for="University" class="form-check-label">University degree</label>
         </div>
-        <small>
+        <div>
             Valid if:
-            <i>Value</i> <strong>Is False</strong> <span class="oper">OR</span> (<i>High School</i> <strong>Is True</strong> <span class="oper">And</span> <i>Year Of Study</i> <span class="oper">&gt;=</span> <strong>14</strong>)
-        </small>
+            <small>
+                <i>Value</i> <strong>Is False</strong> <span class="oper">OR</span> (<i>High School</i> <strong>Is True</strong> <span class="oper">And</span> <i>Year Of Study</i> <span class="oper">&gt;=</span> <strong>14</strong>)
+            </small>
+        </div>
         <span class="text-danger" asp-validation-for="University"></span>
     </div>
     <div class="form-floating flex-fill">
@@ -101,19 +109,21 @@
     <div class="form-floating flex-fill">
         <input asp-for="PhoneNumber" class="form-control w-25" placeholder="" />
         <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
-        <small>
+        <div>
             Valid if:
-            <i>Value</i> <strong>Is Emty</strong> 
-            <span class="oper">OR</span> 
-            (<i>Country</i> <span class="oper">=</span> <strong>US</strong>
-            <span class="oper">AND</span> <i>Phone Number</i> <span class="oper">Match</span> <strong>+1 and other 10 digits</strong>)
-            <span class="oper">OR</span>
-            (<i>Country</i> <span class="oper">=</span> <strong>ES</strong>
-            <span class="oper">AND</span> <i>Phone Number</i> <span class="oper">Match</span> <strong>+34 and other 9 digits</strong>)
-            <span class="oper">OR</span>
-            (<i>Country</i> <span class="oper">=</span> <strong>CU</strong>
-            <span class="oper">AND</span> <i>Phone Number</i> <span class="oper">Match</span> <strong>+53 and other 8 digits</strong>)
-        </small>
+            <small>
+                <i>Value</i> <strong>Is Emty</strong> 
+                <span class="oper">OR</span> 
+                (<i>Country</i> <span class="oper">=</span> <strong>US</strong>
+                <span class="oper">AND</span> <i>Phone Number</i> <span class="oper">Match</span> <strong>+1 and other 10 digits</strong>)
+                <span class="oper">OR</span>
+                (<i>Country</i> <span class="oper">=</span> <strong>ES</strong>
+                <span class="oper">AND</span> <i>Phone Number</i> <span class="oper">Match</span> <strong>+34 and other 9 digits</strong>)
+                <span class="oper">OR</span>
+                (<i>Country</i> <span class="oper">=</span> <strong>CU</strong>
+                <span class="oper">AND</span> <i>Phone Number</i> <span class="oper">Match</span> <strong>+53 and other 8 digits</strong>)
+            </small>
+        </div>
         <span class="text-danger" asp-validation-for="PhoneNumber"></span>
     </div>
     <div class="d-flex flex-row gap-4 align-items-center justify-content-center">

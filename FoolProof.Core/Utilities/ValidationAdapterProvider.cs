@@ -14,13 +14,10 @@ namespace FoolProof.Core
 			IStringLocalizer stringLocalizer
         )
 		{
-			IAttributeAdapter adapter;
 			if (attribute is ModelAwareValidationAttribute modelAwareValidAttrb)
-				adapter = new FoolProofValidationAdapter(modelAwareValidAttrb, stringLocalizer);
-			else
-				adapter = base.GetAttributeAdapter(attribute, stringLocalizer);
-
-			return adapter ?? throw new InvalidOperationException($"No attribute adapter found for: '{attribute.GetType().Name}'.");
+				return new FoolProofValidationAdapter(modelAwareValidAttrb, stringLocalizer);
+			
+            return base.GetAttributeAdapter(attribute, stringLocalizer);
 		}
 	}
 }
