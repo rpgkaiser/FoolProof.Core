@@ -1,7 +1,13 @@
-﻿namespace FoolProof.Core.Tests.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FoolProof.Core.Tests.Models
 {
     public abstract class ValidationModelBase<T> where T: ModelAwareValidationAttribute
     {
+        public const string Value1Description = "Value1: Dependent Value";
+        public const string Value2Description = "Value2: Value To Compare";
+        public const string ValuePwnDescription = "ValuePwn: Value To Compare If Not NULL";
+
         public T GetAttribute(string property) 
         {
             var custmAttrs = this.GetType().GetProperty(property)!.GetCustomAttributes(false);

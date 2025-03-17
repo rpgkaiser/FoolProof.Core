@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -38,7 +39,7 @@ namespace FoolProof.Core
             Operator @operator, 
             string dependentProperty, 
             string defaultMessage
-        ) : base(dependentProperty, defaultMessage)
+        ) : base(dependentProperty, defaultMessage ?? "{0} must be {2} {1}.")
         {
             Operator = @operator;
             _metadata = OperatorMetadata.Get(Operator);
@@ -51,9 +52,7 @@ namespace FoolProof.Core
 
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            var dataTypeStr = (DataType == ClientDataType.Auto 
-                                ? GetDataType(modelMetadata.ModelType)
-                                : DataType).ToString();
+            var dataTypeStr = GetDataType(modelMetadata.ModelType).ToString();
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
                 new KeyValuePair<string, object>("PassOnNull", PassOnNull),
@@ -75,7 +74,7 @@ namespace FoolProof.Core
 			return string.Format(ErrorMessageString, name, DependentPropertyDisplayName ?? DependentProperty, _metadata.ErrorMessage);
 		}
 
-        public static ClientDataType GetDataType(Type valueType)
+        public static ClientDataType GetClientDataType(Type valueType)
         {
             valueType = Nullable.GetUnderlyingType(valueType) ?? valueType;
 
@@ -92,6 +91,11 @@ namespace FoolProof.Core
                 _ => ClientDataType.String
             };
         }
+
+        protected virtual ClientDataType GetDataType(Type modelType)
+            => DataType == ClientDataType.Auto
+                ? GetClientDataType(modelType)
+                : DataType;
     }
 
     public class IsAttribute<T>: ModelAwareValidationAttribute
@@ -107,10 +111,26 @@ namespace FoolProof.Core
             Operator @operator,
             T dependentValue,
             string defaultMessage
-        ) : base(defaultMessage)
+        ) : base(defaultMessage ?? "{0} must be {2} {1}.")
         {
             Operator = @operator;
             DependentValue = dependentValue;
+            _metadata = OperatorMetadata.Get(Operator);
+        }
+
+        public IsAttribute(
+            string dependentValue,
+            Operator @operator
+        ) : this(dependentValue, @operator, "{0} must be {2} {1}.") {}
+
+        public IsAttribute(
+            string dependentValue,
+            Operator @operator,
+            string defaultMessage
+        ) : base(defaultMessage ?? "{0} must be {2} {1}.")
+        {
+            Operator = @operator;
+            DependentValue = ConvertValue<T>(dependentValue);
             _metadata = OperatorMetadata.Get(Operator);
         }
 
@@ -120,7 +140,7 @@ namespace FoolProof.Core
 
         public ClientDataType DataType { get; set; }
 
-        public object DependentValue { get; set; }
+        public T DependentValue { get; set; }
 
         public virtual string DependentValueText
         {
@@ -160,9 +180,7 @@ namespace FoolProof.Core
 
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            var dataTypeStr = (DataType == ClientDataType.Auto
-                                ? IsAttribute.GetDataType(typeof(T))
-                                : DataType).ToString();
+            var dataTypeStr = GetDataType(typeof(T)).ToString();
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("DependentValue", DependentValue),
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
@@ -171,5 +189,13 @@ namespace FoolProof.Core
             };
             return base.GetClientValidationParameters(modelMetadata).Union(clientParams);
         }
+
+        protected virtual VT ConvertValue<VT>(string strValue)
+            => (VT)TypeDescriptor.GetConverter(typeof(VT)).ConvertFromString(strValue);
+
+        protected virtual ClientDataType GetDataType(Type modelType)
+            => DataType == ClientDataType.Auto
+                ? IsAttribute.GetClientDataType(modelType)
+                : DataType;
     }
 }

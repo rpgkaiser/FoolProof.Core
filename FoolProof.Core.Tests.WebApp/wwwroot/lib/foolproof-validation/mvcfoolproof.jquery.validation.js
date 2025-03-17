@@ -132,7 +132,7 @@ FoolProofCore.registerValidators = function (jQuery) {
         return result;
     }
 
-    function callValidation(value, element, params, caller) {
+    function callValidation(value, elem2Valid, params, caller) {
         var adapterName = params["method"].toLowerCase();
         var methodParams = prepareParams(adapterName, params["params"]);
         var validationMethod = null;
@@ -145,7 +145,7 @@ FoolProofCore.registerValidators = function (jQuery) {
                 validationMethod = jQuery.validator.methods[adapterName];
         }
 
-        return validationMethod.apply(caller || this, [value, element, methodParams]);
+        return validationMethod.apply(caller || this, [value, elem2Valid, methodParams]);
     }
 
     jQuery.validator.addMethod("predicate", function (value, element, params) {
@@ -184,9 +184,10 @@ FoolProofCore.registerValidators = function (jQuery) {
 
     jQuery.validator.addMethod("isvalid", function (value, element, params) {
         var modelPropName = params["modelpropertyname"];
+        var elem2Valid = element;
         if (modelPropName) {
             var elemId = FoolProofCore.getId(element, modelPropName);
-            element = document.getElementById(elemId);
+            elem2Valid = document.getElementById(elemId);
             value = getElementValue(element);
         }
 
@@ -194,7 +195,7 @@ FoolProofCore.registerValidators = function (jQuery) {
         if (!isObject(validParams))
             return true;
 
-        var result = callValidation(value, element, validParams, this);
+        var result = callValidation(value, elem2Valid, validParams, this);
         return result;
     });
 };

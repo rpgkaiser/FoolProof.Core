@@ -21,9 +21,35 @@ namespace FoolProof.Core
             T dependentValue,
             string defultMessage
         ) : base(Operator.NotEqualTo, dependentValue, defultMessage) { }
+
+        public NotEqualToAttribute(string dependentValue)
+            : base(dependentValue, Operator.NotEqualTo) { }
+
+        public NotEqualToAttribute(
+            string dependentValue,
+            string defultMessage
+        ) : base(dependentValue, Operator.NotEqualTo, defultMessage) { }
     }
 
-    public class IsNotEmptyAttribute : NotEqualToAttribute<string>
+    //Use this class for string values instead of NotEqualToAttribute<string>, to avoid ambiguity during construction
+    public class DifferentTextAttribute : IsAttribute<string>
+    {
+        public DifferentTextAttribute(string compareText)
+            : base(compareText, Operator.NotEqualTo) { }
+
+        public DifferentTextAttribute(
+            string compareText,
+            string defultMessage
+        ) : base(compareText, Operator.NotEqualTo, defultMessage)
+        {
+            if (string.IsNullOrEmpty(compareText))
+            {
+                throw new System.ArgumentException($"'{nameof(compareText)}' cannot be null or empty.", nameof(compareText));
+            }
+        }
+    }
+
+    public class IsNotEmptyAttribute : DifferentTextAttribute
     {
         public IsNotEmptyAttribute()
             : this("{0} must not be empty.") { }

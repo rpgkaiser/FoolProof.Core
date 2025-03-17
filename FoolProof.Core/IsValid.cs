@@ -69,12 +69,27 @@ namespace FoolProof.Core
                     clientParams.Add("modelpropertyname", ModelPropertyName);
                     clientParams.Add("validationparams", new {
                         method = validParams.Method.ToLowerInvariant(),
-                        @params = validParams.Params
+                        @params = validParams.Params,
+                        message = validParams.Message
                     });
                 }
             }
 
             return clientParams;
+        }
+
+        public override string FormatErrorMessage(ClientModelValidationContext validationContext)
+        {
+            var modelPropMetadata = validationContext.MetadataProvider.GetMetadataForProperty(
+                validationContext.ModelMetadata.ContainerType ?? validationContext.ModelMetadata.ModelType,
+                ModelPropertyName
+            );
+            return base.FormatErrorMessage(new ClientModelValidationContext(
+                validationContext.ActionContext,
+                modelPropMetadata,
+                validationContext.MetadataProvider,
+                validationContext.Attributes
+            ));
         }
     }
 

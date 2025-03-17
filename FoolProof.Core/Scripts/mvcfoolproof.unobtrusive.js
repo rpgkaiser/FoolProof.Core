@@ -15,12 +15,13 @@ var setValidationValues = function(options, ruleName, value) {
 
 var $Unob = jQuery.validator.unobtrusive;
 
-$Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull", "datatype"], function(options) {
+$Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull", "datatype", "dependentvalue"], function(options) {
     setValidationValues(options, "is", {
         dependentproperty: options.params.dependentproperty,
         operator: options.params.operator,
         passonnull: options.params.passonnull,
-        datatype: options.params.datatype
+        datatype: options.params.datatype,
+        dependentvalue: !!options.params.dependentvalue ? JSON.parse(options.params.dependentvalue) : null
     });
 });
 

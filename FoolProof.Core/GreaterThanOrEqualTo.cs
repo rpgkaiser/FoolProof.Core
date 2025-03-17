@@ -21,5 +21,15 @@ namespace FoolProof.Core
             T dependentValue,
             string defaultMessage
         ) : base(Operator.GreaterThanOrEqualTo, dependentValue, defaultMessage) { }
+
+        public GreaterThanOrEqualToAttribute(string dependentValue)
+            : base(dependentValue, Operator.GreaterThanOrEqualTo) { }
+
+        public GreaterThanOrEqualToAttribute(
+            string dependentValue,
+            string defaultMessage
+        ) : base(dependentValue, Operator.GreaterThanOrEqualTo, defaultMessage) { }
     }
+
+    //TODO: Add speficic class for string values, to avoid ambiguity during construction
 }

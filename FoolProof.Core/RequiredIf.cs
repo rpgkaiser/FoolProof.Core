@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -59,9 +60,7 @@ namespace FoolProof.Core
 
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            var dataTypeStr = (DataType == ClientDataType.Auto 
-                                ? IsAttribute.GetDataType(modelMetadata.ModelType)
-                                : DataType).ToString();
+            var dataTypeStr = GetDataType(modelMetadata.ModelType).ToString();
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
                 new KeyValuePair<string, object>("DependentValue", DependentValue),
@@ -77,5 +76,10 @@ namespace FoolProof.Core
 
             return true;
         }
+
+        protected virtual ClientDataType GetDataType(Type modelType)
+            => DataType == ClientDataType.Auto
+                ? IsAttribute.GetClientDataType(modelType)
+                : DataType;
     }
 }

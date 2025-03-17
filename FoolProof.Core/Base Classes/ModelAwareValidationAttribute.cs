@@ -36,12 +36,18 @@ namespace FoolProof.Core
                    .ToDictionary(kv => kv.Key.ToLower(), kv => kv.Value);
         }
 
+        public virtual string FormatErrorMessage(ClientModelValidationContext validationContext)
+            => FormatErrorMessage(validationContext.ModelMetadata.GetDisplayName());
+
+        public virtual string FormatErrorMessage(ValidationContext validationContext)
+            => FormatErrorMessage(validationContext.DisplayName);
+
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             return IsValid(value, validationContext.ObjectInstance) 
                     ? ValidationResult.Success 
-                    : new ValidationResult(FormatErrorMessage(validationContext.DisplayName));
+                    : new ValidationResult(FormatErrorMessage(validationContext));
         }
 
         protected virtual IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)

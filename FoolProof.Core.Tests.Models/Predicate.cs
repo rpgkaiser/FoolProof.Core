@@ -81,15 +81,15 @@ namespace FoolProof.Core.Tests.Models
             [Or<
                 IsEmptyAttribute, 
                 AndAttribute<
-                    IsValidAttribute<EqualToAttribute<string>>, 
+                    IsValidAttribute<SameTextAttribute>, 
                     IsValidAttribute<RegularExpressionAttribute>
                 >,
                 AndAttribute<
-                    IsValidAttribute<EqualToAttribute<string>>,
+                    IsValidAttribute<SameTextAttribute>,
                     IsValidAttribute<RegularExpressionAttribute>
                 >,
                 AndAttribute<
-                    IsValidAttribute<EqualToAttribute<string>>,
+                    IsValidAttribute<SameTextAttribute>,
                     IsValidAttribute<RegularExpressionAttribute>
                 >
              >(

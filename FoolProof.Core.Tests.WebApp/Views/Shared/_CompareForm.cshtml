@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.Html
+@{
+    var dataType = ViewBag.DataType as string;
+    var useEditor = (bool?)ViewBag.UseInputTypes ?? true;
+    var otherFields = ViewBag.OtherFieldsRender as Func<object, HtmlString>;
+    var modelProps = ViewData.ModelMetadata.GetMetadataForProperties(ViewData.ModelMetadata.ModelType)
+                     .Where(pm => pm.ShowForEdit);
+}
+<form method="post" class="d-flex flex-column gap-4" novalidate 
+    asp-action="@nameof(HomeController.Save)" 
+    asp-controller="Home"
+    asp-route-modelTypeName="@(Model.GetType().FullName)">
+    <h5 class="m-0">
+        Assign @dataType values to fields and click one of the validate buttons.
+    </h5>
+
+    <div data-testid="valid-alert" class="alert alert-success alert-dismissible valid-alert" style='display: none;'>
+        <button type="button" class="btn-close" onclick="$(this).parent().fadeOut();"></button>
+        <span class="alert-message">
+        </span>
+    </div>
+
+    <div class="d-flex flex-column gap-4">
+        @foreach (var propMetad in modelProps)
+        {
+            <div class="form-floating flex-fill">
+                @if (useEditor)
+                {
+                    @Html.Editor(propMetad.PropertyName, new { htmlAttributes = new { @class = "form-control", placeholder = "" } })
+                }
+                else
+                {
+                    @Html.TextBox(propMetad.PropertyName, null, new { @class = "form-control", placeholder = "" })
+                }
+                @Html.Label(propMetad.PropertyName, propMetad.Description ?? propMetad.PropertyName)
+                @Html.ValidationMessage(propMetad.PropertyName, new { @class = "text-danger", data_testid = $"{propMetad.PropertyName!.ToLowerInvariant()}-valid-msg" })
+            </div>
+        }
+    </div>
+
+    <div class="d-flex flex-row gap-4 align-items-center justify-content-center">
+        <button data-testid="btn-reset" type="button" class="btn btn-outline-secondary btn-lg btn-reset">
+            Reset
+        </button>
+        <button data-testid="btn-client" type="button" class="btn btn-outline-info btn-lg btn-validate">
+            Validate on Client
+        </button>
+        <button data-testid="btn-server" type="button" class="btn btn-outline-primary btn-lg btn-validate"
+            data-server-validate="true">
+            Submit for Validation
+        </button>
+    </div>
+</form>

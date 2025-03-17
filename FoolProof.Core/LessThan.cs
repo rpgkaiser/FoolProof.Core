@@ -21,5 +21,15 @@ namespace FoolProof.Core
             T dependentValue,
             string defaultMessage
         ) : base(Operator.LessThan, dependentValue, defaultMessage) { }
+
+        public LessThanAttribute(string dependentValue)
+            : base(dependentValue, Operator.LessThan) { }
+
+        public LessThanAttribute(
+            string dependentValue,
+            string defaultMessage
+        ) : base(dependentValue, Operator.LessThan, defaultMessage) { }
     }
+
+    //TODO: Add speficic class for string values, to avoid ambiguity during construction
 }

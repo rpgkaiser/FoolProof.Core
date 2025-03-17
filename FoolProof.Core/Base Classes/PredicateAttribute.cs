@@ -50,7 +50,7 @@ namespace FoolProof.Core
         {
             return Operator switch
             {
-                LogicalOperator.And => Operands.FirstOrDefault(oprnd => !IsValid(oprnd,value, container)) is null,
+                LogicalOperator.And => Operands.FirstOrDefault(oprnd => !IsValid(oprnd, value, container)) is null,
                 LogicalOperator.Or => Operands.FirstOrDefault(oprnd => IsValid(oprnd, value, container)) is not null,
                 LogicalOperator.Not => !IsValid(Operands.First(), value, container),
                 _ => throw new NotSupportedException()
@@ -74,17 +74,20 @@ namespace FoolProof.Core
             ModelMetadata modelMetadata = null
         )
         {
+            modelMetadata ??= validationContext.ModelMetadata;
+
             OperandParams result;
             if (operand is ModelAwareValidationAttribute modelValid)
                 result = new () {
                     Method = modelValid.ClientTypeName.ToLowerInvariant(),
-                    Params = modelValid.ClientValidationParameters(validationContext)
+                    Params = modelValid.ClientValidationParameters(validationContext),
+                    Message = modelValid.FormatErrorMessage(validationContext)
                 };
             else
             {
                 var validContext = new ClientModelValidationContext(
                     validationContext.ActionContext,
-                    modelMetadata ?? validationContext.ModelMetadata,
+                    modelMetadata,
                     validationContext.MetadataProvider,
                     new Dictionary<string, string>()
                 );
@@ -110,7 +113,9 @@ namespace FoolProof.Core
                                   );
                 result = new() { 
                     Method = validMethod,
-                    Params = validParams
+                    Params = validParams,
+                    Message = validContext.Attributes.TryGetValue($"data-val-{validMethod}", out var msg)
+                                ? msg : null
                 };
             }
 
@@ -135,5 +140,8 @@ namespace FoolProof.Core
 
         [JsonPropertyName("params")]
         public Dictionary<string, object> Params { get; set; }
+
+        [JsonPropertyName("message")]
+        public string Message { get; set; }
     }
 }

@@ -20,9 +20,29 @@
             T dependentValue,
             string defaultMessage
         ) : base(Operator.EqualTo, dependentValue, defaultMessage) { }
+
+        public EqualToAttribute(string dependentValue)
+            : base(dependentValue, Operator.EqualTo) { }
+
+        public EqualToAttribute(
+            string dependentValue,
+            string defaultMessage
+        ) : base(dependentValue, Operator.EqualTo, defaultMessage) { }
     }
 
-    public class IsEmptyAttribute : EqualToAttribute<string>
+    //Use this class for string values instead of EqualToAttribute<string>, to avoid ambiguity during construction
+    public class SameTextAttribute : IsAttribute<string>
+    {
+        public SameTextAttribute(string compareText)
+            : base(compareText, Operator.EqualTo) { }
+
+        public SameTextAttribute(
+            string compareText,
+            string defaultMessage
+        ) : base(compareText, Operator.EqualTo, defaultMessage) { }
+    }
+
+    public class IsEmptyAttribute : SameTextAttribute
     {
         public IsEmptyAttribute()
             : this("{0} must be empty.") { }

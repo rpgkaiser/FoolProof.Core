@@ -57,13 +57,13 @@ namespace FoolProof.Core.Tests.E2eTests
             string alertValidationMsg = "Model validation succeed"
         )
         {
-            var value1ValidationMessage = Page.GetByTestId($"val1-valid-msg");
+            var value1ValidationMessage = Page.GetByTestId($"value1-valid-msg");
             await Expect(value1ValidationMessage).ToBeEmptyAsync();
             
-            var value2ValidationMessage = Page.GetByTestId($"val2-valid-msg");
+            var value2ValidationMessage = Page.GetByTestId($"value2-valid-msg");
             await Expect(value2ValidationMessage).ToBeEmptyAsync();
 
-            var valuePwnValidationMessage = Page.GetByTestId($"valPwn-valid-msg");
+            var valuePwnValidationMessage = Page.GetByTestId($"valuepwn-valid-msg");
             await Expect(value2ValidationMessage).ToBeEmptyAsync();
 
             var validAlertDiv = Page.GetByTestId($"valid-alert");
@@ -80,19 +80,19 @@ namespace FoolProof.Core.Tests.E2eTests
             params string[] alertValidationMsgs            
         )
         {
-            var value1ValidationMessage = Page.GetByTestId($"val1-valid-msg");
+            var value1ValidationMessage = Page.GetByTestId($"value1-valid-msg");
             if(string.IsNullOrEmpty(value1ErrorMsg))
                 await Expect(value1ValidationMessage).ToBeEmptyAsync();
             else
                 await Expect(value1ValidationMessage).ToContainTextAsync(value1ErrorMsg);
 
-            var value2ValidationMessage = Page.GetByTestId($"val2-valid-msg");
+            var value2ValidationMessage = Page.GetByTestId($"value2-valid-msg");
             if (string.IsNullOrEmpty(value2ErrorMsg))
                 await Expect(value2ValidationMessage).ToBeEmptyAsync();
             else
                 await Expect(value2ValidationMessage).ToContainTextAsync(value2ErrorMsg);
 
-            var valuePwnValidationMessage = Page.GetByTestId($"valPwn-valid-msg");
+            var valuePwnValidationMessage = Page.GetByTestId($"valuepwn-valid-msg");
             if (string.IsNullOrEmpty(valuePwnErrorMsg))
                 await Expect(valuePwnValidationMessage).ToBeEmptyAsync();
             else
