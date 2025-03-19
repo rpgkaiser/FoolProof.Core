@@ -23,7 +23,7 @@ FoolProofCore.registerValidators = function (jQuery) {
 
     jQuery.validator.addMethod("is", function (value, element, params) {
         var operator = params["operator"];
-        var passOnNull = params["passonnull"];
+        var passOnNull = (/true/i).test(params["passonnull"] + "");
         var dataType = params["datatype"];
 
         var dependentValue = params["dependentvalue"];
@@ -31,6 +31,8 @@ FoolProofCore.registerValidators = function (jQuery) {
             var elemId = FoolProofCore.getId(element, params["dependentproperty"]);
             dependentValue = getElementValue(document.getElementById(elemId));
         }
+        else if (passOnNull && FoolProofCore.isNullish(value))
+            return true;
 
         return FoolProofCore.is(value, operator, dependentValue, passOnNull, dataType);
     });

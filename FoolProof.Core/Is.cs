@@ -22,7 +22,7 @@ namespace FoolProof.Core
 
     public class IsAttribute : ContingentValidationAttribute
     {
-        private OperatorMetadata _metadata;
+        private readonly OperatorMetadata _metadata;
 
         public Operator Operator { get; private set; }
 
@@ -100,7 +100,7 @@ namespace FoolProof.Core
 
     public class IsAttribute<T>: ModelAwareValidationAttribute
     {
-        private OperatorMetadata _metadata;
+        protected readonly OperatorMetadata _metadata;
 
         public IsAttribute(
             Operator @operator,
@@ -136,7 +136,7 @@ namespace FoolProof.Core
 
         public Operator Operator { get; private set; }
 
-        public bool PassOnNull { get; set; }
+        protected bool PassOnNull { get; set; } = true;
 
         public ClientDataType DataType { get; set; }
 
@@ -167,10 +167,7 @@ namespace FoolProof.Core
 
         public override bool IsValid(object value, object container)
         {
-            if (PassOnNull && (value == null || DependentValue == null) && (value != null || DependentValue != null))
-                return true;
-
-            return _metadata.IsValid(value, DependentValue);
+            return value == null || _metadata.IsValid(value, DependentValue);
         }
 
         public override string FormatErrorMessage(string name)

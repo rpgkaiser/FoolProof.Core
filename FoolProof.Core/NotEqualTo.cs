@@ -40,13 +40,7 @@ namespace FoolProof.Core
         public DifferentTextAttribute(
             string compareText,
             string defultMessage
-        ) : base(compareText, Operator.NotEqualTo, defultMessage)
-        {
-            if (string.IsNullOrEmpty(compareText))
-            {
-                throw new System.ArgumentException($"'{nameof(compareText)}' cannot be null or empty.", nameof(compareText));
-            }
-        }
+        ) : base(compareText, Operator.NotEqualTo, defultMessage) { }
     }
 
     public class IsNotEmptyAttribute : DifferentTextAttribute
@@ -55,6 +49,12 @@ namespace FoolProof.Core
             : this("{0} must not be empty.") { }
 
         public IsNotEmptyAttribute(string defaultMessage)
-            : base(string.Empty, defaultMessage) { }
+            : base(string.Empty, defaultMessage) 
+        {
+            PassOnNull = false;
+        }
+
+        public override bool IsValid(object value, object container)
+            => !string.IsNullOrEmpty(value as string) && _metadata.IsValid(value, DependentValue);
     }
 }

@@ -2,12 +2,14 @@
 
 var FoolProofCore = function () { };
 
-FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataType) {
-	function isNullish (input) {
-        return input == null || input == undefined || input == "";
-    }
+FoolProofCore.isNullish = function (input) {
+    return input == null || input == undefined || input == "";
+}   
 
-    passOnNull = (/true/i).test(passOnNull + "");
+FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataType) {
+    var isNullish = FoolProofCore.isNullish;
+
+	passOnNull = (/true/i).test(passOnNull + "");
     if (passOnNull) {
         var value1nullish = isNullish(compValue);
         var value2nullish = isNullish(dependValue);
@@ -83,7 +85,7 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 			return getTime(input);
 
 		if (!dataType || dataType === DataTypes.string)
-			return input;
+			return input || "";
 
 		return force || !isNullish(input) //Invalid value for the given data type
 				? undefined 
