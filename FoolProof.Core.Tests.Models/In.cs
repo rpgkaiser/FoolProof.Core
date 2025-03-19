@@ -5,7 +5,7 @@ namespace FoolProof.Core.Tests.Models
 {
     public class In
     {
-        public class SingleValueModel<T> : ValidationModelBase<InAttribute>
+        public class SingleValueModel<T> : ValidationModelBase
         {
             [Display(Description = Value1Description)]
             [DataType("StringList")]
@@ -32,7 +32,7 @@ namespace FoolProof.Core.Tests.Models
             public TimeSpan? TimeIn { get; set; }
         }
 
-        public class DateTimeListModel : ValidationModelBase<InAttribute>
+        public class DateTimeListModel : ValidationModelBase
         {
             [Display(Description = Value1Description)]
             [DataType("DateTimeList")]
@@ -54,7 +54,7 @@ namespace FoolProof.Core.Tests.Models
             public DateTime? DateTimeIn { get; set; }
         }
 
-        public class In16ListModel : ValidationModelBase<InAttribute>
+        public class In16ListModel : ValidationModelBase
         {
             [Display(Description = Value1Description)]
             [DataType("Int16List")]

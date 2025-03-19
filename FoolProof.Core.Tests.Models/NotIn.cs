@@ -5,7 +5,7 @@ namespace FoolProof.Core.Tests.Models
 {
     public class NotIn
     {
-        public class SingleValueModel<T> : ValidationModelBase<NotInAttribute>
+        public class SingleValueModel<T> : ValidationModelBase
         {
             [DataType("StringList")]
             public T? Value1 { get; set; }
@@ -29,7 +29,7 @@ namespace FoolProof.Core.Tests.Models
             public TimeSpan? TimeNotIn { get; set; }
         }
 
-        public class DateTimeListModel : ValidationModelBase<NotInAttribute>
+        public class DateTimeListModel : ValidationModelBase
         {
             [DataType("DateTimeList")]
             public IEnumerable<DateTime>? Value1 { get; set; }
@@ -48,7 +48,7 @@ namespace FoolProof.Core.Tests.Models
             public DateTime? DateTimeNotIn { get; set; }
         }
 
-        public class In16ListModel : ValidationModelBase<NotInAttribute>
+        public class In16ListModel : ValidationModelBase
         {
             [DataType("Int16List")]
             public IEnumerable<Int16>? Value1 { get; set; }

@@ -5,7 +5,7 @@ namespace FoolProof.Core.Tests.Models
 {
     public class EqualTo
     {
-        public class Model : ValidationModelBase<EqualToAttribute>
+        public class Model : ValidationModelBase
         {
             [Display(Description = Value1Description)]
             public string? Value1 { get; set; }

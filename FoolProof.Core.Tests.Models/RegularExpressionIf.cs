@@ -2,7 +2,7 @@
 {
     public class RegularExpressionIf
     {
-        public class Model : ValidationModelBase<RegularExpressionIfAttribute>
+        public class Model : ValidationModelBase
         {
             public bool? Value1 { get; set; }
 

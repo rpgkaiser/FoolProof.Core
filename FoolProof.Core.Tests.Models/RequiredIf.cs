@@ -2,7 +2,7 @@
 {
     public class RequiredIf
     {
-        public class Model : ValidationModelBase<RequiredIfAttribute>
+        public class Model : ValidationModelBase
         {
             public string? Value1 { get; set; }
 
@@ -10,7 +10,7 @@
             public string? Value2 { get; set; }
         }
 
-        public class ComplexModel : ValidationModelBase<RequiredIfAttribute>
+        public class ComplexModel : ValidationModelBase
         {
             public class SubModel
             {

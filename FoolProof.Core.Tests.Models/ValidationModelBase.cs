@@ -2,18 +2,18 @@
 
 namespace FoolProof.Core.Tests.Models
 {
-    public abstract class ValidationModelBase<T> where T: ModelAwareValidationAttribute
+    public abstract class ValidationModelBase
     {
         public const string Value1Description = "Value1: Dependent Value";
         public const string Value2Description = "Value2: Value To Compare";
         public const string ValuePwnDescription = "ValuePwn: Value To Compare If Not NULL";
 
-        public T GetAttribute(string property) 
+        public ModelAwareValidationAttribute GetAttribute(string property)
         {
             var custmAttrs = this.GetType().GetProperty(property)!.GetCustomAttributes(false);
             return custmAttrs
                     .Where(ca => typeof(ModelAwareValidationAttribute).IsAssignableFrom(ca.GetType()))
-                    .OfType<T>()
+                    .OfType<ModelAwareValidationAttribute>()
                     .First();
         }
 
@@ -26,7 +26,7 @@ namespace FoolProof.Core.Tests.Models
                     .First();
         }
 
-        public bool IsValid(string property) 
+        public bool IsValid(string property)
         {
             var attribute = this.GetAttribute(property);
             return attribute.IsValid(this.GetType().GetProperty(property)!.GetValue(this, null), this);

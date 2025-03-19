@@ -6,7 +6,7 @@ namespace FoolProof.Core.Tests.Models
     public class Predicate
     {
         [ModelPredicate(ErrorMessage = "Personal information validation failed.")]
-        public class Model : ValidationModelBase<ModelAwareValidationAttribute>
+        public class Model : ValidationModelBase
         {
             [Required]
             public string? FirstName { get; set; }

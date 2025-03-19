@@ -7,7 +7,7 @@ namespace FoolProof.Core.Tests.UnitTests
     [TestClass()]
     public class RequiredIfNotEmptyAttributeTest
     {
-        private class Model : ValidationModelBase<RequiredIfNotEmptyAttribute>
+        private class Model : ValidationModelBase
         {
             public string Value1 { get; set; }
 

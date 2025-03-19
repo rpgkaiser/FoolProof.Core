@@ -5,7 +5,7 @@ namespace FoolProof.Core.Tests.Models
 {
     public class GreaterThanOrEqualTo
     {
-        public class DateModel : ValidationModelBase<GreaterThanOrEqualToAttribute>
+        public class DateModel : ValidationModelBase
         {
             [Display(Description = Value1Description)]
             [DataType(DataType.Date)]
@@ -27,7 +27,7 @@ namespace FoolProof.Core.Tests.Models
             public DateOnly? MinDate { get; set; }
         }
 
-        public class Int16Model : ValidationModelBase<GreaterThanOrEqualToAttribute>
+        public class Int16Model : ValidationModelBase
         {
             [Display(Description = Value1Description)]
             public Int16? Value1 { get; set; }
@@ -45,7 +45,7 @@ namespace FoolProof.Core.Tests.Models
             public int? MinValue { get; set; }
         }
 
-        public class TimeModel : ValidationModelBase<GreaterThanOrEqualToAttribute>
+        public class TimeModel : ValidationModelBase
         {
             [Display(Description = Value1Description)]
             [DataType(DataType.Time)]
@@ -67,7 +67,7 @@ namespace FoolProof.Core.Tests.Models
             public TimeSpan? MinTime { get; set; }
         }
 
-        public class DateTimeModel : ValidationModelBase<GreaterThanOrEqualToAttribute>
+        public class DateTimeModel : ValidationModelBase
         {
             [Display(Description = Value1Description)]
             [DataType(DataType.DateTime)]

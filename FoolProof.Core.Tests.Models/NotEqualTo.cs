@@ -5,7 +5,7 @@ namespace FoolProof.Core.Tests.Models
 {
     public class NotEqualTo
     {
-        public class Model : ValidationModelBase<NotEqualToAttribute>
+        public class Model : ValidationModelBase
         {
             [Display(Description = Value1Description)]
             public string? Value1 { get; set; }

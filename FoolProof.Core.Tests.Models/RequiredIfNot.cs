@@ -2,7 +2,7 @@
 {
     public class RequiredIfNot
     {
-        public class Model : ValidationModelBase<RequiredIfNotAttribute>
+        public class Model : ValidationModelBase
         {
             public string? Value1 { get; set; }
 

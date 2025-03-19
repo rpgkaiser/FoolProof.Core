@@ -2,7 +2,7 @@
 {
     public class RequiredIfFalse
     {
-        public class Model : ValidationModelBase<RequiredIfFalseAttribute>
+        public class Model : ValidationModelBase
         {
             public bool? Value1 { get; set; }
 
