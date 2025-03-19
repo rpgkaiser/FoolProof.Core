@@ -22,7 +22,7 @@ namespace FoolProof.Core.Tests.Models
             public DateOnly? ValuePwn { get; set; }
 
             [Display(Description = "MaxDate: Most be less or equals to 01/01/2025")]
-            [DataType(DataType.DateTime)]
+            [DataType(DataType.Date)]
             [LessThan<DateOnly>("01/01/2025")]
             public DateOnly? MaxDate { get; set; }
         }
@@ -41,7 +41,6 @@ namespace FoolProof.Core.Tests.Models
             public Int16? ValuePwn { get; set; }
 
             [Display(Description = "MaxValue: Most be less or equals to 1000")]
-            [DataType(DataType.DateTime)]
             [LessThan<Int16>(1000)]
             public Int16? MaxValue { get; set; }
         }
@@ -63,8 +62,8 @@ namespace FoolProof.Core.Tests.Models
             public TimeSpan? ValuePwn { get; set; }
 
             [Display(Description = "MaxTime: Most be less or equals to 4h and 30min")]
-            [DataType(DataType.DateTime)]
-            [LessThan<DateTime>("04:30")]
+            [DataType(DataType.Time)]
+            [LessThan<TimeSpan>("04:30")]
             public TimeSpan? MaxTime { get; set; }
         }
 

@@ -18,55 +18,41 @@ namespace FoolProof.Core.Tests.E2eTests
 
             protected override string DataType => "string";
 
-            protected override string GetNotValidValue()
-            {
-                return "Any value is a valid value.";
-            }
-
-            protected override (string Value1, string Value2, string ValuePwn) GetValues2PassCompare()
-            {
-                return ("Value one", "Value one", "Value one");
-            }
-
-            protected override (string Value1, string Value2, string ValuePwn) GetValues2FailsCompare()
-            {
-                return ("Value one", "Value two", "Value three");
-            }
-
-            [CustomTestMethod("Empty Values : Valid")]
-            public override async Task EmptyValues()
-            {
-                await LoadPage();
-
-                await ExpectValue1Empty();
-                await ExpectValue2Empty();
-                await ExpectValuePwnEmpty();
-
-                await CallClientValidation();
-                await ExpectValidationSucceed();
-
-                await ResetForm();
-
-                await CallServerValidation();
-                await ExpectValidationSucceed();
-            }
-
-            [Ignore]
-            public override Task InvalidValues()
-            {
-                return base.InvalidValues();
-            }
-
             [CustomTestMethod("Value1 == Value2 == ValuePwn : Valid")]
-            public override Task CompareValuesPass()
+            public override Task FormValidationSuccess()
             {
-                return base.CompareValuesPass();
+                return base.FormValidationSuccess();
             }
 
             [CustomTestMethod("Value1 != Value2 != ValuePwn : Invalid")]
-            public override Task CompareValuesFails()
+            public override Task FormValidationFailure()
             {
-                return base.CompareValuesFails();
+                return base.FormValidationFailure();
+            }
+
+            protected override TestValues GetValues2PassValidation()
+            {
+                return new("Value one", "Value one", "Value one", [
+                    new(nameof(EqualTo.Model.EqualToValue), 1000),
+                    new(nameof(EqualTo.Model.EqualToTime), TimeSpan.Parse("10:30")),
+                    new(nameof(EqualTo.Model.EqualToDateTime), DateTime.Parse("01/01/2025 06:30")),
+                    new(nameof(EqualTo.Model.EqualToDate), DateOnly.Parse("01/01/2025")),
+                    new(nameof(EqualTo.Model.TrueValue), true),
+                    new(nameof(EqualTo.Model.FalseValue), false)
+                ]);
+            }
+
+            protected override TestValues GetValues2FailsValidation()
+            {
+                return new("Value one", "Value two", "Value three", [
+                    new(nameof(EqualTo.Model.EmptyValue), "Any value"),
+                    new(nameof(EqualTo.Model.EqualToValue), 100),
+                    new(nameof(EqualTo.Model.EqualToTime), TimeSpan.Parse("11:50")),
+                    new(nameof(EqualTo.Model.EqualToDateTime), DateTime.Parse("02/02/2025 08:30")),
+                    new(nameof(EqualTo.Model.EqualToDate), DateOnly.Parse("02/02/2025")),
+                    new(nameof(EqualTo.Model.TrueValue), false),
+                    new(nameof(EqualTo.Model.FalseValue), true)
+                ]);
             }
         }
     }

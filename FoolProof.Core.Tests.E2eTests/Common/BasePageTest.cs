@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
@@ -21,7 +22,7 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected IPage Page { get; set; }
 
-        protected bool? UseInputTypes { get; set; } = false;
+        protected bool? UseInputTypes { get; set; } = true;
 
         [TestInitialize]
         public virtual async Task InitTest()
@@ -69,6 +70,7 @@ namespace FoolProof.Core.Tests.E2eTests
             var validAlertDiv = Page.GetByTestId($"valid-alert");
             await Expect(validAlertDiv).ToBeVisibleAsync();
             var cssClass = await validAlertDiv.GetAttributeAsync("class");
+            var content = await Page.ContentAsync();
             Assert.IsTrue(cssClass is not null && cssClass.Contains("alert-success"));
             await Expect(validAlertDiv).ToContainTextAsync(alertValidationMsg);
         }
@@ -107,62 +109,116 @@ namespace FoolProof.Core.Tests.E2eTests
                     await Expect(validAlertDiv).ToContainTextAsync(msg);
         }
 
-        protected virtual async Task AssignValue(string inputSeltor, object? value)
+        protected virtual async Task AssignValue(string inputSeltor, object? value, bool verifyValue = true)
         {
             var input = Page.Locator(inputSeltor);
-            if (value is string strVal)
-            {
-                await input.FillAsync(strVal);
-                await Expect(input).ToHaveValueAsync(strVal);
-            }
-            else if (value is IEnumerable vals)
+            if (value is IEnumerable vals && value is not string)
             {
                 var strVals = vals.Cast<object>().Select(o => ConvertToString(o)).ToArray();
-                await input.SelectOptionAsync(strVals);
-                await Expect(input).ToHaveValuesAsync(strVals);
+                await input.SelectOptionAsync(strVals.Select(v => new SelectOptionValue { Value = v }));
+                if(verifyValue)
+                    try
+                    {
+                        await Expect(input).ToHaveValuesAsync(strVals);
+                    }
+                    catch
+                    {
+                        if (strVals.Length > 1)
+                            throw;
+
+                        await Expect(input).ToHaveValueAsync(strVals[0]);
+                    }
             }
             else
             {
-                strVal = ConvertToString(value);
-                await input.FillAsync(strVal);
-                await Expect(input).ToHaveValueAsync(strVal);
+                var strVal = ConvertToString(value);
+                try
+                {
+                    await input.FillAsync(strVal);
+                    if (verifyValue)
+                        await Expect(input).ToHaveValueAsync(strVal);
+                }
+                catch
+                {
+                    //The input may be a <select>
+                    if (string.IsNullOrEmpty(strVal))
+                    {
+                        var currVal = await input.InputValueAsync();
+                        if (!string.IsNullOrEmpty(currVal))
+                        {
+                            await input.SelectOptionAsync(new SelectOptionValue { Value = string.Empty });
+                            if (verifyValue)
+                                await Expect(input).ToBeEmptyAsync();
+                        }
+                    }
+                    else
+                    {
+                        await input.SelectOptionAsync(new SelectOptionValue { Value = strVal });
+                        if (verifyValue)
+                            await Expect(input).ToHaveValueAsync(strVal);
+                    }
+                }
             }
         }
 
-        protected virtual Task AssignValue1(object? value)
-            => AssignValue("#Value1", value);
+        protected virtual Task AssignValue1(object? value, bool verifyValue = true)
+            => AssignValue("#Value1", value, verifyValue);
 
-        protected virtual async Task ExpectValue1Empty()
+        protected virtual Task ExpectValue1Empty(bool? isSelect = null)
+            => ExpectEmpties(new InputValue("Value1", isSelect: isSelect));
+
+        protected virtual Task AssignValue2(object? value, bool verifyValue = true)
+            => AssignValue("#Value2", value, verifyValue);
+
+        protected virtual Task ExpectValue2Empty(bool? isSelect = null)
+            => ExpectEmpties(new InputValue("Value2", isSelect: isSelect));
+
+        protected virtual Task AssignValuePwn(object? value, bool verifyValue = true)
+            => AssignValue("#ValuePwn", value, verifyValue);
+
+        protected virtual Task ExpectValuePwnEmpty(bool? isSelect = null)
+            => ExpectEmpties(new InputValue("ValuePwn", isSelect: isSelect));
+
+        protected virtual Task AssignFieldValues(params InputValue[] fieldValues)
+            => AssignFieldValues(fieldValues ?? [], true);
+
+        protected virtual async Task AssignFieldValues(IEnumerable<InputValue> fieldValues, bool verifyValue = true)
         {
-            var textInput = Page.Locator("#Value1");
-            await Expect(textInput).ToBeEmptyAsync();
+            foreach (var val in fieldValues)
+                await AssignValue($"#{val.InputId}", val.Value, verifyValue);
         }
 
-        protected virtual Task AssignValue2(object? value)
-            => AssignValue("#Value2", value);
-
-        protected virtual async Task ExpectValue2Empty()
+        protected virtual async Task ExpectValueEmpty(InputValue input)
         {
-            var textInput = Page.Locator("#Value2");
-            await Expect(textInput).ToBeEmptyAsync();
+            var inputLocator = Page.Locator($"#{input.InputId}");
+            if(!input.IsSelect.HasValue)
+            {
+                try { await Expect(inputLocator).ToBeEmptyAsync(); }
+                catch { await Expect(inputLocator).ToHaveValueAsync(string.Empty); }
+            }
+            else if(input.IsSelect.Value)
+                await Expect(inputLocator).ToHaveValueAsync(string.Empty);
+            else
+                await Expect(inputLocator).ToBeEmptyAsync();
         }
 
-        protected virtual Task AssignValuePwn(object? value)
-            => AssignValue("#ValuePwn", value);
-
-        protected virtual async Task ExpectValuePwnEmpty()
+        protected virtual async Task ExpectEmpties(params InputValue[] inputs)
         {
-            var textInput = Page.Locator("#ValuePwn");
-            await Expect(textInput).ToBeEmptyAsync();
+            foreach (var id in inputs)
+                await ExpectValueEmpty(id);
         }
 
-        protected virtual async Task ResetForm()
+        protected virtual async Task ResetForm(params InputValue[] inputs)
         {
             var resetFormBtn = Page.GetByTestId($"btn-reset");
             await resetFormBtn.ClickAsync();
+
             await ExpectValue1Empty();
             await ExpectValue2Empty();
             await ExpectValuePwnEmpty();
+
+            if(inputs is not null && inputs.Length > 0)
+                await ExpectEmpties(inputs);
         }
 
         protected async Task CallClientValidation()
@@ -199,8 +255,27 @@ namespace FoolProof.Core.Tests.E2eTests
                                  : date.ToString("MM/dd/yyyy"),
                 TimeSpan time => time.ToString(@"hh\:mm"),
                 TimeOnly time => time.ToString(@"hh\:mm"),
+                bool boolValue => boolValue.ToString().ToLowerInvariant(),
                 _ => value + ""
             };
+        }
+
+        protected class InputValue
+        {
+            public InputValue() { }
+
+            public InputValue(string id, object? value = null, bool? isSelect = null)
+            {
+                this.InputId = id;
+                this.Value = value;
+                this.IsSelect = null;
+            }
+
+            public string InputId { get; set; } = string.Empty;
+
+            public object? Value { get; set; }
+
+            public bool? IsSelect { get; set; }
         }
     }
 }

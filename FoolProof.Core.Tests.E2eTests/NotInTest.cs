@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
 namespace FoolProof.Core.Tests.E2eTests
 {
-    public abstract class NotInTest<TV1, TV2, TVPwn>: CompareBaseTest<TV1, TV2, TVPwn>
+    public abstract class NotInTest<T>: InTest<T>
     {
         protected override Regex PageTitleRegex() => new($@".+\s+[-]\s+NotIn\s+\({DataType}\)");
 
@@ -13,71 +14,44 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string ValuePwnValidationError => "ValuePwn must be not in Value1";
 
-        [TestInitialize]
-        public void IniTest()
-        {
-            UseInputTypes = true;
-        }
-
         [CustomTestMethod("Empty Values : Invalid")]
         public override async Task EmptyValues()
         {
-            await LoadPage();
-
-            await ExpectValue1Empty();
-            await ExpectValue2Empty();
-            await ExpectValuePwnEmpty();
-
-            await CallClientValidation();
-            await ExpectClientValidationFailed();
-
-            await ResetForm();
-
-            await CallServerValidation();
-            await ExpectServerValidationFailed();
-        }
-
-        [CustomTestMethod("ValuePwn && Value2 ∈ Value1 : Invalid")]
-        public override Task CompareValuesPass()
-        {
-            return base.CompareValuesPass();
+            await EmptyValues(false);
         }
 
         [CustomTestMethod("ValuePwn && Value2 ∉ Value1 : Valid")]
-        public override Task CompareValuesFails()
+        public override Task FormValidationSuccess()
         {
-            return base.CompareValuesFails();
+            return base.FormValidationSuccess();
         }
+
+        [CustomTestMethod("ValuePwn && Value2 ∈ Value1 : Invalid")]
+        public override Task FormValidationFailure()
+        {
+            return base.FormValidationFailure();
+        }
+
+        [Ignore]
+        public override Task SameValuesPass() => Task.CompletedTask;
 
         [CustomTestMethod("Value1 == Value2 == ValuePwn : Invalid")]
         public virtual async Task SameValuesFails()
         {
-            UseInputTypes = false;
             await LoadPage();
 
-            var value = GetValues2PassCompare().Value2;
-            await AssignValue1(value);
-            await AssignValue2(value);
-            await AssignValuePwn(value);
+            var testValues = GetValues2PassValidation();
+            testValues.Value1 = _value1.Take(1).ToArray();
+            testValues.Value2 = testValues.ValuePwn = _value1.First();
+            await AssignTestValues(testValues);
 
             await CallClientValidation();
             await ExpectClientValidationFailed();
 
-            await ResetForm();
-
-            await AssignValue1(value);
-            await AssignValue2(value);
-            await AssignValuePwn(value);
+            await AssignTestValues(testValues, true);
 
             await CallServerValidation();
             await ExpectServerValidationFailed();
-        }
-
-        [CustomTestMethod("Not Valid Values : Invalid")]
-        public override async Task InvalidValues()
-        {
-            UseInputTypes = false;
-            await base.InvalidValues();
         }
 
         [CustomTestMethod("Value1 is Empty : Valid")]
@@ -85,17 +59,15 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             await LoadPage();
 
-            var vals = GetValues2PassCompare();
+            var testValues = GetValues2PassValidation();
+            await AssignTestValues(testValues, false, true, ["Value1"]);
             await ExpectValue1Empty();
-            await AssignValue2(vals.Value2);
-            await AssignValuePwn(vals.ValuePwn);
 
             await CallClientValidation();
             await ExpectValidationSucceed();
 
-            await ResetForm();
-            await AssignValue2(vals.Value2);
-            await AssignValuePwn(vals.ValuePwn);
+            await AssignTestValues(testValues, true, true, ["Value1"]);
+            await ExpectValue1Empty();
 
             await CallServerValidation();
             await ExpectValidationSucceed();
@@ -106,134 +78,134 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             await LoadPage();
 
-            var vals = GetValues2PassCompare();
-            await AssignValue1(vals.Value1);
+            var testValues = GetValues2PassValidation();
+            await AssignTestValues(testValues, false, true, ["Value2"]);
             await ExpectValue2Empty();
-            await AssignValuePwn(vals.ValuePwn);
 
             await CallClientValidation();
             await ExpectValidationSucceed();
 
-            await ResetForm();
-            await AssignValue1(vals.Value1);
-            await AssignValuePwn(vals.ValuePwn);
+            await AssignTestValues(testValues, true, true, ["Value2"]);
+            await ExpectValue2Empty();
 
             await CallServerValidation();
             await ExpectValidationSucceed();
         }
-
-        protected override string InvalidValue1ValidationError(string invalidValue)
-            => $"The value '{invalidValue}' is not valid";
-
-        protected override async Task ExpectValue1Empty()
-        {
-            var textInput = Page.Locator("#Value1");
-            if(UseInputTypes ?? true)
-                await Expect(textInput).ToHaveValuesAsync(Enumerable.Empty<string>());
-            else
-                await Expect(textInput).ToBeEmptyAsync();
-        }
     }
 
     [TestClass]
-    public class SingleValueNotInTest : NotInTest<string[], string, string>
+    public class SingleValueNotInTest : NotInTest<string>
     {
+        public SingleValueNotInTest()
+        {
+            _value1 = ["Value one"];
+        }
+
         protected override string DataType => "Single";
 
-        [Ignore]
-        public override Task InvalidValues()
+        protected override TestValues GetValues2PassValidation()
         {
-            //This test should be ignored in this class
-            return Task.CompletedTask;
+            return new(
+                _value1, 
+                "Value two", 
+                "Value three", 
+                [
+                    new(nameof(NotIn.SingleValueModel<string>.DateNotIn), DateOnly.Parse("08/08/2028")),
+                    new(nameof(NotIn.SingleValueModel<string>.TimeNotIn), TimeSpan.Parse("10:00"))
+                ]
+            );
         }
 
-        protected override (string[] Value1, string Value2, string ValuePwn) GetValues2PassCompare()
+        protected override TestValues GetValues2FailsValidation()
         {
-            return (new[] { "Value one" }, "Value two", "Value three");
-        }
-
-        protected override (string[] Value1, string Value2, string ValuePwn) GetValues2FailsCompare()
-        {
-            return (new[] { "Value one" }, "Value one", "Value one");
-        }
-
-        protected override async Task ExpectValue1Empty()
-        {
-            var textInput = Page.Locator("#Value1");
-            await Expect(textInput).ToHaveValueAsync("");
-        }
-
-        protected override async Task AssignValue1(object? value)
-        {
-            if(value is string[] strVals)
-            {
-                var input = Page.Locator("#Value1");
-                await input.SelectOptionAsync(strVals);
-                await Expect(input).ToHaveValueAsync(strVals.First());
-            }
-            else
-                await base.AssignValue1(value);
+            return new(
+                _value1, 
+                "Value one", 
+                "Value one", 
+                [
+                    new(nameof(NotIn.SingleValueModel<string>.DateNotIn), DateOnly.Parse("03/03/2025")),
+                    new(nameof(NotIn.SingleValueModel<string>.TimeNotIn), TimeSpan.Parse("02:00"))
+                ]
+            );
         }
     }
 
     [TestClass]
-    public class Int16ValuesNotInTest : NotInTest<Int16[], Int16, Int16>
+    public class Int16ValuesNotInTest : NotInTest<Int16>
     {
+        public Int16ValuesNotInTest()
+        {
+            _value1 = [ 2, 4, 7, 9 ];
+        }
+
         protected override string DataType => "Int16";
 
-        protected override (Int16[] Value1, Int16 Value2, Int16 ValuePwn) GetValues2PassCompare()
+        protected override TestValues GetValues2PassValidation()
         {
-            return (new Int16[] { 2, 4, 7, 9 }, 3, 8);
+            return new(_value1, 3, 8, [
+                new (nameof(NotIn.In16ListModel.ValueNotIn), 4)
+            ]);
         }
 
-        protected override (Int16[] Value1, Int16 Value2, Int16 ValuePwn) GetValues2FailsCompare()
+        protected override TestValues GetValues2FailsValidation()
         {
-            return (new Int16[] { 2, 4, 7, 9 }, 4, 9);
+            return new(_value1, 4, 9, [
+                new (nameof(NotIn.In16ListModel.ValueNotIn), 5)
+            ]);
         }
     }
 
     [TestClass]
-    public class DateTimeValuesNotInTest : NotInTest<DateTime[], DateTime, DateTime>
+    public class DateTimeValuesNotInTest : NotInTest<DateTime>
     {
-        protected override string DataType => "DateTime";
-
-        protected override (DateTime[] Value1, DateTime Value2, DateTime ValuePwn) GetValues2PassCompare()
+        public DateTimeValuesNotInTest()
         {
-            return (
-                new[] {
-                        DateTime.Parse("03/03/2003 03:05"),
-                        DateTime.Parse("07/07/2007 07:07"),
-                        DateTime.Parse("12/12/2012 12:12")
-                },
-                DateTime.Parse("08/08/2008 07:07"),
-                DateTime.Parse("05/12/2012 15:15")
-            );
-        }
-
-        protected override (DateTime[] Value1, DateTime Value2, DateTime ValuePwn) GetValues2FailsCompare()
-        {
-            return (
-                new[] {
-                        DateTime.Parse("03/03/2003 03:05"),
-                        DateTime.Parse("07/07/2007 07:07"),
-                        DateTime.Parse("12/12/2012 12:12")
-                },
+            _value1 = [
+                DateTime.Parse("03/03/2003 03:05"),
                 DateTime.Parse("07/07/2007 07:07"),
                 DateTime.Parse("12/12/2012 12:12")
+            ];
+        }
+
+        protected override string DataType => "DateTime";
+
+        protected override TestValues GetValues2PassValidation()
+        {
+            return new(
+                _value1,
+                DateTime.Parse("08/08/2008 07:07"),
+                DateTime.Parse("05/12/2012 15:15"),
+                [
+                    new (nameof(NotIn.DateTimeListModel.DateTimeNotIn), DateTime.Parse("08/10/2028 12:00"))
+                ]
             );
         }
 
-        protected override async Task AssignValue1(object? value)
+        protected override TestValues GetValues2FailsValidation()
         {
-            if(value is DateTime[] dateVals)
+            return new(
+                _value1,
+                DateTime.Parse("07/07/2007 07:07"),
+                DateTime.Parse("12/12/2012 12:12"),
+                [
+                    new (nameof(NotIn.DateTimeListModel.DateTimeNotIn), DateTime.Parse("02/02/2025 02:00"))
+                ]
+            );
+        }
+
+        protected override async Task AssignValue(string inputSeltor, object? value, bool verifyValue = true)
+        {
+            if (!string.Equals(inputSeltor, "#Value1") || value is string || value is not IEnumerable enumVals)
             {
-                var strVals = dateVals.Select(d => d.ToString("MM/dd/yyyy hh:mm")).ToArray();
-                var input = Page.Locator("#Value1");
-                await input.SelectOptionAsync(strVals);
-                await Expect(input).ToHaveValuesAsync(strVals);
+                await base.AssignValue(inputSeltor, value, verifyValue);
+                return;
             }
-            else
-                await base.AssignValue1(value);
+
+            var strVals = enumVals.Cast<DateTime>().Select(d => d.ToString("MM/dd/yyyy hh:mm")).ToArray();
+            var input = Page.Locator("#Value1");
+            await input.SelectOptionAsync(strVals);
+            if (verifyValue)
+                await Expect(input).ToHaveValuesAsync(strVals);
         }
     }
 }

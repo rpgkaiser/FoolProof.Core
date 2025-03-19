@@ -41,7 +41,6 @@ namespace FoolProof.Core.Tests.Models
             public Int16? ValuePwn { get; set; }
 
             [Display(Description = "MaxValue: Most be less than 1000")]
-            [DataType(DataType.Date)]
             [LessThan<Int16>(1000)]
             public Int16? MaxValue { get; set; }
         }
