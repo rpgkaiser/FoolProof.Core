@@ -2,8 +2,9 @@
 
 var FoolProofCore = function () { };
 
-FoolProofCore.isNullish = function (input) {
-    return input == null || input == undefined || input == "";
+FoolProofCore.isNullish = function (input, checkArray) {
+    return input === null || input === undefined || input === ""
+        || (!!checkArray && Array.isArray(input) && input.length == 0);
 }   
 
 FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataType) {
@@ -12,7 +13,7 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 	passOnNull = (/true/i).test(passOnNull + "");
     if (passOnNull) {
         var value1nullish = isNullish(compValue);
-        var value2nullish = isNullish(dependValue);
+        var value2nullish = isNullish(dependValue, operator === "In");
 
         if ((value1nullish && !value2nullish) || (value2nullish && !value1nullish))
             return true;
@@ -175,9 +176,9 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 			return dependValue && (new RegExp(dependValue).test(compValue));
 		case "NotRegExMatch":
 			return dependValue && !(new RegExp(dependValue).test(compValue));
-		case "In":
-			if (isNullish(compValue) && isNullish(dependValue))
-				return true;
+        case "In":
+            if (isNullish(compValue) && isNullish(dependValue, true))
+                return true;
 
 			return verifyInclusion();
 		case "NotIn":

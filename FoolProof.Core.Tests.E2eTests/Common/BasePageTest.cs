@@ -24,6 +24,12 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected bool? UseInputTypes { get; set; } = true;
 
+        protected virtual string Value1ValidMsgId => "value1-valid-msg";
+
+        protected virtual string Value2ValidMsgId => "value2-valid-msg";
+
+        protected virtual string ValuePwnValidMsgId => "valuepwn-valid-msg";
+
         [TestInitialize]
         public virtual async Task InitTest()
         {
@@ -54,17 +60,28 @@ namespace FoolProof.Core.Tests.E2eTests
             await Expect(Page).ToHaveTitleAsync(PageTitleRegex());
         }
 
-        protected async Task ExpectValidationSucceed(
+        protected virtual async Task VerifyValidationResult(InputTestValue input)
+        {
+            var inputValidMsg = Page.GetByTestId(input.ValidMsgElemTestId);
+            if (input.ValidResultText == string.Empty)
+                await Expect(inputValidMsg).ToBeEmptyAsync();
+            else if (input.ValidResultText is null)
+                await Expect(inputValidMsg).Not.ToBeEmptyAsync();
+            else
+                await Expect(inputValidMsg).ToContainTextAsync(input.ValidResultText);
+        }
+
+        protected virtual async Task ExpectValidationSucceed(
             string alertValidationMsg = "Model validation succeed"
         )
         {
-            var value1ValidationMessage = Page.GetByTestId($"value1-valid-msg");
+            var value1ValidationMessage = Page.GetByTestId(Value1ValidMsgId);
             await Expect(value1ValidationMessage).ToBeEmptyAsync();
             
-            var value2ValidationMessage = Page.GetByTestId($"value2-valid-msg");
+            var value2ValidationMessage = Page.GetByTestId(Value2ValidMsgId);
             await Expect(value2ValidationMessage).ToBeEmptyAsync();
 
-            var valuePwnValidationMessage = Page.GetByTestId($"valuepwn-valid-msg");
+            var valuePwnValidationMessage = Page.GetByTestId(ValuePwnValidMsgId);
             await Expect(value2ValidationMessage).ToBeEmptyAsync();
 
             var validAlertDiv = Page.GetByTestId($"valid-alert");
@@ -75,28 +92,34 @@ namespace FoolProof.Core.Tests.E2eTests
             await Expect(validAlertDiv).ToContainTextAsync(alertValidationMsg);
         }
 
-        protected async Task ExpectValidationFailed(
-            string value2ErrorMsg,
+        protected virtual async Task ExpectValidationFailed(
+            string? value2ErrorMsg = null,
             string? valuePwnErrorMsg = null,
             string? value1ErrorMsg = null,
             params string[] alertValidationMsgs            
         )
         {
-            var value1ValidationMessage = Page.GetByTestId($"value1-valid-msg");
-            if(string.IsNullOrEmpty(value1ErrorMsg))
+            var value1ValidationMessage = Page.GetByTestId(Value1ValidMsgId);
+            if(value1ErrorMsg == string.Empty)
                 await Expect(value1ValidationMessage).ToBeEmptyAsync();
+            else if(value1ErrorMsg is null)
+                await Expect(value1ValidationMessage).Not.ToBeEmptyAsync();
             else
                 await Expect(value1ValidationMessage).ToContainTextAsync(value1ErrorMsg);
 
-            var value2ValidationMessage = Page.GetByTestId($"value2-valid-msg");
-            if (string.IsNullOrEmpty(value2ErrorMsg))
+            var value2ValidationMessage = Page.GetByTestId(Value2ValidMsgId);
+            if (value2ErrorMsg == string.Empty)
                 await Expect(value2ValidationMessage).ToBeEmptyAsync();
+            else if(value2ErrorMsg is null)
+                await Expect(value2ValidationMessage).Not.ToBeEmptyAsync();
             else
                 await Expect(value2ValidationMessage).ToContainTextAsync(value2ErrorMsg);
 
-            var valuePwnValidationMessage = Page.GetByTestId($"valuepwn-valid-msg");
-            if (string.IsNullOrEmpty(valuePwnErrorMsg))
+            var valuePwnValidationMessage = Page.GetByTestId(ValuePwnValidMsgId);
+            if (valuePwnErrorMsg == string.Empty)
                 await Expect(valuePwnValidationMessage).ToBeEmptyAsync();
+            else if(valuePwnErrorMsg is null)
+                await Expect(valuePwnValidationMessage).Not.ToBeEmptyAsync();
             else
                 await Expect(valuePwnValidationMessage).ToContainTextAsync(valuePwnErrorMsg);
 
@@ -104,19 +127,59 @@ namespace FoolProof.Core.Tests.E2eTests
             await Expect(validAlertDiv).ToBeVisibleAsync();
             var cssClass = await validAlertDiv.GetAttributeAsync("class");
             Assert.IsTrue(cssClass is not null && cssClass.Contains("alert-danger"));
-            if(alertValidationMsgs is not null)
-                foreach(var msg in alertValidationMsgs)
+            if(alertValidationMsgs is null)
+                await Expect(validAlertDiv).Not.ToBeEmptyAsync();
+            else if(alertValidationMsgs.Length == 0)
+                await Expect(validAlertDiv).ToBeEmptyAsync();
+            else
+                foreach (var msg in alertValidationMsgs)
+                    await Expect(validAlertDiv).ToContainTextAsync(msg);
+        }
+
+        protected virtual async Task ExpectValidationFailed(
+            TestValues testValues,
+            params string[] alertValidationMsgs
+        )
+        {
+            foreach (var testVal in testValues.AllValues())
+                await VerifyValidationResult(testVal);
+
+            var validAlertDiv = Page.GetByTestId($"valid-alert");
+            await Expect(validAlertDiv).ToBeVisibleAsync();
+            var cssClass = await validAlertDiv.GetAttributeAsync("class");
+            Assert.IsTrue(cssClass is not null && cssClass.Contains("alert-danger"));
+            if (alertValidationMsgs is null)
+                await Expect(validAlertDiv).Not.ToBeEmptyAsync();
+            else if (alertValidationMsgs.Length == 0)
+                await Expect(validAlertDiv).ToBeEmptyAsync();
+            else
+                foreach (var msg in alertValidationMsgs)
                     await Expect(validAlertDiv).ToContainTextAsync(msg);
         }
 
         protected virtual async Task AssignValue(string inputSeltor, object? value, bool verifyValue = true)
         {
+            static async Task<bool> Assign(Func<Task> operation)
+            {
+                try
+                {
+                    await operation.Invoke();
+                    return true;
+                }
+                catch { return false; }
+            }
+
+            var assigned = false;
             var input = Page.Locator(inputSeltor);
             if (value is IEnumerable vals && value is not string)
             {
+                //The input must be a multi <select>
                 var strVals = vals.Cast<object>().Select(o => ConvertToString(o)).ToArray();
-                await input.SelectOptionAsync(strVals.Select(v => new SelectOptionValue { Value = v }));
-                if(verifyValue)
+                assigned = await Assign(
+                    () => input.SelectOptionAsync(strVals.Select(v => new SelectOptionValue { Value = v }))
+                );
+
+                if(assigned && verifyValue)
                     try
                     {
                         await Expect(input).ToHaveValuesAsync(strVals);
@@ -128,67 +191,88 @@ namespace FoolProof.Core.Tests.E2eTests
 
                         await Expect(input).ToHaveValueAsync(strVals[0]);
                     }
+
+                if (!assigned)
+                    throw new Exception("Value could not be assigned and/or verified.");
             }
-            else
+
+            if(!assigned && value is bool boolValue)
             {
-                var strVal = ConvertToString(value);
-                try
+                //The input may be a check or radio
+                assigned = await Assign(
+                    async () => {
+                        if (boolValue)
+                            await input.CheckAsync();
+                        else
+                            await input.UncheckAsync();
+                    }
+                );
+            }
+
+            var strVal = ConvertToString(value);
+            if (!assigned)
+            {
+                //The input may be a text or textarea
+                assigned = await Assign(() => input.FillAsync(strVal));
+                if (assigned && verifyValue)
+                    await Expect(input).ToHaveValueAsync(strVal);
+            }
+
+            if(!assigned)
+            {
+                //The input may be a <select>
+                if (string.IsNullOrEmpty(strVal))
                 {
-                    await input.FillAsync(strVal);
-                    if (verifyValue)
-                        await Expect(input).ToHaveValueAsync(strVal);
-                }
-                catch
-                {
-                    //The input may be a <select>
-                    if (string.IsNullOrEmpty(strVal))
+                    var currVal = await input.InputValueAsync();
+                    if (!string.IsNullOrEmpty(currVal))
                     {
-                        var currVal = await input.InputValueAsync();
-                        if (!string.IsNullOrEmpty(currVal))
-                        {
-                            await input.SelectOptionAsync(new SelectOptionValue { Value = string.Empty });
-                            if (verifyValue)
-                                await Expect(input).ToBeEmptyAsync();
-                        }
+                        assigned = await Assign(() => input.SelectOptionAsync(new SelectOptionValue { Value = string.Empty }));
+                        if (assigned && verifyValue)
+                            await Expect(input).ToBeEmptyAsync();
                     }
                     else
-                    {
-                        await input.SelectOptionAsync(new SelectOptionValue { Value = strVal });
-                        if (verifyValue)
-                            await Expect(input).ToHaveValueAsync(strVal);
-                    }
+                        assigned = true;
+                }
+                else
+                {
+                    assigned = await Assign(() => input.SelectOptionAsync(new SelectOptionValue { Value = strVal }));
+                    if (assigned && verifyValue)
+                        await Expect(input).ToHaveValueAsync(strVal);
                 }
             }
+
+            if (!assigned)
+                throw new Exception("Value could not be assigned and/or verified.");
         }
 
         protected virtual Task AssignValue1(object? value, bool verifyValue = true)
             => AssignValue("#Value1", value, verifyValue);
 
         protected virtual Task ExpectValue1Empty(bool? isSelect = null)
-            => ExpectEmpties(new InputValue("Value1", isSelect: isSelect));
+            => ExpectEmpties(new InputTestValue("Value1", isSelect: isSelect));
 
         protected virtual Task AssignValue2(object? value, bool verifyValue = true)
             => AssignValue("#Value2", value, verifyValue);
 
         protected virtual Task ExpectValue2Empty(bool? isSelect = null)
-            => ExpectEmpties(new InputValue("Value2", isSelect: isSelect));
+            => ExpectEmpties(new InputTestValue("Value2", isSelect: isSelect));
 
         protected virtual Task AssignValuePwn(object? value, bool verifyValue = true)
             => AssignValue("#ValuePwn", value, verifyValue);
 
         protected virtual Task ExpectValuePwnEmpty(bool? isSelect = null)
-            => ExpectEmpties(new InputValue("ValuePwn", isSelect: isSelect));
+            => ExpectEmpties(new InputTestValue("ValuePwn", isSelect: isSelect));
 
-        protected virtual Task AssignFieldValues(params InputValue[] fieldValues)
+        protected virtual Task AssignFieldValues(params InputTestValue[] fieldValues)
             => AssignFieldValues(fieldValues ?? [], true);
 
-        protected virtual async Task AssignFieldValues(IEnumerable<InputValue> fieldValues, bool verifyValue = true)
+        protected virtual async Task AssignFieldValues(IEnumerable<InputTestValue> fieldValues, bool verifyValue = true)
         {
             foreach (var val in fieldValues)
                 await AssignValue($"#{val.InputId}", val.Value, verifyValue);
         }
 
-        protected virtual async Task ExpectValueEmpty(InputValue input)
+        protected virtual async Task ExpectValueEmpty(InputTestValue input)
         {
             var inputLocator = Page.Locator($"#{input.InputId}");
             if(!input.IsSelect.HasValue)
@@ -202,13 +286,13 @@ namespace FoolProof.Core.Tests.E2eTests
                 await Expect(inputLocator).ToBeEmptyAsync();
         }
 
-        protected virtual async Task ExpectEmpties(params InputValue[] inputs)
+        protected virtual async Task ExpectEmpties(params InputTestValue[] inputs)
         {
-            foreach (var id in inputs)
-                await ExpectValueEmpty(id);
+            foreach (var input in inputs)
+                await ExpectValueEmpty(input);
         }
 
-        protected virtual async Task ResetForm(params InputValue[] inputs)
+        protected virtual async Task ResetForm(params InputTestValue[] inputs)
         {
             var resetFormBtn = Page.GetByTestId($"btn-reset");
             await resetFormBtn.ClickAsync();
@@ -221,14 +305,32 @@ namespace FoolProof.Core.Tests.E2eTests
                 await ExpectEmpties(inputs);
         }
 
-        protected async Task CallClientValidation()
+        protected virtual async Task ResetForm(TestValues testValues)
         {
-            var clientValidationBtn = Page.GetByTestId($"btn-client");
-            await clientValidationBtn.ClickAsync();
+            var resetFormBtn = Page.GetByTestId($"btn-reset");
+            await resetFormBtn.ClickAsync();
+
+            await ExpectEmpties([.. testValues.AllValues().Where(tv => tv.ResetAsEmpty == true)]);
         }
 
-        protected async Task CallServerValidation()
+        protected async Task CallClientValidation(TestValues? testValues = null, bool resetFirst = false, bool verifyValidResults = false)
         {
+            if(testValues is not null)
+                await AssignTestValues(testValues, resetFirst);
+
+            var clientValidationBtn = Page.GetByTestId($"btn-client");
+            await clientValidationBtn.ClickAsync();
+
+            if (verifyValidResults && testValues is not null)
+                foreach (var testVal in testValues.AllValues())
+                    await VerifyValidationResult(testVal);
+        }
+
+        protected async Task CallServerValidation(TestValues? testValues = null, bool resetFirst = false, bool verifyValidResults = false)
+        {
+            if (testValues is not null)
+                await AssignTestValues(testValues);
+
             var serverValidationBtn = Page.GetByTestId($"btn-server");
             await Page.RunAndWaitForResponseAsync(
                 async () => {
@@ -238,6 +340,10 @@ namespace FoolProof.Core.Tests.E2eTests
                         && string.Equals(resp.Request.Method, "POST", StringComparison.OrdinalIgnoreCase)
                         && new Uri(resp.Url).GetLeftPart(UriPartial.Path).EndsWith("/validate")
             );
+
+            if (verifyValidResults && testValues is not null)
+                foreach (var testVal in testValues.AllValues())
+                    await VerifyValidationResult(testVal);
         }
 
         protected virtual string ConvertToString(object? value)
@@ -260,22 +366,107 @@ namespace FoolProof.Core.Tests.E2eTests
             };
         }
 
-        protected class InputValue
+        protected virtual async Task AssignTestValues(
+            TestValues tesValues,
+            bool resetFirt = false,
+            bool verifyValues = true,
+            params string[] ignoreInputIds
+        )
         {
-            public InputValue() { }
+            if (resetFirt)
+                await ResetForm(tesValues);
 
-            public InputValue(string id, object? value = null, bool? isSelect = null)
+            var fieldsToAssign = tesValues.AllValues();
+            if (ignoreInputIds is not null && ignoreInputIds.Length > 0)
+                fieldsToAssign = fieldsToAssign.Where(iv => !ignoreInputIds.Contains(iv.InputId));
+
+            await AssignFieldValues([.. fieldsToAssign], verifyValues);
+        }
+
+        protected class InputTestValue(
+            string id,
+            object? value = null,
+            bool? isSelect = null,
+            string? validResText = "",
+            string? validMsgElemTestId = null,
+            bool resetAsEmpty = true
+        )
+        {
+            public string InputId { get; set; } = id;
+
+            public object? Value { get; set; } = value;
+
+            public bool? IsSelect { get; set; } = isSelect;
+
+            public string? ValidResultText { get; set; } = validResText;
+
+            public string ValidMsgElemTestId { get; set; } = validMsgElemTestId ?? $"{id.ToLowerInvariant()}-valid-msg";
+
+            public bool ResetAsEmpty { get; set; } = resetAsEmpty;
+
+            public InputTestValue Clone(Action<InputTestValue>? modify = null)
             {
-                this.InputId = id;
-                this.Value = value;
-                this.IsSelect = null;
+                var result = new InputTestValue(InputId, Value, IsSelect, ValidResultText, ValidMsgElemTestId);
+                
+                modify?.Invoke(result);
+
+                return result;
+            }
+        }
+
+        protected class TestValues
+        {
+            protected readonly InputTestValue _value1;
+            protected readonly InputTestValue _value2;
+            protected readonly InputTestValue _valuePwn;
+            protected readonly List<InputTestValue> _otherValues;
+
+            public TestValues(
+                object? value1 = default,
+                object? value2 = default,
+                object? valuePwn = default,
+                params InputTestValue[] otherValues
+            )
+            {
+                _value1 = value1 is InputTestValue inpVal1 ? inpVal1 : new InputTestValue("Value1", value1);
+                _value2 = value2 is InputTestValue inpVal2 ? inpVal2 : new InputTestValue("Value2", value2);
+                _valuePwn = valuePwn is InputTestValue inpValPwn ? inpValPwn : new InputTestValue("ValuePwn", valuePwn);
+
+                if (otherValues is not null && otherValues.Length > 0)
+                    _otherValues = [.. otherValues];
+                else
+                    _otherValues = [];
             }
 
-            public string InputId { get; set; } = string.Empty;
+            public object? Value1
+            {
+                get => _value1.Value;
+                set => _value1.Value = value;
+            }
 
-            public object? Value { get; set; }
+            public object? Value2
+            {
+                get => _value2.Value;
+                set => _value2.Value = value;
+            }
 
-            public bool? IsSelect { get; set; }
+            public object? ValuePwn
+            {
+                get => _valuePwn.Value;
+                set => _valuePwn.Value = value;
+            }
+
+            public List<InputTestValue> OtherValues => _otherValues;
+
+            public IEnumerable<InputTestValue> AllValues()
+            {
+                yield return _value1;
+                yield return _value2;
+                yield return _valuePwn;
+
+                foreach (var val in _otherValues)
+                    yield return val;
+            }
         }
     }
 }

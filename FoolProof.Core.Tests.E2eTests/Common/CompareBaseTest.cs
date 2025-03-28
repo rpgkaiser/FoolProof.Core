@@ -26,8 +26,10 @@ namespace FoolProof.Core.Tests.E2eTests
 
             await CallClientValidation();
             await ExpectValidationFailed(
-                value2ErrorMsg: Value2ValidationError,
-                alertValidationMsgs: "Model validation failed"
+                Value2ValidationError,
+                "",
+                "",
+                "Model validation failed"
             );
 
             await AssignTestValues(testValues, true, true, ["Value1"]);
@@ -35,8 +37,10 @@ namespace FoolProof.Core.Tests.E2eTests
 
             await CallServerValidation();
             await ExpectValidationFailed(
-                value2ErrorMsg: Value2ValidationError,
-                alertValidationMsgs: [Value2ValidationError]
+                Value2ValidationError,
+                "",
+                "",
+                Value2ValidationError
             );
         }
 
@@ -51,8 +55,10 @@ namespace FoolProof.Core.Tests.E2eTests
 
             await CallClientValidation();
             await ExpectValidationFailed(
-                value2ErrorMsg: Value2ValidationError,
-                alertValidationMsgs: "Model validation failed"
+                Value2ValidationError,
+                "",
+                "", 
+                "Model validation failed"
             );
 
             await AssignTestValues(testValues, true, true, ["Value2"]);
@@ -60,8 +66,10 @@ namespace FoolProof.Core.Tests.E2eTests
 
             await CallServerValidation();
             await ExpectValidationFailed(
-                value2ErrorMsg: Value2ValidationError,
-                alertValidationMsgs: [Value2ValidationError]
+                Value2ValidationError,
+                "",
+                "", 
+                Value2ValidationError
             );
         }
 
@@ -144,88 +152,18 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected Task ExpectClientValidationFailed()
             => ExpectValidationFailed(
-                    value2ErrorMsg: Value2ValidationError,
-                    valuePwnErrorMsg: ValuePwnValidationError,
-                    alertValidationMsgs: "Model validation failed"
+                    Value2ValidationError,
+                    ValuePwnValidationError,
+                    "",
+                    "Model validation failed"
                 );
 
         protected Task ExpectServerValidationFailed()
             => ExpectValidationFailed(
-                    value2ErrorMsg: Value2ValidationError,
-                    valuePwnErrorMsg: ValuePwnValidationError,
-                    alertValidationMsgs: [Value2ValidationError, ValuePwnValidationError]
+                    Value2ValidationError,
+                    ValuePwnValidationError,
+                    "",
+                    Value2ValidationError, ValuePwnValidationError
                 );
-
-        protected virtual async Task AssignTestValues(
-            TestValues tesValues, 
-            bool resetFirt = false,
-            bool verifyValues = true,
-            params string[] ignoreInputIds
-        )
-        {
-            if(resetFirt)
-                await ResetForm([.. tesValues.AllValues()]);
-
-            var fieldsToAssign = tesValues.AllValues();
-            if(ignoreInputIds is not null && ignoreInputIds.Length > 0)
-                fieldsToAssign = fieldsToAssign.Where(iv => !ignoreInputIds.Contains(iv.InputId));
-
-            await AssignFieldValues([.. fieldsToAssign], verifyValues);
-        }
-
-        protected class TestValues
-        {
-            private readonly InputValue _value1;
-            private readonly InputValue _value2;
-            private readonly InputValue _valuePwn;
-            private readonly List<InputValue> _otherValues;
-            
-            public TestValues(
-                object? value1 = default,
-                object? value2 = default,
-                object? valuePwn = default, 
-                params InputValue[] otherValues
-            ) 
-            {
-                _value1 = new ("Value1", value1);
-                _value2 = new("Value2", value2);
-                _valuePwn = new("ValuePwn", valuePwn);
-
-                if (otherValues is not null && otherValues.Length > 0)
-                    _otherValues = [.. otherValues];
-                else
-                    _otherValues = [];
-            }
-
-            public object? Value1 
-            { 
-                get => _value1.Value; 
-                set => _value1.Value = value; 
-            }
-
-            public object? Value2 
-            { 
-                get => _value2.Value; 
-                set => _value2.Value = value; 
-            }
-
-            public object? ValuePwn 
-            { 
-                get => _valuePwn.Value; 
-                set => _valuePwn.Value = value; 
-            }
-
-            public List<InputValue> OtherValues => _otherValues;
-
-            public IEnumerable<InputValue> AllValues()
-            {
-                yield return _value1;
-                yield return _value2;
-                yield return _valuePwn;
-
-                foreach (var val in _otherValues)
-                    yield return val;
-            }
-        }
     }
 }

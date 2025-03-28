@@ -14,12 +14,6 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string ValuePwnValidationError => "ValuePwn must be not in Value1";
 
-        [CustomTestMethod("Empty Values : Invalid")]
-        public override async Task EmptyValues()
-        {
-            await EmptyValues(false);
-        }
-
         [CustomTestMethod("ValuePwn && Value2 ∉ Value1 : Valid")]
         public override Task FormValidationSuccess()
         {
@@ -102,6 +96,12 @@ namespace FoolProof.Core.Tests.E2eTests
         }
 
         protected override string DataType => "Single";
+
+        [CustomTestMethod("Empty Values : Invalid")]
+        public override async Task EmptyValues()
+        {
+            await EmptyValues(false);
+        }
 
         protected override TestValues GetValues2PassValidation()
         {

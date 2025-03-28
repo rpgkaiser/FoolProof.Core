@@ -190,7 +190,7 @@ FoolProofCore.registerValidators = function (jQuery) {
         if (modelPropName) {
             var elemId = FoolProofCore.getId(element, modelPropName);
             elem2Valid = document.getElementById(elemId);
-            value = getElementValue(element);
+            value = getElementValue(elem2Valid);
         }
 
         var validParams = params["validationparams"];

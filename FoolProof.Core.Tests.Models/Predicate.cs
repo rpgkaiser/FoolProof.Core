@@ -81,20 +81,26 @@ namespace FoolProof.Core.Tests.Models
             [Or<
                 IsEmptyAttribute, 
                 AndAttribute<
+                    IsValidAttribute<IsNotEmptyAttribute>,
                     IsValidAttribute<SameTextAttribute>, 
                     IsValidAttribute<RegularExpressionAttribute>
                 >,
                 AndAttribute<
+                    IsValidAttribute<IsNotEmptyAttribute>,
                     IsValidAttribute<SameTextAttribute>,
                     IsValidAttribute<RegularExpressionAttribute>
                 >,
                 AndAttribute<
+                    IsValidAttribute<IsNotEmptyAttribute>,
                     IsValidAttribute<SameTextAttribute>,
                     IsValidAttribute<RegularExpressionAttribute>
                 >
              >(
                 null,
-                new object[] {
+                [
+                    new object[] { //Country not empty
+                        nameof(Country)
+                    },
                     new object[] {
                         nameof(Country),
                         new object[]{ "US" }
@@ -104,8 +110,11 @@ namespace FoolProof.Core.Tests.Models
                         new object[] { @"^\s*\+1\s*(\d\s*){10,}$" }
                     },
                     "Phone numbers in USA starts with +1 and at least 10 more digits."
-                },
-                new object[] {
+                ],
+                [
+                    new object[] { //Country not empty
+                        nameof(Country)
+                    },
                     new object[] {
                         nameof(Country),
                         new object[]{ "ES" }
@@ -115,8 +124,11 @@ namespace FoolProof.Core.Tests.Models
                         new object[] { @"^\s*\+34\s*(\d\s*){9,}$" }
                     },
                     "Phone numbers in Spain starts with +34 and at least 9 more digits."
-                },
-                new object[] {
+                ],
+                [
+                    new object[] { //Country not empty
+                        nameof(Country)
+                    },
                     new object[] {
                         nameof(Country),
                         new object[]{ "CU" }
@@ -126,13 +138,14 @@ namespace FoolProof.Core.Tests.Models
                         new object[] { @"^\s*\+53\s*(\d\s*){8,}$" }
                     },
                     "Phone numbers in Cuba starts with +53 and at least 8 more digits."
-                },
+                ],
                 "Invalid international phone number format."
             )]
             [Phone]
             public string? PhoneNumber { get; set; }
 
-            // (1 <= FirstName.Length <= 50 || 1 <= LastName.Length <= 50) && (Email Is Valid) && (Age In Range [5, 120])
+            // (1 <= FirstName.Length <= 50 || 1 <= LastName.Length <= 50) && (Email Is Valid)
+            // && (Age In Range [5, 120]) && (Age > YearsOfStudy)
             public class ModelPredicateAttribute : AndAttribute
             {
                 public ModelPredicateAttribute()
@@ -141,17 +154,17 @@ namespace FoolProof.Core.Tests.Models
                             new AndAttribute(
                                 new IsValidAttribute(
                                     nameof(FirstName),
-                                    new MinLengthAttribute(3)
+                                    new MinLengthAttribute(5)
                                 ),
                                 new IsValidAttribute(
                                     nameof(FirstName),
-                                    new MaxLengthAttribute(50)
+                                    new MaxLengthAttribute(20)
                                 )
                             ),
                             new IsValidAttribute(
                                 nameof(LastName),
-                                new StringLengthAttribute(20) { 
-                                    MinimumLength = 5
+                                new StringLengthAttribute(50) { 
+                                    MinimumLength = 10
                                 }
                             )
                         ),

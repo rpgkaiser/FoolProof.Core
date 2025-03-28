@@ -45,10 +45,16 @@
     public class IsEmptyAttribute : SameTextAttribute
     {
         public IsEmptyAttribute()
-            : this("{0} must be empty.") { }
+            : this("{0} must be empty.") 
+        {
+            PassOnNull = false;
+        }
 
         public IsEmptyAttribute(string defaultMessage)
-            : base(string.Empty, defaultMessage) { }
+            : base(string.Empty, defaultMessage) 
+        {
+            PassOnNull = false;
+        }
     }
 
     public class IsTrueAttribute : EqualToAttribute<bool>

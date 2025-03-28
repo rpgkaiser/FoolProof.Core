@@ -63,6 +63,12 @@ namespace FoolProof.Core
 
             if (modelPropMetadata is not null)
             {
+                validationContext = new ClientModelValidationContext(
+                    validationContext.ActionContext,
+                    modelPropMetadata,
+                    validationContext.MetadataProvider,
+                    validationContext.Attributes
+                );
                 var validParams = PredicateAttribute.GetClientParams(Validator, validationContext, modelPropMetadata);
                 if (validParams is not null)
                 {
