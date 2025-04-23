@@ -44,11 +44,12 @@ combining other validators (inlcuding the predicate ones).
 + `Not(operand)`
 + `And(operand1, operand2,..., operandN)` 
 + `Or(operand1, operand2,..., operandN)`
-+ `IsValid(_property_, _validator_)`
-_operand_ could be any `ValidationAttribute`, inlcuding the *predicate* ones, so you can recursively combine validators 
++ `IsValid(property, operand)`
+
+*operand* could be any `ValidationAttribute`, inlcuding the *predicate* ones, so you can recursively combine validators 
 to build any logical predicate.
 
-*IsValid* will let you validate any property in the model, using any existing `ValidationAttribute`; so using the 
+**IsValid** will let you validate any property in the model, using any existing `ValidationAttribute`; so combining the 
 *predicate* validators and the *IsValid* validator, you can create validation rules to be evaluated at the model 
 level (aka model-wise validation).
 
