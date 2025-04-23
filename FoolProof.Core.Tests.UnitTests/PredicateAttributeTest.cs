@@ -81,14 +81,16 @@ namespace FoolProof.Core.Tests.UnitTests
         public void IsModelValid()
         {
             var model = new Predicate.Model() {
-                FirstName = "Joe",
-                LastName = "Doe",
+                FirstName = "Jhonny",
+                LastName = "Smith McMilan",
                 Email = "joe.doe@server.com",
                 Age = 40,
                 YearsOfStudy = 16,
                 ElementarySchool = true,
                 HighSchool = true,
-                University = true
+                University = true,
+                Country = "US",
+                PhoneNumber = "+13053050909"
             };
             Assert.IsTrue(model.IsModelValid());
         }
