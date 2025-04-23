@@ -13,26 +13,26 @@ var setValidationValues = function(options, ruleName, value) {
     }
 };
 
-var $Unob = $.validator.unobtrusive;
+var $Unob = jQuery.validator.unobtrusive;
 
-$Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull", "datatype"], function(options) {
+$Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull", "datatype", "dependentvalue"], function(options) {
     setValidationValues(options, "is", {
         dependentproperty: options.params.dependentproperty,
         operator: options.params.operator,
         passonnull: options.params.passonnull,
-        datatype: options.params.datatype
+        datatype: options.params.datatype,
+        dependentvalue: !!options.params.dependentvalue ? JSON.parse(options.params.dependentvalue) : null
     });
 });
 
 $Unob.adapters.add("requiredif", ["dependentproperty", "dependentvalue", "operator", "pattern", "datatype"], function(options) {
-    var value = {
+    setValidationValues(options, "requiredif", {
         dependentproperty: options.params.dependentproperty,
         dependentvalue: options.params.dependentvalue,
         operator: options.params.operator,
         pattern: options.params.pattern,
         datatype: options.params.datatype
-    };
-    setValidationValues(options, "requiredif", value);
+    });
 });
 
 $Unob.adapters.add("requiredifempty", ["dependentproperty"], function(options) {
@@ -46,3 +46,42 @@ $Unob.adapters.add("requiredifnotempty", ["dependentproperty"], function(options
         dependentproperty: options.params.dependentproperty
     });
 });
+
+$Unob.adapters.add("predicate", ["logicalOperator", "operands"], function(options) {
+    setValidationValues(options, "predicate", {
+        targetPropertyName: options.params.targetPropertyName,
+        logicaloperator: options.params.logicalOperator,
+        operands: JSON.parse(options.params.operands)
+    });
+});
+
+$Unob.adapters.add("isvalid", ["modelPropertyName", "validationParams"], function(options) {
+    setValidationValues(options, "isvalid", {
+        modelPropertyName: options.params.modelPropertyName,
+        validationParams: JSON.parse(options.params.validationParams)
+    });
+});
+
+//Hack for model-wise validation to work:
+//jQuery unobtrusive validation expects a name field for each validable element.
+(function ($) {
+    function elementsHack() {
+        $("[data-model-validation=true]").each(function () {
+            this.name = this.name || $(this).attr("name");
+            this.form = $(this).closest("form")[0];
+        });
+    }
+
+    new MutationObserver(function(mutations) {
+        elementsHack();
+    }).observe(document, { childList: true });
+
+    elementsHack();
+
+    //By default jQuery validation only validate "editable" elements.
+    var prevElements = $.validator.prototype.elements;
+    $.validator.prototype.elements = function () {
+        var $defElems = prevElements.call(this);
+        return $defElems.add($("[data-model-validation=true]", this.currentForm));
+    };
+})(jQuery);

@@ -1,11 +1,11 @@
 ﻿@{
     var dataType = ViewBag.DataType as string;
     ViewData["Title"] = $"FoolProof.Core Validation - NotIn ({dataType})";
-    ViewData["ValidatorName"] = $"In Validator Attribute ({dataType})";
+    ViewData["ValidatorName"] = $"NotIn Validator Attribute ({dataType})";
 }
 
 <div class="d-flex flex-column gap-5">
     <div>
-        <partial name="_CompareFieldsForm" />
+        <partial name="_CompareForm" />
     </div>
 </div>

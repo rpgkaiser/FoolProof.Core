@@ -2,7 +2,7 @@
 {
     public class RequiredIfEmpty
     {
-        public class Model : ValidationModelBase<RequiredIfEmptyAttribute>
+        public class Model : ValidationModelBase
         {
             public string? Value1 { get; set; }
 

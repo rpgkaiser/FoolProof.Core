@@ -6,6 +6,11 @@ namespace FoolProof.Core
         public RequiredIfEmptyAttribute(string dependentProperty)
             : base(dependentProperty, "{0} is required due to {1} being empty.") { }
 
+        public RequiredIfEmptyAttribute(
+            string dependentProperty,
+            string defaultMessage
+        ) : base(dependentProperty, defaultMessage ?? "{0} is required due to {1} being empty.") { }
+
         public override bool IsValid(object value, object dependentValue, object container)
         {
             if (string.IsNullOrEmpty((dependentValue ?? string.Empty).ToString().Trim()))

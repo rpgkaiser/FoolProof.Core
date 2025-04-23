@@ -17,43 +17,31 @@ namespace FoolProof.Core.Tests.E2eTests
 
             protected override string DataType => "string";
 
-            protected override string GetNotValidValue()
+            protected override TestValues GetValues2PassValidation()
             {
-                return "Any value is a valid value.";
+                return new("Value one", "Value two", "Value three", [
+                    new(nameof(NotEqualTo.Model.NotEmptyValue), "Any value"),
+                    new(nameof(NotEqualTo.Model.NotEqualToValue), 100),
+                    new(nameof(NotEqualTo.Model.NotEqualToTime), TimeSpan.Parse("12:45")),
+                    new(nameof(NotEqualTo.Model.NotEqualToDateTime), DateTime.Parse("02/02/2025 09:15")),
+                    new(nameof(NotEqualTo.Model.NotEqualToDate), DateOnly.Parse("02/02/2025")),
+                ]);
             }
 
-            protected override (string Value1, string Value2, string ValuePwn) GetValues2PassCompare()
+            protected override TestValues GetValues2FailsValidation()
             {
-                return ("Value one", "Value two", "Value three");
-            }
-
-            protected override (string Value1, string Value2, string ValuePwn) GetValues2FailsCompare()
-            {
-                return ("Value one", "Value one", "Value one");
+                return new("Value one", "Value one", "Value one", [
+                    new(nameof(NotEqualTo.Model.NotEqualToValue), 1000),
+                    new(nameof(NotEqualTo.Model.NotEqualToTime), TimeSpan.Parse("10:30")),
+                    new(nameof(NotEqualTo.Model.NotEqualToDateTime), DateTime.Parse("01/01/2025 06:30")),
+                    new(nameof(NotEqualTo.Model.NotEqualToDate), DateOnly.Parse("01/01/2025")),
+                ]);
             }
 
             [CustomTestMethod("Empty Values : Invalid")]
             public override async Task EmptyValues()
             {
-                await LoadPage();
-
-                await ExpectValue1Empty();
-                await ExpectValue2Empty();
-                await ExpectValuePwnEmpty();
-
-                await CallClientValidation();
-                await ExpectClientValidationFailed();
-
-                await ResetForm();
-
-                await CallServerValidation();
-                await ExpectServerValidationFailed();
-            }
-
-            [Ignore]
-            public override Task InvalidValues()
-            {
-                return base.InvalidValues();
+                await EmptyValues(false);
             }
 
             [CustomTestMethod("Value1 is Empty : Valid")]
@@ -61,54 +49,53 @@ namespace FoolProof.Core.Tests.E2eTests
             {
                 await LoadPage();
 
-                var value = GetValues2PassCompare().Value1;
+                var testValues = GetValues2PassValidation();
+                await AssignTestValues(testValues, false, true, ["Value1"]);
                 await ExpectValue1Empty();
-                await AssignValue2(value);
-                await AssignValuePwn(value);
 
                 await CallClientValidation();
                 await ExpectValidationSucceed();
 
-                await ResetForm();
-                await AssignValue2(value);
-                await AssignValuePwn(value);
+                await AssignTestValues(testValues, true, true, ["Value1"]);
+                await ExpectValue1Empty();
 
                 await CallServerValidation();
                 await ExpectValidationSucceed();
             }
 
-            [CustomTestMethod("Value2 and ValuePwn are Empty : Valid")]
+            [CustomTestMethod("Value1, Value2 and ValuePwn are Empty : Invalid")]
             public override async Task Value2Empty()
             {
                 await LoadPage();
 
-                var value = GetValues2PassCompare().Value1;
-                await AssignValue1(value);
+                var testValues = GetValues2PassValidation();
+                await AssignTestValues(testValues, false, true, ["Value1", "Value2", "ValuePwn"]);
+                await ExpectValue1Empty();
                 await ExpectValue2Empty();
                 await ExpectValuePwnEmpty();
 
                 await CallClientValidation();
-                await ExpectValidationSucceed();
+                await ExpectClientValidationFailed();
 
-                await ResetForm();
-                await AssignValue1(value);
+                await AssignTestValues(testValues, true, true, ["Value1", "Value2", "ValuePwn"]);
+                await ExpectValue1Empty();
                 await ExpectValue2Empty();
                 await ExpectValuePwnEmpty();
 
                 await CallServerValidation();
-                await ExpectValidationSucceed();
+                await ExpectServerValidationFailed();
             }
 
             [CustomTestMethod("Value2 != Value1 != ValuePwn : Valid")]
-            public override Task CompareValuesPass()
+            public override Task FormValidationSuccess()
             {
-                return base.CompareValuesPass();
+                return base.FormValidationSuccess();
             }
 
             [CustomTestMethod("Value1 == Value2 == ValuePwn : Invalid")]
-            public override Task CompareValuesFails()
+            public override Task FormValidationFailure()
             {
-                return base.CompareValuesFails();
+                return base.FormValidationFailure();
             }
         }
     }

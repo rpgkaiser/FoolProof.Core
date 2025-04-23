@@ -116,7 +116,13 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
             return View("NotIn", model);
 		}
 
-		[HttpGet("complexmodel")]
+        [HttpGet("predicate")]
+        public IActionResult Predicate()
+        {
+            return View("Predicate", new Predicate.Model());
+        }
+
+        [HttpGet("complexmodel")]
         public IActionResult ComplexModel()
         {
             return View("ComplexModel", new PersonalInfo());

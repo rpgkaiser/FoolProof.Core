@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.Localization;
 
@@ -10,15 +11,13 @@ namespace FoolProof.Core
 
 		IAttributeAdapter IValidationAttributeAdapterProvider.GetAttributeAdapter(
 			ValidationAttribute attribute,
-			IStringLocalizer stringLocalizer)
+			IStringLocalizer stringLocalizer
+        )
 		{
-			IAttributeAdapter adapter;
 			if (attribute is ModelAwareValidationAttribute modelAwareValidAttrb)
-				adapter = new FoolProofValidationAdapter(modelAwareValidAttrb, stringLocalizer);
-			else
-				adapter = GetAttributeAdapter(attribute, stringLocalizer);
-
-			return adapter;
+				return new FoolProofValidationAdapter(modelAwareValidAttrb, stringLocalizer);
+			
+            return base.GetAttributeAdapter(attribute, stringLocalizer);
 		}
 	}
 }

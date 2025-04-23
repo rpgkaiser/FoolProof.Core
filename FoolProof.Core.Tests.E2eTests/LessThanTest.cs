@@ -16,31 +16,19 @@ namespace FoolProof.Core.Tests.E2eTests
         [CustomTestMethod("Empty Values : Invalid")]
         public override async Task EmptyValues()
         {
-            await LoadPage();
-
-            await ExpectValue1Empty();
-            await ExpectValue2Empty();
-            await ExpectValuePwnEmpty();
-
-            await CallClientValidation();
-            await ExpectClientValidationFailed();
-
-            await ResetForm();
-
-            await CallServerValidation();
-            await ExpectServerValidationFailed();
+            await EmptyValues(false);
         }
 
-        [CustomTestMethod("ValuePwn < Value2 < Value1 : Valid")]
-        public override Task CompareValuesPass()
+        [CustomTestMethod("ValuePwn < Value1 > Value2 : Valid")]
+        public override Task FormValidationSuccess()
         {
-            return base.CompareValuesPass();
+            return base.FormValidationSuccess();
         }
 
-        [CustomTestMethod("ValuePwn > Value2 > Value1 : Invalid")]
-        public override Task CompareValuesFails()
+        [CustomTestMethod("ValuePwn > Value1 < Value2 : Invalid")]
+        public override Task FormValidationFailure()
         {
-            return base.CompareValuesFails();
+            return base.FormValidationFailure();
         }
 
         [CustomTestMethod("Value1 == Value2 == ValuePwn : Invalid")]
@@ -48,19 +36,14 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             await LoadPage();
 
-            var value1 = GetValues2PassCompare().Value1;
-            await AssignValue1(value1);
-            await AssignValue2(value1);
-            await AssignValuePwn(value1);
+            var testValues = GetValues2PassValidation();
+            testValues.Value2 = testValues.ValuePwn = testValues.Value1;
+            await AssignTestValues(testValues);
 
             await CallClientValidation();
             await ExpectClientValidationFailed();
 
-            await ResetForm();
-
-            await AssignValue1(value1);
-            await AssignValue2(value1);
-            await AssignValuePwn(value1);
+            await AssignTestValues(testValues, true);
 
             await CallServerValidation();
             await ExpectServerValidationFailed();
@@ -71,14 +54,28 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override string DataType => "Date";
 
-            protected override (string Value1, string Value2, string ValuePwn) GetValues2PassCompare()
+            protected override TestValues GetValues2PassValidation()
             {
-                return ("12/12/2020", "10/10/2010", "5/5/2005");
+                return new(
+                    DateOnly.Parse("12/12/2020"), 
+                    DateOnly.Parse("10/10/2010"), 
+                    DateOnly.Parse("5/5/2005"),
+                    [
+                        new(nameof(LessThan.DateModel.MaxDate), DateOnly.Parse("01/01/2024"))
+                    ]
+                );
             }
 
-            protected override (string Value1, string Value2, string ValuePwn) GetValues2FailsCompare()
+            protected override TestValues GetValues2FailsValidation()
             {
-                return ("5/5/2005", "10/10/2010", "12/12/2020");
+                return new(
+                    DateOnly.Parse("5/5/2005"), 
+                    DateOnly.Parse("10/10/2010"), 
+                    DateOnly.Parse("12/12/2020"),
+                    [
+                        new(nameof(LessThan.DateModel.MaxDate), DateOnly.Parse("08/08/2026"))
+                    ]
+                );
             }
         }
 
@@ -87,14 +84,18 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override string DataType => "Int16";
 
-            protected override (string Value1, string Value2, string ValuePwn) GetValues2PassCompare()
+            protected override TestValues GetValues2PassValidation()
             {
-                return ("222", "55", "11");
+                return new(222, 55, 11, [
+                    new(nameof(LessThan.Int16Model.MaxValue), 600)
+                ]);
             }
 
-            protected override (string Value1, string Value2, string ValuePwn) GetValues2FailsCompare()
+            protected override TestValues GetValues2FailsValidation()
             {
-                return ("22", "88", "999");
+                return new(22, 88, 999, [
+                    new(nameof(LessThan.Int16Model.MaxValue), 1600)
+                ]);
             }
         }
 
@@ -103,14 +104,56 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override string DataType => "Time";
 
-            protected override (string Value1, string Value2, string ValuePwn) GetValues2PassCompare()
+            protected override TestValues GetValues2PassValidation()
             {
-                return ("20:15", "15:30", "10:00");
+                return new(
+                    TimeSpan.Parse("20:15"), 
+                    TimeSpan.Parse("15:30"), 
+                    TimeSpan.Parse("10:00"), [
+                        new(nameof(LessThan.TimeModel.MaxTime), TimeSpan.Parse("01:10"))
+                    ]
+                );
             }
 
-            protected override (string Value1, string Value2, string ValuePwn) GetValues2FailsCompare()
+            protected override TestValues GetValues2FailsValidation()
             {
-                return ("08:15", "12:00", "18:30");
+                return new(
+                    TimeSpan.Parse("08:15"), 
+                    TimeSpan.Parse("12:00"), 
+                    TimeSpan.Parse("18:30"), [
+                        new(nameof(LessThan.TimeModel.MaxTime), TimeSpan.Parse("09:30"))
+                    ]
+                );
+            }
+        }
+
+        [TestClass]
+        public class DateTimeValues : LessThanTest
+        {
+            protected override string DataType => "DateTime";
+
+            protected override TestValues GetValues2PassValidation()
+            {
+                return new(
+                    DateTime.Parse("12/12/2020 10:10"),
+                    DateTime.Parse("10/10/2010 11:15"),
+                    DateTime.Parse("5/5/2005 08:20"),
+                    [
+                        new(nameof(LessThan.DateTimeModel.MaxDateTime), DateTime.Parse("01/01/2024 10:30"))
+                    ]
+                );
+            }
+
+            protected override TestValues GetValues2FailsValidation()
+            {
+                return new(
+                    DateTime.Parse("5/5/2005"),
+                    DateTime.Parse("10/10/2010"),
+                    DateTime.Parse("12/12/2020"),
+                    [
+                        new(nameof(LessThan.DateTimeModel.MaxDateTime), DateTime.Parse("08/08/2026 12:40"))
+                    ]
+                );
             }
         }
     }

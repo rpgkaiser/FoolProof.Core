@@ -2,7 +2,7 @@
 {
     public class RequiredIfNotRegExMatch
     {
-        public class Model : ValidationModelBase<RequiredIfNotRegExMatchAttribute>
+        public class Model : ValidationModelBase
         {
             public string? Value1 { get; set; }
 

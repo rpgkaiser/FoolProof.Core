@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -15,21 +16,37 @@ namespace FoolProof.Core
 
         protected OperatorMetadata Metadata { get; private set; }
 
-		public RequiredIfAttribute(string dependentProperty, Operator @operator, object dependentValue, string defaultMessage)
-			: base(dependentProperty, defaultMessage)
-		{
-			Operator = @operator;
-			DependentValue = dependentValue;
-			Metadata = OperatorMetadata.Get(Operator);
-		}
+        public RequiredIfAttribute(
+            string dependentProperty, 
+            Operator @operator, 
+            object dependentValue
+        ) : this(dependentProperty, @operator, dependentValue, "{0} is required due to {1} being {3} {2}")
+        {}
 
-		public RequiredIfAttribute(string dependentProperty, Operator @operator, object dependentValue)
-            : this(dependentProperty, @operator, dependentValue, "{0} is required due to {1} being {3} {2}")
+        public RequiredIfAttribute(
+            string dependentProperty,
+            Operator @operator,
+            object dependentValue,
+            string defaultMessage
+        ) : base(dependentProperty, defaultMessage ?? "{0} is required due to {1} being {3} {2}")
         {
+            Operator = @operator;
+            DependentValue = dependentValue;
+            Metadata = OperatorMetadata.Get(Operator);
         }
 
-        public RequiredIfAttribute(string dependentProperty, object dependentValue)
-            : this(dependentProperty, Operator.EqualTo, dependentValue) { }
+        public RequiredIfAttribute(
+            string dependentProperty, 
+            object dependentValue
+        ) : this(dependentProperty, Operator.EqualTo, dependentValue) 
+        {}
+
+        public RequiredIfAttribute(
+            string dependentProperty,
+            object dependentValue,
+            string defaultMessage
+        ) : this(dependentProperty, Operator.EqualTo, dependentValue, defaultMessage)
+        { }
 
         public override string FormatErrorMessage(string name)
         {
@@ -43,9 +60,7 @@ namespace FoolProof.Core
 
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            var dataTypeStr = (DataType == ClientDataType.Auto 
-                                ? IsAttribute.GetDataType(modelMetadata.ModelType)
-                                : DataType).ToString();
+            var dataTypeStr = GetDataType(modelMetadata.ModelType).ToString();
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
                 new KeyValuePair<string, object>("DependentValue", DependentValue),
@@ -61,5 +76,10 @@ namespace FoolProof.Core
 
             return true;
         }
+
+        protected virtual ClientDataType GetDataType(Type modelType)
+            => DataType == ClientDataType.Auto
+                ? IsAttribute.GetClientDataType(modelType)
+                : DataType;
     }
 }

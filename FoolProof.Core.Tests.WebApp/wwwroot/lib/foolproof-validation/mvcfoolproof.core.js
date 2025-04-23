@@ -2,15 +2,18 @@
 
 var FoolProofCore = function () { };
 
-FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataType) {
-	function isNullish (input) {
-        return input == null || input == undefined || input == "";
-    }
+FoolProofCore.isNullish = function (input, checkArray) {
+    return input === null || input === undefined || input === ""
+        || (!!checkArray && Array.isArray(input) && input.length == 0);
+}   
 
-    passOnNull = (/true/i).test(passOnNull + "");
+FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataType) {
+    var isNullish = FoolProofCore.isNullish;
+
+	passOnNull = (/true/i).test(passOnNull + "");
     if (passOnNull) {
         var value1nullish = isNullish(compValue);
-        var value2nullish = isNullish(dependValue);
+        var value2nullish = isNullish(dependValue, operator === "In");
 
         if ((value1nullish && !value2nullish) || (value2nullish && !value1nullish))
             return true;
@@ -83,7 +86,7 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 			return getTime(input);
 
 		if (!dataType || dataType === DataTypes.string)
-			return input;
+			return input || "";
 
 		return force || !isNullish(input) //Invalid value for the given data type
 				? undefined 
@@ -173,9 +176,9 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 			return dependValue && (new RegExp(dependValue).test(compValue));
 		case "NotRegExMatch":
 			return dependValue && !(new RegExp(dependValue).test(compValue));
-		case "In":
-			if (isNullish(compValue) && isNullish(dependValue))
-				return true;
+        case "In":
+            if (isNullish(compValue) && isNullish(dependValue, true))
+                return true;
 
 			return verifyInclusion();
 		case "NotIn":
@@ -189,11 +192,27 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 };
 
 FoolProofCore.getId = function (element, dependentPropety) {
-    var pos = element.id.lastIndexOf("_") + 1;
-    return element.id.substr(0, pos) + dependentPropety.replace(/\./g, "_");
+    var prefixAttr = element.attributes.getNamedItem("data-model-prefix");
+    var prefix = prefixAttr ? prefixAttr.value : null;
+    if (!prefix) {
+        var pos = element.id.lastIndexOf("_") + 1;
+        prefix = element.id.substr(0, pos)
+    }
+    else if (!prefix.endsWith("_"))
+        prefix += "_";
+
+    return prefix + dependentPropety.replace(/\./g, "_");
 };
 
 FoolProofCore.getName = function (element, dependentPropety) {
-    var pos = element.name.lastIndexOf(".") + 1;
-    return element.name.substr(0, pos) + dependentPropety;
+    var prefixAttr = element.attributes.getNamedItem("data-model-prefix");
+    var prefix = prefixAttr ? prefixAttr.value : null;
+    if (!prefix) {
+        var pos = element.id.lastIndexOf(".") + 1;
+        prefix = element.id.substr(0, pos)
+    }
+    else if (!prefix.endsWith("_"))
+        prefix += ".";
+
+    return prefix + dependentPropety;
 };
