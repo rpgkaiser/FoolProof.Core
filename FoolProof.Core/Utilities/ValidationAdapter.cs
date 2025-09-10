@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +13,21 @@ namespace FoolProof.Core
 {
     public class FoolProofValidationAdapter : AttributeAdapterBase<ModelAwareValidationAttribute>
     {
+        public static PropertyInfo GetModelProperty(Type modelType, string propertyName)
+        {
+            PropertyInfo result = null;
+            foreach (string namePart in propertyName.Split('.'))
+            {
+                result = modelType.GetProperty(namePart);
+                if (result is null)
+                    break;
+
+                modelType = result.PropertyType;
+            }
+
+            return result;
+        }
+
         public FoolProofValidationAdapter(ModelAwareValidationAttribute attribute, IStringLocalizer stringLocalizer)
             : base(attribute, stringLocalizer) { }
 
@@ -20,11 +36,13 @@ namespace FoolProof.Core
 			if (Attribute is ContingentValidationAttribute contingAttr 
                 && !string.IsNullOrWhiteSpace(contingAttr.DependentProperty))
 			{
-				var otherPropertyInfo = context.ModelMetadata.ContainerType.GetProperty(contingAttr.DependentProperty);
-
-				var displayName = GetMetaDataDisplayName(otherPropertyInfo);
-				if (displayName != null)
-					contingAttr.DependentPropertyDisplayName = displayName;
+                var otherPropertyInfo = GetModelProperty(context.ModelMetadata.ContainerType, contingAttr.DependentProperty);
+                if (otherPropertyInfo is not null)
+                {
+                    var displayName = GetMetaDataDisplayName(otherPropertyInfo);
+                    if (displayName != null)
+                        contingAttr.DependentPropertyDisplayName = displayName;
+                }
 			}
 
 			var validName = Attribute.ClientTypeName.ToLowerInvariant();
@@ -43,7 +61,7 @@ namespace FoolProof.Core
 				);
 		}
 
-		public override string GetErrorMessage(ModelValidationContextBase validationContext)
+        public override string GetErrorMessage(ModelValidationContextBase validationContext)
 		{
 			return GetErrorMessage(validationContext.ModelMetadata, validationContext.ModelMetadata.GetDisplayName());
 		}

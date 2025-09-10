@@ -142,21 +142,10 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
         [HttpGet("requiredif")]
         public IActionResult RequiredIf()
         {
-            return View("RequiredIf", new PersonalInfo());
+            return View("RequiredIf", new RequiredIf.PictureSettings());
         }
 
-        [HttpPost("requiredif")]
-        public IActionResult RequiredIf(PersonalInfo? vm)
-        {
-            if (ModelState.IsValid)
-            {
-                ViewBag.SuccessMessage = "Validation succeeded";
-            }
-
-            return View("RequiredIf", vm);
-        }
-
-		[HttpPost("validate")]
+        [HttpPost("validate")]
         public async Task<JsonResult> Save([FromQuery]string modelTypeName)
         {
             var modelType = typeof(EqualTo).Assembly.GetType(modelTypeName)

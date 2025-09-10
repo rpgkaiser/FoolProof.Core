@@ -1,24 +1,87 @@
-@model PersonalInfo
+@model RequiredIf.PictureSettings
 
 @{
-ViewData["ValidatorName"] = "Complex Model Validation";
+    ViewData["Title"] = "FoolProof.Core Validation - RequiredIf";
+    ViewData["ValidatorName"] = "RequiredIf Validator Attribute";
 }
 
-<form method="post" class="d-flex flex-column gap-4">
-    
-    <div class="form-floating flex-fill">
-        <input class="form-control" asp-for="Preferences.FavoriteColor" placeholder="" />
-        <label>Preferences.FavoriteColor (type blue to force FavoriteBlueShade validation)</label>
-        <span class="text-danger" asp-validation-for="Preferences.FavoriteColor"></span>
+<form method="post" class="d-flex flex-column gap-4" 
+      novalidate
+      asp-action="@nameof(HomeController.Save)"
+      asp-controller="Home"
+      asp-route-modelTypeName="@(Model.GetType().FullName)">
+    <div data-testid="valid-alert" class="alert alert-success alert-dismissible valid-alert" style='display: none;'>
+        <button type="button" class="btn-close" onclick="$(this).parent().fadeOut();"></button>
+        <span class="alert-message">
+        </span>
     </div>
-    <div class="form-floating flex-fill">
-        <input class="form-control" asp-for="Preferences.FavoriteBlueShade" placeholder="" />
-        <label>Preferences.FavoriteBlueShade</label>
-        <span class="text-danger" asp-validation-for="Preferences.FavoriteBlueShade"></span>
-    </div>
-    <hr/>
 
-    <button type="submit" class="btn btn-primary btn-lg col-4 m-auto mt-4">
-        Submit for Validation
-    </button>
+    <fieldset>
+        <legend>Preferences</legend>
+        <div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="Prefs.FavoriteColor" placeholder="" />
+                <label>Favorite Color</label>
+                <span class="text-danger" asp-validation-for="Prefs.FavoriteColor"></span>
+            </div>
+            <div class="form-floating flex-fill">
+                <input class="form-control" asp-for="Prefs.FavoriteBlueShade" placeholder="" />
+                <label>Favorite Blue Shade</label>
+                <span class="text-danger" asp-validation-for="Prefs.FavoriteBlueShade"></span>
+                <div>
+                    <small>
+                        Required if field <i>FavoriteColor</i> has <strong><i>blue</i></strong> as value.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Picture Settings</legend>
+        <div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="RedShade2Use" placeholder="" />
+                <label>Red Shade To Use</label>
+                <span class="text-danger" asp-validation-for="RedShade2Use"></span>
+                <div>
+                    <small>
+                        Required if field <i>FavoriteColor</i> has <strong><i>red</i></strong> as value.
+                    </small>
+                </div>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="BlueShade2Use" placeholder="" />
+                <label>Blue Shade To Use</label>
+                <span class="text-danger" asp-validation-for="BlueShade2Use"></span>
+                <div>
+                    <small>
+                        Required if field <i>FavoriteColor</i> has <strong><i>blue</i></strong> as value.
+                    </small>
+                </div>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="GreenShade2Use" placeholder="" />
+                <label>Green Shade To Use</label>
+                <span class="text-danger" asp-validation-for="GreenShade2Use"></span>
+                <div>
+                    <small>
+                        Required if field <i>FavoriteColor</i> has <strong><i>green</i></strong> as value.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <div class="d-flex flex-row gap-4 align-items-center justify-content-center">
+        <button data-testid="btn-reset" type="button" class="btn btn-outline-secondary btn-lg btn-reset">
+            Reset
+        </button>
+        <button data-testid="btn-client" type="button" class="btn btn-outline-info btn-lg btn-validate">
+            Validate on Client
+        </button>
+        <button data-testid="btn-server" type="button" class="btn btn-outline-primary btn-lg btn-validate"
+                data-server-validate="true">
+            Submit for Validation
+        </button>
+    </div>
 </form>

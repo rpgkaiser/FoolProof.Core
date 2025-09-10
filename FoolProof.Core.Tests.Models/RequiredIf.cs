@@ -2,25 +2,26 @@
 {
     public class RequiredIf
     {
-        public class Model : ValidationModelBase
+        public class Preferences : ValidationModelBase
         {
-            public string? Value1 { get; set; }
+            public string? FavoriteColor { get; set; }
 
-            [RequiredIf("Value1", "hello")]
-            public string? Value2 { get; set; }
+            [RequiredIf("FavoriteColor", "blue")]
+            public string? FavoriteBlueShade { get; set; }
         }
 
-        public class ComplexModel : ValidationModelBase
+        public class PictureSettings : ValidationModelBase
         {
-            public class SubModel
-            {
-                public string? InnerValue { get; set; }
-            }
+            public Preferences Prefs { get; set; } = new Preferences();
 
-            public SubModel? Value1 { get; set; }
+            [RequiredIf("Prefs.FavoriteColor", "blue")]
+            public string? BlueShade2Use { get; set; }
 
-            [RequiredIf("Value1.InnerValue", "hello")]
-            public string? Value2 { get; set; }
+            [RequiredIf("Prefs.FavoriteColor", "red")]
+            public string? RedShade2Use { get; set; }
+
+            [RequiredIf("Prefs.FavoriteColor", "green")]
+            public string? GreenShade2Use { get; set; }
         }
     }
 }

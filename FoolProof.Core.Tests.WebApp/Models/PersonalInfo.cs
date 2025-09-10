@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using FoolProof.Core;
 
 namespace FoolProof.Core.Tests.E2eTests.WebApp.Models
 {
@@ -13,14 +12,6 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Models
         Phd
     }
 
-    public class Preferences
-    {
-        public string? FavoriteColor { get; set; }
-        
-        [RequiredIf(nameof(FavoriteColor), "blue")]
-        public string? FavoriteBlueShade { get; set; }
-    }
-    
     public class PersonalInfo
     {
         public string? FirstName { get; set; }
@@ -31,8 +22,6 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Models
         [DataType(DataType.Date)]
         public DateTime? BirthDate { get; set; }
 
-        public Preferences? Preferences { get; set; }
-        
         public string? Country { get; set; }
 
         [RequiredIf(nameof(Country), "USA")]
