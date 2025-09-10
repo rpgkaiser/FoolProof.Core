@@ -1,0 +1,21 @@
+﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<script src="~/lib/foolproof-validation/mvcfoolproof.core.js"></script>
+
+<script src="~/lib/foolproof-validation/mvcfoolproof.jquery.validation.js"></script>
+<script src="~/lib/foolproof-validation/mvcfoolproof.unobtrusive.js"></script>
+
+<script type="text/javascript">
+    jQuery.extend($.validator.defaults, {
+        ignore: ".valid-ignore",
+        validClass: "is-valid",
+        errorClass: "is-invalid"
+    });
+
+    $.validator.unobtrusive.options = jQuery.extend($.validator.unobtrusive.options, {
+        ignore: ".valid-ignore",
+        validClass: "is-valid",
+        errorClass: "is-invalid"
+    });
+</script>

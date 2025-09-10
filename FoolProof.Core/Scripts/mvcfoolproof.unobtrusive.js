@@ -1,9 +1,12 @@
-﻿;//You must load the mvcfoolproof.core.js and mvcfoolproof.jquery.validation.js scripts before this one.
+﻿;//You must load jQuery, jQuery.validation, mvcfoolproof.core.js and mvcfoolproof.validators.js scripts before this.
 
 if (!FoolProofCore)
     throw "You must load the mvcfoolproof.core.js script before this.";
 
 if (!FoolProofCore.registerValidators)
+    throw "You must load the mvcfoolproof.custom-validators.js script before this.";
+
+if (!jQuery.validator.methods.predicate)
     throw "You must load the mvcfoolproof.jquery.validation.js script before this.";
 
 var setValidationValues = function(options, ruleName, value) {

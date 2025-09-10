@@ -218,7 +218,17 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js"></script>
 
-    <partial name="_ValidationScriptsPartial" />
+    @{
+        var useJQuery = ViewBag.UseJQuery ?? (bool?)ViewData["UseJQuery"] ?? true;
+        if(useJQuery)
+        {
+            <partial name="_jQueryValidationScriptsPartial" />
+        }
+        else
+        {
+            <partial name="_AspnetClientValidationScriptsPartial" />
+        }
+    }
     <script type="text/javascript">
         $(function () {
             setupForms();
