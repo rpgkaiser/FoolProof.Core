@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -37,7 +38,7 @@ namespace FoolProof.Core
                             else if (value == null && dependentValue != null)
                                 return false;
 
-                            return value.Equals(dependentValue);
+                            return CompareValues(value,dependentValue) == 0;
                         }
                     }
                 },
@@ -51,7 +52,7 @@ namespace FoolProof.Core
                             else if (value == null && dependentValue == null)
                                 return false;
 
-                            return !value.Equals(dependentValue);
+                            return CompareValues(value, dependentValue) != 0;
                         }
                     }
                 },
@@ -63,7 +64,7 @@ namespace FoolProof.Core
                             if (value == null || dependentValue == null)
                                 return false;
 
-                            return Comparer<object>.Default.Compare(value, dependentValue) >= 1;
+                            return CompareValues(value, dependentValue) >= 1;
                         }
                     }
                 },
@@ -75,7 +76,7 @@ namespace FoolProof.Core
                             if (value == null || dependentValue == null)
                                 return false;
 
-                            return Comparer<object>.Default.Compare(value, dependentValue) <= -1;
+                            return CompareValues(value, dependentValue) <= -1;
                         }
                     }
                 },
@@ -90,7 +91,7 @@ namespace FoolProof.Core
                             if (value == null || dependentValue == null)
                                 return false;
 
-                            return Get(Operator.EqualTo).IsValid(value, dependentValue) || Comparer<object>.Default.Compare(value, dependentValue) >= 1;
+                            return Get(Operator.EqualTo).IsValid(value, dependentValue) || CompareValues(value, dependentValue) >= 1;
                         }
                     }
                 },
@@ -105,7 +106,7 @@ namespace FoolProof.Core
                             if (value == null || dependentValue == null)
                                 return false;
 
-                            return Get(Operator.EqualTo).IsValid(value, dependentValue) || Comparer<object>.Default.Compare(value, dependentValue) <= -1;
+                            return Get(Operator.EqualTo).IsValid(value, dependentValue) || CompareValues(value, dependentValue) <= -1;
                         }
                     }
                 },
@@ -150,6 +151,30 @@ namespace FoolProof.Core
 					}
 				}
 			};
+        }
+
+        private static int CompareValues(object value, object dependentValue, bool convertIfRequired = true)
+        {
+            try
+            {
+                return Comparer<object>.Default.Compare(value, dependentValue);
+            }
+            catch
+            {
+                //Possible type mismatch
+                if(value.GetType() != dependentValue.GetType() && convertIfRequired)
+                {
+                    object convDepValue;
+                    var converter = TypeDescriptor.GetConverter(value.GetType());
+                    if (converter is not null && converter.CanConvertFrom(dependentValue.GetType()))
+                        convDepValue = converter.ConvertFrom(dependentValue);
+                    else
+                        convDepValue = Convert.ChangeType(dependentValue, value.GetType());
+
+                    return Comparer<object>.Default.Compare(value, convDepValue);
+                }
+                throw;
+            }
         }
 
         private static IEnumerable<object> GetValueList(object value)

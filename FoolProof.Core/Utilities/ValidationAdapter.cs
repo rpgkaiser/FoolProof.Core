@@ -13,21 +13,6 @@ namespace FoolProof.Core
 {
     public class FoolProofValidationAdapter : AttributeAdapterBase<ModelAwareValidationAttribute>
     {
-        public static PropertyInfo GetModelProperty(Type modelType, string propertyName)
-        {
-            PropertyInfo result = null;
-            foreach (string namePart in propertyName.Split('.'))
-            {
-                result = modelType.GetProperty(namePart);
-                if (result is null)
-                    break;
-
-                modelType = result.PropertyType;
-            }
-
-            return result;
-        }
-
         public FoolProofValidationAdapter(ModelAwareValidationAttribute attribute, IStringLocalizer stringLocalizer)
             : base(attribute, stringLocalizer) { }
 
@@ -36,7 +21,7 @@ namespace FoolProof.Core
 			if (Attribute is ContingentValidationAttribute contingAttr 
                 && !string.IsNullOrWhiteSpace(contingAttr.DependentProperty))
 			{
-                var otherPropertyInfo = GetModelProperty(context.ModelMetadata.ContainerType, contingAttr.DependentProperty);
+                var otherPropertyInfo = ModelAwareValidationAttribute.GetModelProperty(context.ModelMetadata.ContainerType, contingAttr.DependentProperty);
                 if (otherPropertyInfo is not null)
                 {
                     var displayName = GetMetaDataDisplayName(otherPropertyInfo);

@@ -22,17 +22,29 @@
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="Prefs.FavoriteColor" placeholder="" />
                 <label>Favorite Color</label>
-                <span class="text-danger" asp-validation-for="Prefs.FavoriteColor"></span>
             </div>
-            <div class="form-floating flex-fill">
+            <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="Prefs.FavoriteBlueShade" placeholder="" />
-                <label>Favorite Blue Shade</label>
+                <label>Favorite Blue Shade (Required if <i>FavoriteColor</i> is <strong><i>blue</i></strong>)</label>
                 <span class="text-danger" asp-validation-for="Prefs.FavoriteBlueShade"></span>
-                <div>
-                    <small>
-                        Required if field <i>FavoriteColor</i> has <strong><i>blue</i></strong> as value.
-                    </small>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <div class="form-check">
+                    <input asp-for="Prefs.AutoScale" type="checkbox" class="form-check-input" placeholder="" />
+                    <label asp-for="Prefs.AutoScale" class="form-check-label">Auto Scale</label>
                 </div>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="Prefs.AspectRatio" placeholder="" />
+                <label>Aspect Ratio</label>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="Prefs.MaxFileSize" placeholder="" />
+                <label>Max File Size</label>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="Prefs.InitDate" placeholder="" />
+                <label>Initial Date</label>
             </div>
         </div>
     </fieldset>
@@ -42,33 +54,44 @@
         <div>
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="RedShade2Use" placeholder="" />
-                <label>Red Shade To Use</label>
+                <label>Red Shade To Use (Required if <i>FavoriteColor</i> is <strong><i>red</i></strong>)</label>
                 <span class="text-danger" asp-validation-for="RedShade2Use"></span>
-                <div>
-                    <small>
-                        Required if field <i>FavoriteColor</i> has <strong><i>red</i></strong> as value.
-                    </small>
-                </div>
             </div>
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="BlueShade2Use" placeholder="" />
-                <label>Blue Shade To Use</label>
+                <label>Blue Shade To Use (Required if <i>FavoriteColor</i> is <strong><i>blue</i></strong>)</label>
                 <span class="text-danger" asp-validation-for="BlueShade2Use"></span>
-                <div>
-                    <small>
-                        Required if field <i>FavoriteColor</i> has <strong><i>blue</i></strong> as value.
-                    </small>
-                </div>
             </div>
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="GreenShade2Use" placeholder="" />
-                <label>Green Shade To Use</label>
+                <label>Green Shade To Use (Required if <i>FavoriteColor</i> is <strong><i>green</i></strong>)</label>
                 <span class="text-danger" asp-validation-for="GreenShade2Use"></span>
-                <div>
-                    <small>
-                        Required if field <i>FavoriteColor</i> has <strong><i>green</i></strong> as value.
-                    </small>
-                </div>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="ScaleAlgorithm" placeholder="" />
+                <label>Scale Algorithm (Required if <i>AutoScale</i> is <strong><i>true</i></strong>)</label>
+                <span class="text-danger" asp-validation-for="ScaleAlgorithm"></span>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="SquareSize" placeholder="" />
+                <label>Square Size (Required if <i>AspectRatio</i> = <strong><i>1</i></strong>)</label>
+                <span class="text-danger" asp-validation-for="SquareSize"></span>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <select asp-for="CompressWith" class="form-select w-50" placeholder="">
+                    <option value="">None</option>
+                    @foreach (var item in Enum.GetValues<RequiredIf.CompressionAlgorithm>())
+                    {
+                        <option value="@((int)item)">@Enum.GetName(typeof(RequiredIf.CompressionAlgorithm), item)</option>
+                    }
+                </select>
+                <label>Compress With (Required if <i>MaxFileSize</i> &lt;= <strong><i>1024</i></strong>)</label>
+                <span class="text-danger" asp-validation-for="CompressWith"></span>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="StartProcessingDate" placeholder="" />
+                <label>Start Processing Date (Required if <i>InitDate</i> &gt; <strong><i>01/01/2025</i></strong>)</label>
+                <span class="text-danger" asp-validation-for="StartProcessingDate"></span>
             </div>
         </div>
     </fieldset>
