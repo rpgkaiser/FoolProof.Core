@@ -208,8 +208,8 @@ FoolProofCore.getName = function (element, dependentPropety) {
     var prefixAttr = element.attributes.getNamedItem("data-model-prefix");
     var prefix = prefixAttr ? prefixAttr.value : null;
     if (!prefix) {
-        var pos = element.id.lastIndexOf(".") + 1;
-        prefix = element.id.substr(0, pos)
+        var pos = element.name.lastIndexOf(".") + 1;
+        prefix = element.name.substr(0, pos)
     }
     else if (!prefix.endsWith("_"))
         prefix += ".";

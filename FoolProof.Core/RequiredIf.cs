@@ -60,7 +60,8 @@ namespace FoolProof.Core
 
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            var dataTypeStr = GetDataType(modelMetadata.ModelType).ToString();
+            var dependentProperty = GetModelProperty(modelMetadata.ContainerType, DependentProperty);
+            var dataTypeStr = GetDataType(dependentProperty.PropertyType).ToString();
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
                 new KeyValuePair<string, object>("DependentValue", DependentValue),

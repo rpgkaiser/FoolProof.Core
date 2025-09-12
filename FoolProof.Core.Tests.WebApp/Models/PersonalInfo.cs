@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using FoolProof.Core;
 
 namespace FoolProof.Core.Tests.E2eTests.WebApp.Models
 {
