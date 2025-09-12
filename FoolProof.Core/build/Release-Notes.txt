@@ -1,5 +1,2 @@
-- Many new *compare* validation attributes 
-- New *predicate* validation attributes (`AndAttribute`, `OrAttribute`, `NotAttribute` and `IsValidAttribute`) to support complex validation rules through boolean predicates.
-- Drop support for *MS Ajax Validation*.
-- *jQuery* validation support for all the new validators, including the *predicate* ones.
-- Support for complex model-wise validation rules (using *predicate* validators and `IsValidAttribute`).
+- Fix client-side validation when using composite models (properties with a '.' on the name).
+- Update **RequiredIf** validators to better auto-assign the _DataType_ to improve the compare operations in client-side.
