@@ -188,6 +188,18 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:;" role="button" aria-expanded="false">
+                                Complex Required
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Home" asp-action="@nameof(HomeController.RequiredIf)">
+                                        Required If
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
                             <a class="nav-link" asp-controller="Home" asp-action="@nameof(HomeController.Predicate)">
                                 Predicate
                             </a>

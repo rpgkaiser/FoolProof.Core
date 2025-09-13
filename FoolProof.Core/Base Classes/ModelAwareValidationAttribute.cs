@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
@@ -68,6 +69,21 @@ namespace FoolProof.Core
             }
 
             return value;
+        }
+
+        public static PropertyInfo GetModelProperty(Type modelType, string propertyName)
+        {
+            PropertyInfo result = null;
+            foreach (string namePart in propertyName.Split('.'))
+            {
+                result = modelType.GetProperty(namePart);
+                if (result is null)
+                    break;
+
+                modelType = result.PropertyType;
+            }
+
+            return result;
         }
 
         private static readonly HashSet<Type> NumericTypes = new HashSet<Type>

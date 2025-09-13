@@ -138,8 +138,14 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
 
 			return View("ComplexModel", vm);
 		}
+        
+        [HttpGet("requiredif")]
+        public IActionResult RequiredIf()
+        {
+            return View("RequiredIf", new RequiredIf.PictureSettings());
+        }
 
-		[HttpPost("validate")]
+        [HttpPost("validate")]
         public async Task<JsonResult> Save([FromQuery]string modelTypeName)
         {
             var modelType = typeof(EqualTo).Assembly.GetType(modelTypeName)
