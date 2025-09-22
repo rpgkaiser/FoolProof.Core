@@ -1,7 +1,13 @@
-﻿;//You must load the mvcfoolproof.core.js and mvcfoolproof.validators.js scripts before this.
+﻿;//You must load jQuery, jQuery.validation, foolproof.core.js and foolproof.validators.js before this.
 
 if (!jQuery || !jQuery.validator)
-    throw "You must load jQuery and jQuery.validation before this.";
+    throw "You must load jQuery, jQuery.validation before this.";
+
+if (!FoolProofCore)
+    throw "You must load foolproof.core.js before this.";
+
+if (!FoolProofCore.registerValidators)
+    throw "You must load foolproof.validators.js before this.";
 
 FoolProofCore.registerValidators(
     jQuery.validator.addMethod, 

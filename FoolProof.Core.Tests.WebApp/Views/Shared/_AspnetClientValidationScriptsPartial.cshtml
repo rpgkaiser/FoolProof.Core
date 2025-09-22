@@ -1,18 +1,15 @@
-﻿<script src="~/lib/aspnet-client-validation/aspnet-client-validation.min.js"></script>
+﻿<script src="~/lib/aspnet-client-validation/aspnet-validation.js"></script>
 
-<script src="~/lib/foolproof-validation/mvcfoolproof.core.js"></script>
+<script src="~/lib/foolproof-validation/foolproof.core.js"></script>
+<script src="~/lib/foolproof-validation/foolproof.validators.js"></script>
+<script src="~/lib/foolproof-validation/foolproof.aspnet-validation.js"></script>
+<script src="~/lib/foolproof-validation/foolproof.aspnet-validation.unobtrusive.js"></script>
 
-<script src="~/lib/foolproof-validation/mvcfoolproof.aspnet-client-validation.js"></script>
 <script type="text/javascript">
-    jQuery.extend($.validator.defaults, {
-        ignore: ".valid-ignore",
-        validClass: "is-valid",
-        errorClass: "is-invalid"
-    });
+    FoolProofCore.aspnetValidationService.ValidationInputCssClassName = "is-invalid";
+    FoolProofCore.aspnetValidationService.ValidationInputValidCssClassName = "is-valid";
 
-    $.validator.unobtrusive.options = jQuery.extend($.validator.unobtrusive.options, {
-        ignore: ".valid-ignore",
-        validClass: "is-valid",
-        errorClass: "is-invalid"
-    });
+    function isFormValid($form) {
+        return FoolProofCore.aspnetValidationService.isValid($form[0]);
+    }
 </script>

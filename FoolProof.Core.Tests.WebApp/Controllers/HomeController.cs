@@ -173,6 +173,10 @@ namespace FoolProof.Core.Tests.E2eTests.WebApp.Controllers
                                       && bool.TryParse(cookie, out useInputTypes)
                                       ? useInputTypes
                                       : (bool?)null;
+
+            ViewBag.UseJQuery = !Request.Query.TryGetValue("__useJQuery__", out var useJQueryStr)
+                                || !bool.TryParse(useJQueryStr.FirstOrDefault(), out var useJQuery) 
+                                || useJQuery;
         }
     }
 }

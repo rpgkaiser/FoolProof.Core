@@ -30,15 +30,19 @@
 }
 
 function clientValidate($form) {
-    var valid = $form.valid();
+    var valid = isFormValid($form);
     showValidationResult($form, {
         succeed: valid,
         errors: []
     });
 }
 
+function isFormValid($form) {
+    return $form.valid();
+}
+
 function serverValidate($form) {
-    $form.valid();
+    isFormValid($form);
 
     $.ajax({
         url: $form.attr("action"),

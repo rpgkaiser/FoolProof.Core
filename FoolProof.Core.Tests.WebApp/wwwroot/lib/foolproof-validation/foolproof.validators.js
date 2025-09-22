@@ -1,7 +1,7 @@
-﻿;//You must load the mvcfoolproof.core.js script before this.
+﻿;//You must load foolproof.core.js before this.
 
 if (!FoolProofCore)
-    throw "You must load the mvcfoolproof.core.js script before this.";
+    throw "You must load foolproof.core.js before this.";
 
 function isObject(value, pureOnly) {
     return !!value && typeof value === 'object'
@@ -25,9 +25,29 @@ FoolProofCore.registerValidators = function (addValidatorFunc, getValidatorFunc,
         }
 
         return result;
-    }
+    }    
+
+    function isOptional(element) {
+        var val = getElementValue(element);
+        var reqMethod = getValidatorFunc("required");
+		return !reqMethod.call(this, val, element) && "dependency-mismatch";
+    };
+
+    //Unify the regex validation method
+    addValidatorFunc("regex", function (value, element, params) {
+        if (isOptional.call(this, element))
+            return true;
+
+        var pattern = typeof (params) === "string" ? params : params.pattern;
+        var match = new RegExp(pattern).exec(value);
+        return (match && (match.index === 0) && (match[0].length === value.length));
+    });
 
     addValidatorFunc("is", function (value, element, params) {
+        var elemValue = getElementValue(element);
+        if (typeof (elemValue) !== typeof (value))
+            value = elemValue;
+
         var operator = params["operator"];
         var passOnNull = (/true/i).test(params["passonnull"] + "");
         var dataType = params["datatype"];
@@ -132,9 +152,6 @@ FoolProofCore.registerValidators = function (addValidatorFunc, getValidatorFunc,
 
                 result = result.length == 1 ? result[0] : result;
             }
-        }
-        else if (adapterName == "regex") {
-            result = adapterParams["pattern"];
         }
 
         return result;

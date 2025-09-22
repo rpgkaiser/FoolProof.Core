@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FoolProof.Core
@@ -62,9 +63,10 @@ namespace FoolProof.Core
         {
             var dependentProperty = GetModelProperty(modelMetadata.ContainerType, DependentProperty);
             var dataTypeStr = GetDataType(dependentProperty.PropertyType).ToString();
+            object depValue = DependentValue is not null ? JsonSerializer.Serialize(DependentValue) : DependentValue;
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
-                new KeyValuePair<string, object>("DependentValue", DependentValue),
+                new KeyValuePair<string, object>("DependentValue", depValue),
                 new KeyValuePair<string, object>("DataType", dataTypeStr)
             };
             return base.GetClientValidationParameters(modelMetadata).Union(clientParams);

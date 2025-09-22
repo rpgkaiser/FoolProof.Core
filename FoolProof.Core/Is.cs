@@ -178,8 +178,9 @@ namespace FoolProof.Core
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
             var dataTypeStr = GetDataType(typeof(T)).ToString();
+            object depValue = DependentValue is not null ? JsonSerializer.Serialize(DependentValue) : DependentValue;
             var clientParams = new List<KeyValuePair<string, object>>() {
-                new KeyValuePair<string, object>("DependentValue", DependentValue),
+                new KeyValuePair<string, object>("DependentValue", depValue),
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
                 new KeyValuePair<string, object>("PassOnNull", PassOnNull),
                 new KeyValuePair<string, object>("DataType", dataTypeStr)

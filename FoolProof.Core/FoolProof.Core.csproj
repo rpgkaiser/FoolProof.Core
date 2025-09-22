@@ -12,7 +12,7 @@
 		<PackageLicenseFile>license.txt</PackageLicenseFile>
 		<RepositoryUrl>https://github.com/rpgkaiser/FoolProof.Core</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<Version>2.0.0</Version>
+		<Version>2.2.0</Version>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<LangVersion>11.0</LangVersion>
 	</PropertyGroup>
@@ -46,6 +46,33 @@
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="Scripts\foolproof.aspnet-client-validation.js">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Scripts\foolproof.aspnet-client-validation.unobtrusive.js">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Scripts\foolproof.core.js">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Scripts\foolproof.jquery.validation.js">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Scripts\foolproof.jquery.validation.unobtrusive.js">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	  <Content Update="Scripts\foolproof.validators.js">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
 	</ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
