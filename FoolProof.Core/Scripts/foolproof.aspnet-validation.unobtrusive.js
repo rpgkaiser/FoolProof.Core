@@ -19,10 +19,10 @@ aspnetValidation.ValidationService.prototype.parseDirectives = function (attribu
     for (var key in directives) {
         var currDtv = directives[key];
         switch (key) {
-            case "is":
-            case "requiredif":
-                currDtv.params.dependentvalue = !!currDtv.params.dependentvalue ? JSON.parse(currDtv.params.dependentvalue) : null;
-                break;
+            //case "is":
+            //case "requiredif":
+            //    currDtv.params.dependentvalue = !!currDtv.params.dependentvalue ? JSON.parse(currDtv.params.dependentvalue) : null;
+            //    break;
             case "predicate":
                 currDtv.params.operands = JSON.parse(currDtv.params.operands);
                 break;

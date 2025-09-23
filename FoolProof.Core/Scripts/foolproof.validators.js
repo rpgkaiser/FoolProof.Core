@@ -18,7 +18,7 @@ FoolProofCore.registerValidators = function (addValidatorFunc, getValidatorFunc,
             result = element.checked;
         else if (element.type == 'select-multiple'){
             var values = [];
-            for (var i = 0; i < element.selectedOptions; i++)
+            for (var i = 0; i < element.selectedOptions.length; i++)
                 values.push(element.selectedOptions[i].value);
 
             result = values;
@@ -53,6 +53,9 @@ FoolProofCore.registerValidators = function (addValidatorFunc, getValidatorFunc,
         var dataType = params["datatype"];
 
         var dependentValue = params["dependentvalue"];
+        if (typeof (dependentValue) === "string")
+            dependentValue = JSON.parse(dependentValue);
+
         if (params["dependentproperty"]) {
             var elemId = FoolProofCore.getId(element, params["dependentproperty"]);
             dependentValue = getElementValue(document.getElementById(elemId));
@@ -64,11 +67,14 @@ FoolProofCore.registerValidators = function (addValidatorFunc, getValidatorFunc,
     });
 
     addValidatorFunc("requiredif", function (value, element, params) {
-        var dependentProperty = FoolProofCore.getName(element, params["dependentproperty"]);
         var dependentTestValue = params["dependentvalue"];
+        if (typeof (dependentTestValue) === "string")
+            dependentTestValue = JSON.parse(dependentTestValue);
+
         var operator = params["operator"];
         var pattern = params["pattern"];
         var dataType = params["datatype"];
+        var dependentProperty = FoolProofCore.getName(element, params["dependentproperty"]);
         var dependentPropertyElement = document.getElementsByName(dependentProperty);
         var dependentValue = null;
 

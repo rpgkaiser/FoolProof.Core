@@ -27,14 +27,16 @@ $Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull", "dataty
         operator: options.params.operator,
         passonnull: options.params.passonnull,
         datatype: options.params.datatype,
-        dependentvalue: !!options.params.dependentvalue ? JSON.parse(options.params.dependentvalue) : null
+        dependentvalue: options.params.dependentvalue,
+        //dependentvalue: !!options.params.dependentvalue ? JSON.parse(options.params.dependentvalue) : null
     });
 });
 
 $Unob.adapters.add("requiredif", ["dependentproperty", "dependentvalue", "operator", "pattern", "datatype"], function(options) {
     setValidationValues(options, "requiredif", {
         dependentproperty: options.params.dependentproperty,
-        dependentvalue: !!options.params.dependentvalue ? JSON.parse(options.params.dependentvalue) : null,
+        dependentvalue: options.params.dependentvalue,
+        //dependentvalue: !!options.params.dependentvalue ? JSON.parse(options.params.dependentvalue) : null,
         operator: options.params.operator,
         pattern: options.params.pattern,
         datatype: options.params.datatype
