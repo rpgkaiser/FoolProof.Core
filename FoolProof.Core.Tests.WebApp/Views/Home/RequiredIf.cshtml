@@ -10,8 +10,8 @@
       asp-action="@nameof(HomeController.Save)"
       asp-controller="Home"
       asp-route-modelTypeName="@(Model.GetType().FullName)">
-    <div data-testid="valid-alert" class="alert alert-success alert-dismissible valid-alert" style='display: none;'>
-        <button type="button" class="btn-close" onclick="$(this).parent().fadeOut();"></button>
+    <div data-testid="valid-alert" class="alert alert-success alert-dismissible valid-alert fade-out d-none">
+        <button type="button" class="btn-close" onclick="fadeOut(this.parentElement);"></button>
         <span class="alert-message">
         </span>
     </div>

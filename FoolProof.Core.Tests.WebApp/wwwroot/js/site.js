@@ -1,59 +1,88 @@
-﻿function showValidationResult($form, result) {
-    if (result && result.succeed) {
-        $(document).trigger("foolproof.validation.succeed");
-        $(".valid-alert", $form).fadeOut(function () {
-            $(this).find(".alert-message").html("Model validation succeed.");
-            $(this).removeClass("alert-danger")
-            .addClass("alert-success")
-            .fadeIn();
-        });  
-
+﻿function fadeOut(elem, callback) {
+    if (!elem.checkVisibility()) {
+        callback && callback(elem);
         return;
     }
 
-    if (!result || !result.succeed) {
-        $(document).trigger("foolproof.validation.failed", result);
-        $(".valid-alert", $form).fadeOut(function () {
-            if (!Array.isArray(result.errors) || !result.errors.length)
-                result.errors = ["Model validation failed."];
-            var messages = $.map(result.errors, function (err, indx) {
-                return `${(indx ? "<br/>" : "" )}<p>${err}</p>`;
-            });
-            $(this).find(".alert-message").html(messages);
-            $(this).removeClass("alert-success")
-            .addClass("alert-danger")
-            .fadeIn();
-        });  
-
-        return;
-    }
+    elem.classList.remove("fade-in", "fade-out");
+    setTimeout(function () {
+        elem.classList.add("fade-out");
+        setTimeout(function () {
+            elem.classList.add("d-none");
+            callback && callback(elem);
+        }, 400);
+    }, 0);
 }
 
-function clientValidate($form) {
-    var valid = isFormValid($form);
-    showValidationResult($form, {
+function fadeIn(elem, callback) {
+    if (elem.checkVisibility())
+        elem.classList.remove("fade-in", "fade-out");
+
+    setTimeout(function () {
+        elem.classList.add("fade-in");
+        setTimeout(function () {
+            elem.classList.remove("d-none");
+            callback && callback(elem);
+        }, 400);
+    }, 0);
+}
+
+function showValidationResult(form, result) {
+    var validAlert = form.querySelector(".valid-alert");
+    fadeOut(validAlert);
+
+    if (result && result.succeed) {
+        document.dispatchEvent(new Event("foolproof.validation.succeed"));
+        validAlert.querySelector(".alert-message").innerHTML = "Model validation succeed.";
+        validAlert.classList.remove("alert-danger");
+        validAlert.classList.add("alert-success");
+        fadeIn(validAlert);
+
+        return;
+    }
+
+    document.dispatchEvent(new Event("foolproof.validation.failed", result));
+        
+    if (!Array.isArray(result.errors) || !result.errors.length)
+        result.errors = ["Model validation failed."];
+
+    var messages = "";
+    result.errors.forEach(function (err, indx) {
+        messages += `${(indx ? "<br />" : "")}<div>${err}</div>`;
+    });
+    validAlert.querySelector(".alert-message").innerHTML = messages;
+    validAlert.classList.remove("alert-success");
+    validAlert.classList.add("alert-danger");
+    fadeIn(validAlert);
+}
+
+function clientValidate(form) {
+    var valid = isFormValid(form);
+    showValidationResult(form, {
         succeed: valid,
         errors: []
     });
 }
 
-function isFormValid($form) {
-    return $form.valid();
+//This function will be overriden for every validation library to use.
+function isFormValid(form) {
+    return form.valid();
 }
 
-function serverValidate($form) {
-    isFormValid($form);
+function serverValidate(form) {
+    isFormValid(form);
 
-    $.ajax({
-        url: $form.attr("action"),
-        type: "POST",
-        data: $form.serialize()
+    var url = form.getAttribute("action");
+    fetch(url, {
+        method: "POST",
+        body: new FormData(form)
     })
+    .then(response => response.json())
     .then(function (result) { 
-        showValidationResult($form, result);
+        showValidationResult(form, result);
     })
     .catch(function (error) { 
-        showValidationResult($form, {
+        showValidationResult(form, {
             succeed: false,
             errors: ["Unexpected error validating the model."]
         });
@@ -61,23 +90,30 @@ function serverValidate($form) {
 }
 
 function setupForms() {
-    $("form .btn-validate").on("click", function (evt) {
+    document.querySelectorAll("form .btn-validate").forEach(function (btnElem) {
+        btnElem.addEventListener("click", function (evt) {
+            evt.preventDefault();
+
+            var form = this.closest("form");
+            if (btnElem.dataset.serverValidate)
+                serverValidate(form);
+            else
+                clientValidate(form);
+        });
+    })
+
+    document.querySelector("form .btn-reset").addEventListener("click", function (evt) {
         evt.preventDefault();
 
-        var $form = $(this).closest("form");
-        if ($(this).data("serverValidate"))
-            serverValidate($form);
-        else
-            clientValidate($form);
+        var form = this.closest("form");
+        form.reset();
+
+        fadeOut(form.querySelector(".valid-alert"));
+        form.querySelector("[data-valmsg-for]").innerHTML = "";
     });
+}
 
-    $("form .btn-reset").on("click", function (evt) {
-        evt.preventDefault();
-
-        var $form = $(this).closest("form");
-        $form[0].reset();
-
-        $(".valid-alert", $form).fadeOut();
-        $("[data-valmsg-for]", $form).html("");
-    });
+function useJQuery(useIt) {
+    Cookies.set('UseJQuery', useIt, { expires: 7 });
+    location.reload();
 }

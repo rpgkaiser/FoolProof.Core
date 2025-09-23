@@ -1,4 +1,5 @@
-﻿<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+﻿<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
 
 <script src="~/lib/foolproof-validation/foolproof.core.js"></script>
@@ -16,4 +17,8 @@
         validClass: "is-valid",
         errorClass: "is-invalid"
     });
+
+    function isFormValid(form) {
+        return $(form).valid();
+    }
 </script>

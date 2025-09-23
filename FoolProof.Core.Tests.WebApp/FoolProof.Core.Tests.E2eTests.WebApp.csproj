@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Update="wwwroot\lib\foolproof-validation\foolproof.aspnet-validation.js">
       <PackagePath>contentFiles\Scripts\</PackagePath>
       <Pack>true</Pack>
