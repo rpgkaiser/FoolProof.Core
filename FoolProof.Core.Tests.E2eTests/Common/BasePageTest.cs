@@ -24,6 +24,8 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected bool? UseInputTypes { get; set; } = true;
 
+        protected bool? UseJQuery { get; set; } = true;
+
         protected virtual string Value1ValidMsgId => "value1-valid-msg";
 
         protected virtual string Value2ValidMsgId => "value2-valid-msg";
@@ -36,6 +38,9 @@ namespace FoolProof.Core.Tests.E2eTests
             Browser = await Playwright.Chromium.LaunchAsync();
             Context = await Browser.NewContextAsync();
             Page = await Context.NewPageAsync();
+
+            if(bool.TryParse(TestContext.Properties["UseJQuery"] + "", out var useJQ))
+                UseJQuery = useJQ;
         }
 
         [TestCleanup]
@@ -54,6 +59,13 @@ namespace FoolProof.Core.Tests.E2eTests
                     Url = PageUri().AbsoluteUri,
                     Name = "UseInputTypes",
                     Value = UseInputTypes.Value.ToString()
+                } ]);
+
+            if (UseJQuery.HasValue)
+                await Page.Context.AddCookiesAsync([ new Cookie {
+                    Url = PageUri().AbsoluteUri,
+                    Name = "UseJQuery",
+                    Value = UseJQuery.Value.ToString()
                 } ]);
 
             await Page.GotoAsync(PageUri().AbsoluteUri);
