@@ -76,7 +76,12 @@ namespace FoolProof.Core
 
         public static ClientDataType GetClientDataType(Type valueType)
         {
-            valueType = Nullable.GetUnderlyingType(valueType) ?? valueType;
+            if (valueType.IsArray)
+                valueType = valueType.GetElementType();
+            else if (typeof(IEnumerable).IsAssignableFrom(valueType) && valueType.IsGenericType)
+                valueType = valueType.GenericTypeArguments.First();
+            else
+                valueType = Nullable.GetUnderlyingType(valueType) ?? valueType;
 
             if (IsNumeric(valueType))
                 return ClientDataType.Number;

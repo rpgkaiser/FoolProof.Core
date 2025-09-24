@@ -135,7 +135,8 @@ namespace FoolProof.Core
 						IsValid = (value, dependentValue) => {
 							var eqOperMtd = Get(Operator.EqualTo);
                             var valueList = GetValueList(dependentValue);
-							return valueList.Any(val => eqOperMtd.IsValid(value, val));
+							return (!valueList.Any() && value is null)
+                                   || (valueList.Any() && valueList.Any(val => eqOperMtd.IsValid(value, val)));
 						}
 					}
 				},
@@ -146,7 +147,7 @@ namespace FoolProof.Core
 						IsValid = (value, dependentValue) => {
 							var eqOperMtd = Get(Operator.EqualTo);
                             var valueList = GetValueList(dependentValue);
-                            return valueList.All(val => !eqOperMtd.IsValid(value, val));
+                            return !valueList.Any() || valueList.All(val => !eqOperMtd.IsValid(value, val));
 						}
 					}
 				}
@@ -179,6 +180,9 @@ namespace FoolProof.Core
 
         private static IEnumerable<object> GetValueList(object value)
         {
+            if (value is null)
+                return Array.Empty<object>();
+
             if (value is string)
                 return new[] { value as string };
 

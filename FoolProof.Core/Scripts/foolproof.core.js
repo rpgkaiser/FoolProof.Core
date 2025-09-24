@@ -103,21 +103,21 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 			catch (e) {}
 		}
 
-		if (Array.isArray(dependValue)) {
-			for (var key in dependValue) {
-				var currVal = convertValue(dependValue[key], !!dataType);
-				if (compValue == currVal)
-					return operator == "In" ? true : false;
-			}
+        if (!Array.isArray(dependValue)) {
+            dependValue = convertValue(dependValue, !!dataType);
+		    if (dependValue === undefined)
+                return false; //The dependant value do not correspond with the provided data type
 
-			return operator == "In" ? false : true;
+            dependValue = [dependValue];
+        }
+
+        for (var key in dependValue) {
+			var currVal = convertValue(dependValue[key], !!dataType);
+			if (compValue == currVal)
+				return operator == "In" ? true : false;
 		}
-			
-		dependValue = convertValue(dependValue, !!dataType);
-		if (dependValue === undefined)
-			return false; //The dependant value do not correspond with the provided data type
 
-		return operator == "In" ? compValue == dependValue : compValue != dependValue;
+        return operator != "In" || (!dependValue.length && isNullish(compValue));
 	}
 
 	switch (operator) {
@@ -177,15 +177,9 @@ FoolProofCore.is = function (compValue, operator, dependValue, passOnNull, dataT
 		case "NotRegExMatch":
 			return dependValue && !(new RegExp(dependValue).test(compValue));
         case "In":
-            if (isNullish(compValue) && isNullish(dependValue, true))
-                return true;
-
-			return verifyInclusion();
+            return (isNullish(compValue) && isNullish(dependValue, true)) || verifyInclusion();
 		case "NotIn":
-			if (isNullish(compValue) && !isNullish(dependValue))
-				return true;
-
-			return verifyInclusion();
+			return isNullish(compValue, true) || verifyInclusion();
     }
 
     return false;

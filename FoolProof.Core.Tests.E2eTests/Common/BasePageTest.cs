@@ -333,6 +333,8 @@ namespace FoolProof.Core.Tests.E2eTests
             var clientValidationBtn = Page.GetByTestId($"btn-client");
             await clientValidationBtn.ClickAsync();
 
+            //No need to wait for the JavaScript code to finish so far
+
             if (verifyValidResults && testValues is not null)
                 foreach (var testVal in testValues.AllValues())
                     await VerifyValidationResult(testVal);
@@ -352,6 +354,9 @@ namespace FoolProof.Core.Tests.E2eTests
                         && string.Equals(resp.Request.Method, "POST", StringComparison.OrdinalIgnoreCase)
                         && new Uri(resp.Url).GetLeftPart(UriPartial.Path).EndsWith("/validate")
             );
+
+            //Wait some time for the JavaScript processing to finish before continue with the test
+            await Task.Delay(500);
 
             if (verifyValidResults && testValues is not null)
                 foreach (var testVal in testValues.AllValues())

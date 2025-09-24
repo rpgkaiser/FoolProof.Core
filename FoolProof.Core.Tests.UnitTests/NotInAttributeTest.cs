@@ -86,31 +86,31 @@ namespace FoolProof.Core.Tests.UnitTests
         }
 
         [TestMethod()]
-        public void IsNotValidWithNulls()
+        public void IsValidWithNulls()
         {
             var singModel = new NotIn.SingleValueModel<object>() {
                 Value1 = null,
                 Value2 = null,
                 ValuePwn = null
             };
-            Assert.IsFalse(singModel.IsValid(nameof(singModel.Value2)));
-            Assert.IsFalse(singModel.IsValid(nameof(singModel.ValuePwn)));
+            Assert.IsTrue(singModel.IsValid(nameof(singModel.Value2)));
+            Assert.IsTrue(singModel.IsValid(nameof(singModel.ValuePwn)));
             
             var dateModel = new NotIn.DateTimeListModel() { 
                 Value1 = null, 
                 Value2 = null,
                 ValuePwn = null
             };
-            Assert.IsFalse(dateModel.IsValid(nameof(dateModel.Value2)));
-            Assert.IsFalse(dateModel.IsValid(nameof(dateModel.ValuePwn)));
+            Assert.IsTrue(dateModel.IsValid(nameof(dateModel.Value2)));
+            Assert.IsTrue(dateModel.IsValid(nameof(dateModel.ValuePwn)));
 
             var int16Model = new NotIn.In16ListModel() { 
                 Value1 = null, 
                 Value2 = null,
                 ValuePwn = null
             };
-            Assert.IsFalse(int16Model.IsValid(nameof(int16Model.Value2)));
-            Assert.IsFalse(int16Model.IsValid(nameof(int16Model.ValuePwn)));
+            Assert.IsTrue(int16Model.IsValid(nameof(int16Model.Value2)));
+            Assert.IsTrue(int16Model.IsValid(nameof(int16Model.ValuePwn)));
         }
 
         [TestMethod()]

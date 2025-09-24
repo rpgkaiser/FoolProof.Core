@@ -1,20 +1,17 @@
-﻿function fadeOut(elem, callback) {
-    if (!elem.checkVisibility()) {
-        callback && callback(elem);
+﻿function fadeOut(elem) {
+    if (!elem.checkVisibility())
         return;
-    }
 
     elem.classList.remove("fade-in", "fade-out");
     setTimeout(function () {
         elem.classList.add("fade-out");
         setTimeout(function () {
             elem.classList.add("d-none");
-            callback && callback(elem);
         }, 400);
     }, 0);
 }
 
-function fadeIn(elem, callback) {
+function fadeIn(elem) {
     if (elem.checkVisibility())
         elem.classList.remove("fade-in", "fade-out");
 
@@ -22,7 +19,6 @@ function fadeIn(elem, callback) {
         elem.classList.add("fade-in");
         setTimeout(function () {
             elem.classList.remove("d-none");
-            callback && callback(elem);
         }, 400);
     }, 0);
 }
