@@ -210,14 +210,14 @@
         </nav>
     </header>
     <div class="btn-group btn-group-sm usejquery-chk" role="group" aria-label="Select validation library">
-        <input type="radio" class="btn-check" id="btnradio1" value="true"
-               autocomplete="off"
+        <input type="radio" class="btn-check" id="btnradio1" value="true" data-testid="use-jquery-rbtn"
+               autocomplete="off" name="valid-lib"
                checked="@Context.Request.UseJQuery()"
                onchange="useJQuery(true)" />
         <label class="btn btn-outline-dark" for="btnradio1">jQuery Validation</label>
 
-        <input type="radio" class="btn-check" id="btnradio2" value="true"
-               autocomplete="off"
+        <input type="radio" class="btn-check" id="btnradio2" value="true" data-testid="use-aspnetclient-rbtn"
+               autocomplete="off" name="valid-lib"
                checked="@(!Context.Request.UseJQuery())"
                onchange="useJQuery(false)" />
         <label class="btn btn-outline-dark" for="btnradio2">Aspnet Client Validation</label>
@@ -255,9 +255,7 @@
         }
     }
     <script type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function() {
-            setupForms();
-        });
+        setupForms();
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

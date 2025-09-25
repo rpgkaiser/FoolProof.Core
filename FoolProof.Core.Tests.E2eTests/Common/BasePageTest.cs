@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Playwright;
@@ -39,8 +40,7 @@ namespace FoolProof.Core.Tests.E2eTests
             Context = await Browser.NewContextAsync();
             Page = await Context.NewPageAsync();
 
-            if(bool.TryParse(TestContext.Properties["UseJQuery"] + "", out var useJQ))
-                UseJQuery = useJQ;
+            UseJQuery = TestEnv.UseJQuery;
         }
 
         [TestCleanup]
@@ -70,6 +70,11 @@ namespace FoolProof.Core.Tests.E2eTests
 
             await Page.GotoAsync(PageUri().AbsoluteUri);
             await Expect(Page).ToHaveTitleAsync(PageTitleRegex());
+
+            var rbtn = UseJQuery ?? true
+                        ? Page.GetByTestId("use-jquery-rbtn")
+                        : Page.GetByTestId("use-aspnetclient-rbtn");
+            await Expect(rbtn).ToBeCheckedAsync();
         }
 
         protected virtual async Task VerifyValidationResult(InputTestValue input)
@@ -325,28 +330,35 @@ namespace FoolProof.Core.Tests.E2eTests
             await ExpectEmpties([.. testValues.AllValues().Where(tv => tv.ResetAsEmpty == true)]);
         }
 
-        protected async Task CallClientValidation(TestValues? testValues = null, bool resetFirst = false, bool verifyValidResults = false)
+        protected async Task<bool> CallClientValidation(TestValues? testValues = null, bool resetFirst = false, bool verifyValidResults = false)
         {
             if(testValues is not null)
                 await AssignTestValues(testValues, resetFirst);
 
+            var validMsgTask = ExpectValidationCompletedMessage();
+
             var clientValidationBtn = Page.GetByTestId($"btn-client");
             await clientValidationBtn.ClickAsync();
 
-            //No need to wait for the JavaScript code to finish so far
+            //Wait for the JavaScript processing to finish before continue with the test
+            var result = await validMsgTask;
 
             if (verifyValidResults && testValues is not null)
                 foreach (var testVal in testValues.AllValues())
                     await VerifyValidationResult(testVal);
+
+            return result;
         }
 
-        protected async Task CallServerValidation(TestValues? testValues = null, bool resetFirst = false, bool verifyValidResults = false)
+        protected async Task<bool> CallServerValidation(TestValues? testValues = null, bool resetFirst = false, bool verifyValidResults = false)
         {
             if (testValues is not null)
                 await AssignTestValues(testValues);
 
+            var validMsgTask = ExpectValidationCompletedMessage();
+
             var serverValidationBtn = Page.GetByTestId($"btn-server");
-            await Page.RunAndWaitForResponseAsync(
+            var waitRespTask = Page.RunAndWaitForResponseAsync(
                 async () => {
                     await serverValidationBtn.ClickAsync();
                 }, 
@@ -355,12 +367,42 @@ namespace FoolProof.Core.Tests.E2eTests
                         && new Uri(resp.Url).GetLeftPart(UriPartial.Path).EndsWith("/validate")
             );
 
-            //Wait some time for the JavaScript processing to finish before continue with the test
-            await Task.Delay(500);
+            var retryCount = 1;
+            for (int i = 0; i < retryCount; i++)
+            {
+                try
+                {
+                    await waitRespTask;
+                    break;
+                }
+                catch (TimeoutException)
+                { 
+                    //Retry the request
+                }
+            }            
+
+            //Wait for the JavaScript processing to finish before continue with the test
+            var result = await validMsgTask;
 
             if (verifyValidResults && testValues is not null)
                 foreach (var testVal in testValues.AllValues())
                     await VerifyValidationResult(testVal);
+
+            return result;
+        }
+
+        protected async Task<bool> ExpectValidationCompletedMessage(bool? succeed = null)
+        {
+            var consoleMsg = await Page.WaitForConsoleMessageAsync(new() {
+                Predicate = msgObj => new string[] { "log", "info", "debug", "trace", "error", "warning" }.Contains(msgObj.Type)
+                                      && msgObj.Text.Contains("Validation completed", StringComparison.OrdinalIgnoreCase)
+            });
+
+            var result = consoleMsg.Args.Count > 1 && await consoleMsg.Args[1].JsonValueAsync<bool>();
+            if(succeed.HasValue)
+                Assert.AreEqual(succeed.Value, result);
+
+            return result;
         }
 
         protected virtual string ConvertToString(object? value)

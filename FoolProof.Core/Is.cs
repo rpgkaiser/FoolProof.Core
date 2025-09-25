@@ -52,11 +52,13 @@ namespace FoolProof.Core
 
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            var dataTypeStr = GetDataType(modelMetadata.ModelType).ToString();
+            var clientDataType = DataType == ClientDataType.Auto 
+                                 ? GetDataType(modelMetadata.ModelType) 
+                                 : DataType;
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
                 new KeyValuePair<string, object>("PassOnNull", PassOnNull),
-                new KeyValuePair<string, object>("DataType", dataTypeStr)
+                new KeyValuePair<string, object>("DataType", clientDataType.ToString())
             };
             return base.GetClientValidationParameters(modelMetadata).Union(clientParams);
         }
@@ -78,8 +80,6 @@ namespace FoolProof.Core
         {
             if (valueType.IsArray)
                 valueType = valueType.GetElementType();
-            else if (typeof(IEnumerable).IsAssignableFrom(valueType) && valueType.IsGenericType)
-                valueType = valueType.GenericTypeArguments.First();
             else
                 valueType = Nullable.GetUnderlyingType(valueType) ?? valueType;
 
@@ -98,9 +98,7 @@ namespace FoolProof.Core
         }
 
         protected virtual ClientDataType GetDataType(Type modelType)
-            => DataType == ClientDataType.Auto
-                ? GetClientDataType(modelType)
-                : DataType;
+            => GetClientDataType(modelType);
     }
 
     public class IsAttribute<T>: ModelAwareValidationAttribute
@@ -182,13 +180,15 @@ namespace FoolProof.Core
 
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
-            var dataTypeStr = GetDataType(typeof(T)).ToString();
+            var clientDataType = DataType == ClientDataType.Auto
+                                 ? GetDataType(modelMetadata.ModelType)
+                                 : DataType;
             object depValue = DependentValue is not null ? JsonSerializer.Serialize(DependentValue) : DependentValue;
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("DependentValue", depValue),
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
                 new KeyValuePair<string, object>("PassOnNull", PassOnNull),
-                new KeyValuePair<string, object>("DataType", dataTypeStr)
+                new KeyValuePair<string, object>("DataType", clientDataType.ToString())
             };
             return base.GetClientValidationParameters(modelMetadata).Union(clientParams);
         }
@@ -197,8 +197,6 @@ namespace FoolProof.Core
             => (VT)TypeDescriptor.GetConverter(typeof(VT)).ConvertFromString(strValue);
 
         protected virtual ClientDataType GetDataType(Type modelType)
-            => DataType == ClientDataType.Auto
-                ? IsAttribute.GetClientDataType(modelType)
-                : DataType;
+            => IsAttribute.GetClientDataType(typeof(T));
     }
 }

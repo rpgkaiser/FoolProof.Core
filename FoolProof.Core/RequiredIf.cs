@@ -62,12 +62,14 @@ namespace FoolProof.Core
         protected override IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
         {
             var dependentProperty = GetModelProperty(modelMetadata.ContainerType, DependentProperty);
-            var dataTypeStr = GetDataType(dependentProperty.PropertyType).ToString();
+            var clientDataType = DataType == ClientDataType.Auto 
+                                 ? GetDataType(dependentProperty.PropertyType)
+                                 : DataType;
             object depValue = DependentValue is not null ? JsonSerializer.Serialize(DependentValue) : DependentValue;
             var clientParams = new List<KeyValuePair<string, object>>() {
                 new KeyValuePair<string, object>("Operator", Operator.ToString()),
                 new KeyValuePair<string, object>("DependentValue", depValue),
-                new KeyValuePair<string, object>("DataType", dataTypeStr)
+                new KeyValuePair<string, object>("DataType", clientDataType.ToString())
             };
             return base.GetClientValidationParameters(modelMetadata).Union(clientParams);
         }
@@ -81,8 +83,6 @@ namespace FoolProof.Core
         }
 
         protected virtual ClientDataType GetDataType(Type modelType)
-            => DataType == ClientDataType.Auto
-                ? IsAttribute.GetClientDataType(modelType)
-                : DataType;
+            => IsAttribute.GetClientDataType(modelType);
     }
 }

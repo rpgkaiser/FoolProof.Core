@@ -52,37 +52,63 @@ function showValidationResult(form, result) {
     fadeIn(validAlert);
 }
 
-function clientValidate(form) {
-    var valid = isFormValid(form);
-    showValidationResult(form, {
-        succeed: valid,
-        errors: []
-    });
-}
-
 //This function will be overriden for every validation library to use.
 function isFormValid(form) {
     return form.valid();
 }
 
-function serverValidate(form) {
-    isFormValid(form);
-
-    var url = form.getAttribute("action");
-    fetch(url, {
-        method: "POST",
-        body: new FormData(form)
-    })
-    .then(response => response.json())
-    .then(function (result) { 
-        showValidationResult(form, result);
-    })
-    .catch(function (error) { 
+function clientValidate(form) {
+    try
+    {
+        var valid = isFormValid(form);
         showValidationResult(form, {
-            succeed: false,
-            errors: ["Unexpected error validating the model."]
+            succeed: valid,
+            errors: []
         });
-    });
+        console.debug("Validation completed", valid);
+        console.log("Validation completed", valid);
+        console.trace("Validation completed", valid);
+    }
+    catch (e) {
+        console.debug("Validation completed", false);
+        console.log("Validation completed", false);
+        console.trace("Validation completed", false);
+    }
+}
+
+function serverValidate(form) {
+    try
+    {
+        isFormValid(form);
+
+        var url = form.getAttribute("action");
+        fetch(url, {
+            method: "POST",
+            body: new FormData(form)
+        })
+        .then(response => response.json())
+        .then(function (result) { 
+            showValidationResult(form, result);
+            var valid = result && result.succeed;
+            console.debug("Validation completed", valid);
+            console.log("Validation completed", valid);
+            console.trace("Validation completed", valid);
+        })
+        .catch(function (error) { 
+            showValidationResult(form, {
+                succeed: false,
+                errors: ["Unexpected error validating the model."]
+            });
+            console.debug("Validation completed", false);
+            console.log("Validation completed", false);
+            console.trace("Validation completed", false);
+        });
+    }
+    catch (e) {
+        console.debug("Validation completed", false);
+        console.log("Validation completed", false);
+        console.trace("Validation completed", false);
+    }
 }
 
 function setupForms() {
