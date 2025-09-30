@@ -121,7 +121,7 @@ FoolProofCore.registerValidators = function (addValidatorFunc, getValidatorFunc,
 
     addValidatorFunc("requiredifnotempty", function (value, element, params) {
         var dependentProperty = FoolProofCore.getId(element, params["dependentproperty"]);
-        var dependentValue = getElementValue("#" + dependentProperty);
+        var dependentValue = getElementValue(document.getElementById(dependentProperty));
 
         if (dependentValue != null && dependentValue.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "") {
             if (value != null && value.toString().replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "")

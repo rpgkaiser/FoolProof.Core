@@ -58,7 +58,7 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string DataType => "Single";
 
-        protected override TestValues GetValues2PassValidation()
+        protected override CompareTestValues GetValues2PassValidation()
         {
             return new(_value1, "Value one", "Value one", [
                 new (nameof(In.SingleValueModel<string>.DateIn), DateOnly.Parse("03/03/2025")),
@@ -66,7 +66,7 @@ namespace FoolProof.Core.Tests.E2eTests
             ]);
         }
 
-        protected override TestValues GetValues2FailsValidation()
+        protected override CompareTestValues GetValues2FailsValidation()
         {
             return new(_value1, "Value two", "Value three", [
                 new (nameof(In.SingleValueModel<string>.DateIn), DateOnly.Parse("10/10/2025")),
@@ -85,14 +85,14 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string DataType => "Int16";
 
-        protected override TestValues GetValues2PassValidation()
+        protected override CompareTestValues GetValues2PassValidation()
         {
             return new(_value1, 2, 7, [
                 new (nameof(In.In16ListModel.ValueIn), -1)
             ]);
         }
 
-        protected override TestValues GetValues2FailsValidation()
+        protected override CompareTestValues GetValues2FailsValidation()
         {
             return new(_value1, 3, 5, [
                 new (nameof(In.In16ListModel.ValueIn), 4)
@@ -114,7 +114,7 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string DataType => "DateTime";
 
-        protected override TestValues GetValues2PassValidation()
+        protected override CompareTestValues GetValues2PassValidation()
         {
             return new(
                 _value1,
@@ -126,7 +126,7 @@ namespace FoolProof.Core.Tests.E2eTests
             );
         }
 
-        protected override TestValues GetValues2FailsValidation()
+        protected override CompareTestValues GetValues2FailsValidation()
         {
             return new(
                 _value1,

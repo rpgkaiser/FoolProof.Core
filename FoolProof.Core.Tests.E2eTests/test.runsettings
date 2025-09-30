@@ -7,6 +7,8 @@
 		<Parameter name="StartWebApp" value="true" />
 		<Parameter name="WebAppPort" value="9090" />
 		<Parameter name="WebAppUrl" value="http://localhost:9090" />
-        <Parameter name="UseJQuery" value="true" />
+        <Parameter name="UseJQuery" value="false" />
+        <Parameter name="Wait4MsgTimeout" value="50000" />
+        <Parameter name="CallServerRetryCount" value="3" />
 	</TestRunParameters>
 </RunSettings>

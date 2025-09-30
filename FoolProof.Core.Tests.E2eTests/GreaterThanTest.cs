@@ -54,14 +54,14 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override string DataType => "Date";
 
-            protected override TestValues GetValues2PassValidation()
+            protected override CompareTestValues GetValues2PassValidation()
             {
                 return new(DateOnly.Parse("5/5/2005"), DateOnly.Parse("10/10/2010"), DateOnly.Parse("11/11/2020"), [
                    new(nameof(GreaterThan.DateModel.MinDate), DateOnly.Parse("05/05/2025"))
                 ]);
             }
 
-            protected override TestValues GetValues2FailsValidation()
+            protected override CompareTestValues GetValues2FailsValidation()
             {
                 return new (DateOnly.Parse("11/11/2020"), DateOnly.Parse("10/10/2010"), DateOnly.Parse("5/5/2005"), [
                    new(nameof(GreaterThan.DateModel.MinDate), DateOnly.Parse("01/01/2024"))
@@ -74,14 +74,14 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override string DataType => "Int16";
 
-            protected override TestValues GetValues2PassValidation()
+            protected override CompareTestValues GetValues2PassValidation()
             {
                 return new(11, 55, 77, [
                    new(nameof(GreaterThan.Int16Model.MinValue), 2000)
                 ]);
             }
 
-            protected override TestValues GetValues2FailsValidation()
+            protected override CompareTestValues GetValues2FailsValidation()
             {
                 return new(999, 88, 22, [
                    new(nameof(GreaterThan.Int16Model.MinValue), 200)
@@ -94,14 +94,14 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override string DataType => "Time";
 
-            protected override TestValues GetValues2PassValidation()
+            protected override CompareTestValues GetValues2PassValidation()
             {
                 return new(TimeSpan.Parse("08:00"), TimeSpan.Parse("14:30"), TimeSpan.Parse("22:00"), [
                    new(nameof(GreaterThan.TimeModel.MinTime), TimeSpan.Parse("06:30"))
                 ]);
             }
 
-            protected override TestValues GetValues2FailsValidation()
+            protected override CompareTestValues GetValues2FailsValidation()
             {
                 return new(TimeSpan.Parse("20:30"), TimeSpan.Parse("16:45"), TimeSpan.Parse("10:00"), [
                    new(nameof(GreaterThan.TimeModel.MinTime), TimeSpan.Parse("01:30"))
@@ -114,7 +114,7 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override string DataType => "DateTime";
 
-            protected override TestValues GetValues2PassValidation()
+            protected override CompareTestValues GetValues2PassValidation()
             {
                 return new(
                     DateTime.Parse("05/05/2005 10:10"), 
@@ -126,7 +126,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 );
             }
 
-            protected override TestValues GetValues2FailsValidation()
+            protected override CompareTestValues GetValues2FailsValidation()
             {
                 return new(
                     DateTime.Parse("11/11/2020 10:10"), 

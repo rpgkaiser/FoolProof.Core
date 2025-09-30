@@ -14,10 +14,16 @@ namespace FoolProof.Core.Tests.Models
 
         public class Preferences : ValidationModelBase
         {
+            public string? ColorModel { get; set; }
+
+            [RequiredIfEmpty("ColorModel")]
             public string? FavoriteColor { get; set; }
 
-            [RequiredIf("FavoriteColor", "blue")]
-            public string? FavoriteBlueShade { get; set; }
+            [RequiredIfNotEmpty("FavoriteColor")]
+            public string? FavoriteShade { get; set; }
+
+            [RequiredIfRegExMatch(nameof(ColorModel), @"^\s*(r|R)(g|G)(b|B)\s*$")]
+            public int? BitDepth { get; set; }
 
             public bool AutoScale { get; set; }
 
@@ -39,11 +45,14 @@ namespace FoolProof.Core.Tests.Models
             [RequiredIf("Prefs.FavoriteColor", "red")]
             public string? RedShade2Use { get; set; }
 
-            [RequiredIf("Prefs.FavoriteColor", "green")]
-            public string? GreenShade2Use { get; set; }
+            [RequiredIfNotRegExMatch("Prefs.ColorModel", @"^\s*(r|R)(g|G)(b|B)\s*$")]
+            public int? PixelsPerInch { get; set; }
 
-            [RequiredIf("Prefs.AutoScale", true)]
+            [RequiredIfTrue("Prefs.AutoScale")]
             public string? ScaleAlgorithm { get; set; }
+
+            [RequiredIfFalse("Prefs.AutoScale")]
+            public string? CropSize { get; set; }
 
             [RequiredIf("Prefs.AspectRatio", 1)]
             public int? SquareSize { get; set; }

@@ -65,3 +65,7 @@ span.oper {
 .fade-out {
     animation: fadeOut 0.4s ease-in;
 }
+
+.field-error-msg {
+    margin-bottom: .3rem;
+}

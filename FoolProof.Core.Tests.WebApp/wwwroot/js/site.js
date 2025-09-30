@@ -44,7 +44,7 @@ function showValidationResult(form, result) {
 
     var messages = "";
     result.errors.forEach(function (err, indx) {
-        messages += `${(indx ? "<br />" : "")}<div>${err}</div>`;
+        messages += `<div class='field-error-msg'>${err}</div>`;
     });
     validAlert.querySelector(".alert-message").innerHTML = messages;
     validAlert.classList.remove("alert-success");
@@ -124,14 +124,16 @@ function setupForms() {
         });
     })
 
-    document.querySelector("form .btn-reset").addEventListener("click", function (evt) {
-        evt.preventDefault();
+    document.querySelectorAll("form .btn-reset").forEach(function (btnElem) {
+        btnElem.addEventListener("click", function (evt) {
+            evt.preventDefault();
 
-        var form = this.closest("form");
-        form.reset();
+            var form = this.closest("form");
+            form.reset();
 
-        fadeOut(form.querySelector(".valid-alert"));
-        form.querySelector("[data-valmsg-for]").innerHTML = "";
+            fadeOut(form.querySelector(".valid-alert"));
+            form.querySelector("[data-valmsg-for]").innerHTML = "";
+        });
     });
 }
 

@@ -17,7 +17,7 @@ namespace FoolProof.Core.Tests.E2eTests
 
             protected override string DataType => "string";
 
-            protected override TestValues GetValues2PassValidation()
+            protected override CompareTestValues GetValues2PassValidation()
             {
                 return new("Value one", "Value two", "Value three", [
                     new(nameof(NotEqualTo.Model.NotEmptyValue), "Any value"),
@@ -28,7 +28,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 ]);
             }
 
-            protected override TestValues GetValues2FailsValidation()
+            protected override CompareTestValues GetValues2FailsValidation()
             {
                 return new("Value one", "Value one", "Value one", [
                     new(nameof(NotEqualTo.Model.NotEqualToValue), 1000),
