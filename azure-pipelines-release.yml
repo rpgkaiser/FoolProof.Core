@@ -84,6 +84,8 @@ steps:
     rerunType: 'basedOnTestFailurePercentage'
     rerunFailedThreshold: '20'
     rerunMaxAttempts: '5'
+    failOnMinTestsNotRun: true
+    minimumExpectedTests: 170
     
 - task: VSTest@3
   displayName: Run E2E Tests using `aspnet-client-validation` as the client-side validation library
@@ -102,6 +104,8 @@ steps:
     rerunType: 'basedOnTestFailurePercentage'
     rerunFailedThreshold: '20'
     rerunMaxAttempts: '5'
+    failOnMinTestsNotRun: true
+    minimumExpectedTests: 170
     
 - task: CopyFiles@2
   displayName: Copy artifacts (packages) to publish
