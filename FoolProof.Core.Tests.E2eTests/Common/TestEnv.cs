@@ -39,7 +39,7 @@ namespace FoolProof.Core.Tests.E2eTests
             if (int.TryParse(testContext.Properties["CallServerRetryCount"] + "", out var retryCount))
                 CallServerRetryCount = retryCount;
 
-            Trace.WriteLine($"Executing E2E tests using {(UseJQuery ?? true ? "jquery.validation" : "aspnet-client-validation")} as the client-side validation library.");
+            testContext.WriteLine($"Executing E2E tests using {(UseJQuery ?? true ? "jquery.validation" : "aspnet-client-validation")} as the client-side validation library.");
         }
 
         [AssemblyCleanup]

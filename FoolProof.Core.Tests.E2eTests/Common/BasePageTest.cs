@@ -25,7 +25,7 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected bool? UseInputTypes { get; set; } = true;
 
-        protected bool? UseJQuery { get; set; } = true;
+        protected bool UseJQuery { get; set; } = true;
 
         protected int Wait4MsgTimeout { get; set; } = 30000;
 
@@ -40,9 +40,11 @@ namespace FoolProof.Core.Tests.E2eTests
             Context = await Browser.NewContextAsync();
             Page = await Context.NewPageAsync();
 
-            UseJQuery = TestEnv.UseJQuery;
+            UseJQuery = TestEnv.UseJQuery ?? true;
             Wait4MsgTimeout = TestEnv.Wait4MsgTimeout;
             CallServerRetryCount = TestEnv.CallServerRetryCount;
+
+            TestContext.WriteLine($"Using {(UseJQuery ? "jquery.validation" : "aspnet-client-validation")} as the client-side validation library.");
         }
 
         [TestCleanup]
@@ -63,17 +65,16 @@ namespace FoolProof.Core.Tests.E2eTests
                     Value = UseInputTypes.Value.ToString()
                 } ]);
 
-            if (UseJQuery.HasValue)
-                await Page.Context.AddCookiesAsync([ new Cookie {
-                    Url = PageUri().AbsoluteUri,
-                    Name = "UseJQuery",
-                    Value = UseJQuery.Value.ToString()
-                } ]);
+            await Page.Context.AddCookiesAsync([ new Cookie {
+                Url = PageUri().AbsoluteUri,
+                Name = "UseJQuery",
+                Value = UseJQuery.ToString()
+            } ]);
 
             await Page.GotoAsync(PageUri().AbsoluteUri);
             await Expect(Page).ToHaveTitleAsync(PageTitleRegex());
 
-            var rbtn = UseJQuery ?? true
+            var rbtn = UseJQuery
                         ? Page.GetByTestId("use-jquery-rbtn")
                         : Page.GetByTestId("use-aspnetclient-rbtn");
             await Expect(rbtn).ToBeCheckedAsync();
@@ -313,7 +314,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 catch (TimeoutException ex)
                 {
                     if (i + 1 < CallServerRetryCount)
-                        Trace.WriteLine($"Server response not received in the {i+1}th intent. Trying again");
+                        TestContext.WriteLine($"Server response not received in the {i+1}th intent. Trying again");
                     else
                         throw new Exception($"Server response not received after {CallServerRetryCount} intents.", ex);
                 }
