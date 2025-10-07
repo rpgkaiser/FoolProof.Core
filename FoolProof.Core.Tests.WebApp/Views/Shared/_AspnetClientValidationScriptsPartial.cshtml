@@ -1,0 +1,15 @@
+﻿<script src="~/lib/aspnet-client-validation/aspnet-validation.js"></script>
+
+<script src="~/lib/foolproof-validation/foolproof.core.js"></script>
+<script src="~/lib/foolproof-validation/foolproof.validators.js"></script>
+<script src="~/lib/foolproof-validation/foolproof.aspnet-validation.js"></script>
+<script src="~/lib/foolproof-validation/foolproof.aspnet-validation.unobtrusive.js"></script>
+
+<script type="text/javascript">
+    FoolProofCore.aspnetValidationService.ValidationInputCssClassName = "is-invalid";
+    FoolProofCore.aspnetValidationService.ValidationInputValidCssClassName = "is-valid";
+
+    function isFormValid(form) {
+        return FoolProofCore.aspnetValidationService.isValid(form);
+    }
+</script>

@@ -97,13 +97,7 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string DataType => "Single";
 
-        [CustomTestMethod("Empty Values : Invalid")]
-        public override async Task EmptyValues()
-        {
-            await EmptyValues(false);
-        }
-
-        protected override TestValues GetValues2PassValidation()
+        protected override CompareTestValues GetValues2PassValidation()
         {
             return new(
                 _value1, 
@@ -116,7 +110,7 @@ namespace FoolProof.Core.Tests.E2eTests
             );
         }
 
-        protected override TestValues GetValues2FailsValidation()
+        protected override CompareTestValues GetValues2FailsValidation()
         {
             return new(
                 _value1, 
@@ -140,14 +134,14 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string DataType => "Int16";
 
-        protected override TestValues GetValues2PassValidation()
+        protected override CompareTestValues GetValues2PassValidation()
         {
             return new(_value1, 3, 8, [
                 new (nameof(NotIn.In16ListModel.ValueNotIn), 4)
             ]);
         }
 
-        protected override TestValues GetValues2FailsValidation()
+        protected override CompareTestValues GetValues2FailsValidation()
         {
             return new(_value1, 4, 9, [
                 new (nameof(NotIn.In16ListModel.ValueNotIn), 5)
@@ -169,7 +163,7 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override string DataType => "DateTime";
 
-        protected override TestValues GetValues2PassValidation()
+        protected override CompareTestValues GetValues2PassValidation()
         {
             return new(
                 _value1,
@@ -181,7 +175,7 @@ namespace FoolProof.Core.Tests.E2eTests
             );
         }
 
-        protected override TestValues GetValues2FailsValidation()
+        protected override CompareTestValues GetValues2FailsValidation()
         {
             return new(
                 _value1,

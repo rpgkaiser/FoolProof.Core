@@ -1,10 +1,16 @@
-﻿;//You must load the mvcfoolproof.core.js and mvcfoolproof.jquery.validation.js scripts before this one.
+﻿;//You must load jQuery, jQuery.validation, foolproof.core.js and foolproof.validators.js before this.
+
+if (!jQuery || !jQuery.validator)
+    throw "You must load jQuery, jQuery.validation before this.";
 
 if (!FoolProofCore)
-    throw "You must load the mvcfoolproof.core.js script before this.";
+    throw "You must load foolproof.core.js before this.";
 
 if (!FoolProofCore.registerValidators)
-    throw "You must load the mvcfoolproof.jquery.validation.js script before this.";
+    throw "You must load foolproof.validators.js before this.";
+
+if (!jQuery.validator.methods.predicate)
+    throw "You must load foolproof.jquery.validation.js before this.";
 
 var setValidationValues = function(options, ruleName, value) {
     options.rules[ruleName] = value;
@@ -21,7 +27,8 @@ $Unob.adapters.add("is", ["dependentproperty", "operator", "passonnull", "dataty
         operator: options.params.operator,
         passonnull: options.params.passonnull,
         datatype: options.params.datatype,
-        dependentvalue: !!options.params.dependentvalue ? JSON.parse(options.params.dependentvalue) : null
+        dependentvalue: options.params.dependentvalue,
+        //dependentvalue: !!options.params.dependentvalue ? JSON.parse(options.params.dependentvalue) : null
     });
 });
 
@@ -29,6 +36,7 @@ $Unob.adapters.add("requiredif", ["dependentproperty", "dependentvalue", "operat
     setValidationValues(options, "requiredif", {
         dependentproperty: options.params.dependentproperty,
         dependentvalue: options.params.dependentvalue,
+        //dependentvalue: !!options.params.dependentvalue ? JSON.parse(options.params.dependentvalue) : null,
         operator: options.params.operator,
         pattern: options.params.pattern,
         datatype: options.params.datatype

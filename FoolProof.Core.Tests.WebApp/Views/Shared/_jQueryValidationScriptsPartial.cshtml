@@ -1,0 +1,24 @@
+﻿<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+<script src="~/lib/foolproof-validation/foolproof.core.js"></script>
+<script src="~/lib/foolproof-validation/foolproof.validators.js"></script>
+<script src="~/lib/foolproof-validation/foolproof.jquery.validation.js"></script>
+<script src="~/lib/foolproof-validation/foolproof.jquery.validation.unobtrusive.js"></script>
+
+<script type="text/javascript">
+    jQuery.extend($.validator.defaults, {
+        validClass: "is-valid",
+        errorClass: "is-invalid"
+    });
+
+    $.validator.unobtrusive.options = jQuery.extend($.validator.unobtrusive.options, {
+        validClass: "is-valid",
+        errorClass: "is-invalid"
+    });
+
+    function isFormValid(form) {
+        return $(form).valid();
+    }
+</script>

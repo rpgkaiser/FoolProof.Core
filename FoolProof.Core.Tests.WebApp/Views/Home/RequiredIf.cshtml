@@ -10,41 +10,68 @@
       asp-action="@nameof(HomeController.Save)"
       asp-controller="Home"
       asp-route-modelTypeName="@(Model.GetType().FullName)">
-    <div data-testid="valid-alert" class="alert alert-success alert-dismissible valid-alert" style='display: none;'>
-        <button type="button" class="btn-close" onclick="$(this).parent().fadeOut();"></button>
+    <div data-testid="valid-alert" class="alert alert-success alert-dismissible valid-alert fade-out d-none">
+        <button type="button" class="btn-close" onclick="fadeOut(this.parentElement);"></button>
         <span class="alert-message">
         </span>
     </div>
 
+    <div class="d-flex flex-row gap-4 align-items-center justify-content-end">
+        <button type="button" class="btn btn-outline-secondary btn-lg btn-reset">
+            Reset
+        </button>
+        <button type="button" class="btn btn-outline-info btn-lg btn-validate">
+            Validate on Client
+        </button>
+        <button type="button" class="btn btn-outline-primary btn-lg btn-validate"
+                data-server-validate="true">
+            Submit for Validation
+        </button>
+    </div>
     <fieldset>
         <legend>Preferences</legend>
         <div>
             <div class="form-floating flex-fill mb-3">
-                <input class="form-control" asp-for="Prefs.FavoriteColor" placeholder="" />
-                <label>Favorite Color</label>
+                <input class="form-control" asp-for="Prefs.ColorModel" placeholder="" />
+                <label>Color Model (RGB | CMYK | HSV/HSB | LAB | YIQ | Grayscale)</label>
+                <span class="text-danger" asp-validation-for="Prefs.ColorModel" data-testid="prefs_colormodel-valid-msg"></span>
             </div>
             <div class="form-floating flex-fill mb-3">
-                <input class="form-control" asp-for="Prefs.FavoriteBlueShade" placeholder="" />
-                <label>Favorite Blue Shade (Required if <i>FavoriteColor</i> is <strong><i>blue</i></strong>)</label>
-                <span class="text-danger" asp-validation-for="Prefs.FavoriteBlueShade"></span>
+                <input class="form-control" asp-for="Prefs.FavoriteColor" placeholder="" />
+                <label>Favorite Color (Required if <i>ColorModel</i> is empty)</label>
+                <span class="text-danger" asp-validation-for="Prefs.FavoriteColor" data-testid="prefs_favoritecolor-valid-msg"></span>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="Prefs.FavoriteShade" placeholder="" />
+                <label>Favorite Shade (Required if <i>FavoriteColor</i> is not empty)</label>
+                <span class="text-danger" asp-validation-for="Prefs.FavoriteShade" data-testid="prefs_favoriteshade-valid-msg"></span>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="Prefs.BitDepth" placeholder="" />
+                <label>Bit Depth (Required if <i>ColorModel</i> match regex pattern <strong><i>^\s*(r|R)(g|G)(b|B)\s*$</i></strong>)</label>
+                <span class="text-danger" asp-validation-for="Prefs.BitDepth" data-testid="prefs_bitdepth-valid-msg"></span>
             </div>
             <div class="form-floating flex-fill mb-3">
                 <div class="form-check">
                     <input asp-for="Prefs.AutoScale" type="checkbox" class="form-check-input" placeholder="" />
                     <label asp-for="Prefs.AutoScale" class="form-check-label">Auto Scale</label>
+                    <span class="text-danger" asp-validation-for="Prefs.AutoScale" data-testid="prefs_autoscale-valid-msg"></span>
                 </div>
             </div>
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="Prefs.AspectRatio" placeholder="" />
                 <label>Aspect Ratio</label>
+                <span class="text-danger" asp-validation-for="Prefs.AspectRatio" data-testid="prefs_aspectratio-valid-msg"></span>
             </div>
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="Prefs.MaxFileSize" placeholder="" />
                 <label>Max File Size</label>
+                <span class="text-danger" asp-validation-for="Prefs.MaxFileSize" data-testid="prefs_maxfilesize-valid-msg"></span>
             </div>
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="Prefs.InitDate" placeholder="" />
                 <label>Initial Date</label>
+                <span class="text-danger" asp-validation-for="Prefs.InitDate" data-testid="prefs_initdate-valid-msg"></span>
             </div>
         </div>
     </fieldset>
@@ -55,47 +82,53 @@
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="RedShade2Use" placeholder="" />
                 <label>Red Shade To Use (Required if <i>FavoriteColor</i> is <strong><i>red</i></strong>)</label>
-                <span class="text-danger" asp-validation-for="RedShade2Use"></span>
+                <span class="text-danger" asp-validation-for="RedShade2Use" data-testid="@($"{nameof(Model.RedShade2Use).ToLowerInvariant()}-valid-msg")"></span>
             </div>
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="BlueShade2Use" placeholder="" />
                 <label>Blue Shade To Use (Required if <i>FavoriteColor</i> is <strong><i>blue</i></strong>)</label>
-                <span class="text-danger" asp-validation-for="BlueShade2Use"></span>
+                <span class="text-danger" asp-validation-for="BlueShade2Use" data-testid="@($"{nameof(Model.BlueShade2Use).ToLowerInvariant()}-valid-msg")"></span>
             </div>
             <div class="form-floating flex-fill mb-3">
-                <input class="form-control" asp-for="GreenShade2Use" placeholder="" />
-                <label>Green Shade To Use (Required if <i>FavoriteColor</i> is <strong><i>green</i></strong>)</label>
-                <span class="text-danger" asp-validation-for="GreenShade2Use"></span>
+                <input class="form-control" asp-for="PixelsPerInch" placeholder="" />
+                <label>Pixels x Inch (Required if <i>ColorModel</i> do not match regex pattern <strong><i>^\s*(r|R)(g|G)(b|B)\s*$</i></strong>)</label>
+                <span class="text-danger" asp-validation-for="PixelsPerInch" data-testid="@($"{nameof(Model.PixelsPerInch).ToLowerInvariant()}-valid-msg")"></span>
             </div>
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="ScaleAlgorithm" placeholder="" />
                 <label>Scale Algorithm (Required if <i>AutoScale</i> is <strong><i>true</i></strong>)</label>
-                <span class="text-danger" asp-validation-for="ScaleAlgorithm"></span>
+                <span class="text-danger" asp-validation-for="ScaleAlgorithm" data-testid="@($"{nameof(Model.ScaleAlgorithm).ToLowerInvariant()}-valid-msg")"></span>
+            </div>
+            <div class="form-floating flex-fill mb-3">
+                <input class="form-control" asp-for="CropSize" placeholder="" />
+                <label>Crop Size (Required if <i>AutoScale</i> is <strong><i>false</i></strong>)</label>
+                <span class="text-danger" asp-validation-for="CropSize" data-testid="@($"{nameof(Model.CropSize).ToLowerInvariant()}-valid-msg")"></span>
             </div>
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="SquareSize" placeholder="" />
                 <label>Square Size (Required if <i>AspectRatio</i> = <strong><i>1</i></strong>)</label>
-                <span class="text-danger" asp-validation-for="SquareSize"></span>
+                <span class="text-danger" asp-validation-for="SquareSize" data-testid="@($"{nameof(Model.SquareSize).ToLowerInvariant()}-valid-msg")"></span>
             </div>
             <div class="form-floating flex-fill mb-3">
                 <select asp-for="CompressWith" class="form-select w-50" placeholder="">
                     <option value="">None</option>
                     @foreach (var item in Enum.GetValues<RequiredIf.CompressionAlgorithm>())
                     {
-                        <option value="@((int)item)">@Enum.GetName(typeof(RequiredIf.CompressionAlgorithm), item)</option>
+                        <option value="@item">@Enum.GetName(typeof(RequiredIf.CompressionAlgorithm), item)</option>
                     }
                 </select>
                 <label>Compress With (Required if <i>MaxFileSize</i> &lt;= <strong><i>1024</i></strong>)</label>
-                <span class="text-danger" asp-validation-for="CompressWith"></span>
+                <span class="text-danger" asp-validation-for="CompressWith"  data-testid="@($"{nameof(Model.CompressWith).ToLowerInvariant()}-valid-msg")"></span>
             </div>
             <div class="form-floating flex-fill mb-3">
                 <input class="form-control" asp-for="StartProcessingDate" placeholder="" />
                 <label>Start Processing Date (Required if <i>InitDate</i> &gt; <strong><i>01/01/2025</i></strong>)</label>
-                <span class="text-danger" asp-validation-for="StartProcessingDate"></span>
+                <span class="text-danger" asp-validation-for="StartProcessingDate"  data-testid="@($"{nameof(Model.StartProcessingDate).ToLowerInvariant()}-valid-msg")"></span>
             </div>
         </div>
     </fieldset>
-    <div class="d-flex flex-row gap-4 align-items-center justify-content-center">
+
+    <div class="d-flex flex-row gap-4 align-items-center justify-content-end">
         <button data-testid="btn-reset" type="button" class="btn btn-outline-secondary btn-lg btn-reset">
             Reset
         </button>

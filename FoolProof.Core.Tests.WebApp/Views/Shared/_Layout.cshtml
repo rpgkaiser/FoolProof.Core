@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
+    <header class="fixed-top">
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid d-flex flex-row gap-4 align-items-center justify-content-between">
                 <div class="h3">
@@ -209,6 +209,19 @@
             </div>
         </nav>
     </header>
+    <div class="btn-group btn-group-sm usejquery-chk" role="group" aria-label="Select validation library">
+        <input type="radio" class="btn-check" id="btnradio1" value="true" data-testid="use-jquery-rbtn"
+               autocomplete="off" name="valid-lib"
+               checked="@Context.Request.UseJQuery()"
+               onchange="useJQuery(true)" />
+        <label class="btn btn-outline-dark" for="btnradio1">jQuery Validation</label>
+
+        <input type="radio" class="btn-check" id="btnradio2" value="true" data-testid="use-aspnetclient-rbtn"
+               autocomplete="off" name="valid-lib"
+               checked="@(!Context.Request.UseJQuery())"
+               onchange="useJQuery(false)" />
+        <label class="btn btn-outline-dark" for="btnradio2">Aspnet Client Validation</label>
+    </div>
     <div class="container">
         <main role="main" class="pb-3">
             <div class="text-center mb-4">
@@ -226,15 +239,23 @@
         </div>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/js-cookie/js.cookie.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
     <script src="~/js/site.js"></script>
 
-    <partial name="_ValidationScriptsPartial" />
+    @{
+        var useJQuery = ViewBag.UseJQuery ?? (bool?)ViewData["UseJQuery"] ?? true;
+        if(useJQuery)
+        {
+            <partial name="_jQueryValidationScriptsPartial" />
+        }
+        else
+        {
+            <partial name="_AspnetClientValidationScriptsPartial" />
+        }
+    }
     <script type="text/javascript">
-        $(function () {
-            setupForms();
-        });
+        setupForms();
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

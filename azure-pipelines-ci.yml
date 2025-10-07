@@ -65,10 +65,10 @@ steps:
   inputs:
     targetType: filePath
     filePath: 'FoolProof.Core.Tests.E2eTests/bin/$(buildConfiguration)/net8.0/playwright.ps1'
-    arguments: install --with-deps
+    arguments: install chromium --with-deps
 
 - task: VSTest@3
-  displayName: Run E2E Tests
+  displayName: Run E2E Tests using `jquery.validation` as the client-side validation library
   inputs:
     testSelector: 'testAssemblies'
     testAssemblyVer2: |
@@ -79,11 +79,35 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
     runSettingsFile: 'FoolProof.Core.Tests.E2eTests/test.runsettings'
-    overrideTestrunParameters: -StartWebApp true -WebAppPort 9090 -WebAppUrl http://localhost:9090
+    overrideTestrunParameters: -StartWebApp true -WebAppPort 9090 -WebAppUrl http://localhost:9090 -UseJQuery true
     rerunFailedTests: true
     rerunType: 'basedOnTestFailurePercentage'
     rerunFailedThreshold: '50'
-    rerunMaxAttempts: '5'
+    rerunMaxAttempts: '3'
+    diagnosticsEnabled: true
+    failOnMinTestsNotRun: true
+    minimumExpectedTests: 150
+    
+- task: VSTest@3
+  displayName: Run E2E Tests using `aspnet-client-validation` as the client-side validation library
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: |
+      **\*E2eTests.dll
+      !**\*TestAdapter.dll
+      !**\obj\**
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+    runSettingsFile: 'FoolProof.Core.Tests.E2eTests/test.runsettings'
+    overrideTestrunParameters: -StartWebApp true -WebAppPort 9090 -WebAppUrl http://localhost:9090 -UseJQuery false
+    rerunFailedTests: true
+    rerunType: 'basedOnTestFailurePercentage'
+    rerunFailedThreshold: '50'
+    rerunMaxAttempts: '3'
+    diagnosticsEnabled: true
+    failOnMinTestsNotRun: true
+    minimumExpectedTests: 150
     
 - task: CopyFiles@2
   displayName: Copy artifacts (packages) to publish

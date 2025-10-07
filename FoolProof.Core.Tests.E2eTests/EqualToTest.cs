@@ -30,7 +30,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 return base.FormValidationFailure();
             }
 
-            protected override TestValues GetValues2PassValidation()
+            protected override CompareTestValues GetValues2PassValidation()
             {
                 return new("Value one", "Value one", "Value one", [
                     new(nameof(EqualTo.Model.EqualToValue), 1000),
@@ -42,7 +42,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 ]);
             }
 
-            protected override TestValues GetValues2FailsValidation()
+            protected override CompareTestValues GetValues2FailsValidation()
             {
                 return new("Value one", "Value two", "Value three", [
                     new(nameof(EqualTo.Model.EmptyValue), "Any value"),

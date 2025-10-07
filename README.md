@@ -55,10 +55,10 @@ level (aka model-wise validation).
 
 ## Client-side validation
 
-All the validators are available for client side validation.
-Although you can combine any *ValidationAttribute* using the *predicate* validators, only the `ValidationAttribute` with 
-a registered `IAttributeAdapter` will be available for client-side validation; of course, this includes all the validator provided by 
-this library (and many others from `System.ComponentModel.DataAnnotations`).
+All the validators are available for client side validation to use with `jquery.validation` or `aspnet-client-validation`.
+Although you can combine any *ValidationAttribute* using the *predicate* validators, only *operands* (`ValidationAttribute`) with 
+a registered `IAttributeAdapter` or implementing the `IClientModelValidator` interface will be available for client-side validation; of course, 
+this include all the validators provided by this library (and many others from `System.ComponentModel.DataAnnotations`).
 
 This library provides you with an HTML helper method `ModelValidation` to render the model-wise validation as you would do with any
 property validation. To bring this helper in context, you need to include the `FoolProof.Core` namespace with the `@using` directive.
@@ -70,8 +70,35 @@ Take a look at the [predicate page](http://foolproofcore.tryasp.net/predicate) i
 
 ## Setting Up
 
+### Back-end
 + Include namespace  _FoolProof.Core_
 + Just add this line `services.AddFoolProof();` to your _ConfigureServices_ method on the _Startup_ class; this will register a new `IValidationAttributeAdapterProvider`.
+
+### Front-end
+After installing the nuget package, a new folder `foolproof-validation` should be created under your `wwwroot\lib` folder 
+with all the required JavaScript files for the client-side validation. The content of this new folder correspond 
+with the content of the `Scripts` folder in the nuget package.
+
+#### To integrate with [jquery.validation](https://jqueryvalidation.org), include the following JavaScript files in the given order:
+
+1. [`jquery.js` (NPM)](https://www.npmjs.com/package/jquery)
+2. [`jquery.validate.js` (NPM)](https://www.npmjs.com/package/jquery-validation)
+3. [`jquery.validate.unobtrusive.js` (NPM)](https://www.npmjs.com/package/@types/jquery-validation-unobtrusive)
+4. `foolproof.core.js`
+5. `foolproof.validators.js`
+6. `foolproof.jquery.validation.js`
+7. `foolproof.jquery.validation.unobtrusive.js`
+
+#### To integrate with [aspnet-client-validation](https://github.com/haacked/aspnet-client-validation), include the following JavaScript files in the given order:
+
+1. [`aspnet-validation.js` (NPM)](https://www.npmjs.com/package/aspnet-client-validation)
+4. `foolproof.core.js`
+5. `foolproof.validators.js`
+6. `foolproof.aspnet-validation.js`
+7. `foolproof.aspnet-validation.unobtrusive.  js`
+
+Once the page get loaded, `FoolProofCore.aspnetValidationService` will contain a bootstrapped instance of a _[ValidationService](https://github.com/haacked/aspnet-client-validation?tab=readme-ov-file#quick-start-guide)_, with all
+the available validation methods already registered and associated with the corresponding form fields.
 
 ## Example WebApp
 

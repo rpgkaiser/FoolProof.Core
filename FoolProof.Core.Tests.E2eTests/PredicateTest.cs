@@ -10,12 +10,6 @@ namespace FoolProof.Core.Tests.E2eTests
 
         protected override Uri PageUri() => new(new Uri(WebAppUrl), "predicate");
 
-        protected override string Value1ValidMsgId => $"{nameof(Predicate.Model.FirstName).ToLowerInvariant()}-valid-msg";
-
-        protected override string Value2ValidMsgId => $"{nameof(Predicate.Model.LastName).ToLowerInvariant()}-valid-msg";
-
-        protected override string ValuePwnValidMsgId => $"{nameof(Predicate.Model.Email).ToLowerInvariant()}-valid-msg";
-
         [TestInitialize]
         public override Task InitTest()
         {
@@ -78,35 +72,42 @@ namespace FoolProof.Core.Tests.E2eTests
                 ]
             );
             yield return testValues;
+
             yield return testValues = testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 12;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 6;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.ElementarySchool)).Value = true;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 12;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 6;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.ElementarySchool)).Value = true;
             });
+
+            yield return testValues = testValues = testValues.Clone(tv => {
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 18;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 10;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.HighSchool)).Value = true;
+            });
+
             yield return testValues = testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 18;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 10;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.HighSchool)).Value = true;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 20;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 14;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.University)).Value = true;
             });
-            yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 20;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 14;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.University)).Value = true;
+
+            yield return testValues = testValues.Clone(tv => {
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "US";
             });
-            yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "US";
+
+            yield return testValues = testValues.Clone(tv => {
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "US";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+13053054567";
             });
-            yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "US";
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+13053054567";
+
+            yield return testValues = testValues.Clone(tv => {
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "ES";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+34446234528";
             });
+
             yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "ES";
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+34446234528";
-            });
-            yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "CU";
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+5352048866";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "CU";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+5352048866";
             });
         }
 
@@ -126,103 +127,123 @@ namespace FoolProof.Core.Tests.E2eTests
                     new(nameof(Predicate.Model.PhoneNumber), "+340054652", false, validResText: "Invalid international phone number format.")
                 ]
             ) {
-                ModelWiseHandler = new("ModelValidationHandler", validResText: "Personal information validation failed")
+                ModelWiseHandler = new("ModelValidationHandler", validResText: "Personal information validation failed", resetAsEmpty: false)
             };
 
             yield return testValues;
 
             yield return testValues = testValues.Clone(tv => {
-                tv.Value1 = "Jhonny";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.FirstName)).Value = "Jhonny";
             });
+
             yield return testValues = testValues.Clone(tv => {
-                tv.Value2 = "McDonald Smith";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.LastName)).Value = "McDonald Smith";
             });
+
             yield return testValues = testValues.Clone(tv => {
-                tv.ValuePwn = "jhon.mcd@server.com";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Email)).Value = "jhon.mcd@server.com";
             });
+
             yield return testValues = testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 22;
-                tv.ModelWiseHandler!.ValidResultText = string.Empty;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 22;
+                tv.ModelWiseHandler!.ValidResultText = null;
             });
+
             yield return testValues = testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 12;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 6;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.ElementarySchool)).Value = true;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.ElementarySchool)).ValidResultText = string.Empty;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 12;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 6;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.ElementarySchool)).Value = true;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.ElementarySchool)).ValidResultText = string.Empty;
             });
+
             yield return testValues = testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 16;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 10;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.HighSchool)).Value = true;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.HighSchool)).ValidResultText = string.Empty;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 16;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 10;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.HighSchool)).Value = true;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.HighSchool)).ValidResultText = string.Empty;
             });
+
             yield return testValues = testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 22;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 14;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.University)).Value = true;
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.University)).ValidResultText = string.Empty;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Age)).Value = 22;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.YearsOfStudy)).Value = 14;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.University)).Value = true;
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.University)).ValidResultText = string.Empty;
             });
-            yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "";
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+1405305465";
+
+            yield return testValues = testValues.Clone(tv => {
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+1405305465";
             });
-            yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "US";
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+1405305465";
+
+            yield return testValues = testValues.Clone(tv => {
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "US";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+1405305465";
             });
-            yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "US";
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+344053054658";
+
+            yield return testValues = testValues.Clone(tv => {
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "US";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+344053054658";
             });
-            yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "ES";
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+13053054653";
+
+            yield return testValues = testValues.Clone(tv => {
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "ES";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+13053054653";
             });
-            yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "ES";
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+340530546";
+
+            yield return testValues = testValues.Clone(tv => {
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "ES";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+340530546";
             });
-            yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "CU";
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+1305305465";
+
+            yield return testValues = testValues.Clone(tv => {
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "CU";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+1305305465";
             });
+
             yield return testValues.Clone(tv => {
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "CU";
-                tv.OtherValues.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+53530546";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.Country)).Value = "CU";
+                tv._values.First(ov => ov.InputId == nameof(Predicate.Model.PhoneNumber)).Value = "+53530546";
             });
         }
 
         protected class PredicateTestValues : TestValues
         {
+            protected internal IEnumerable<InputTestValue> _values;
+
             public PredicateTestValues(
                 string? firstName = default,
                 string? lastName = default,
                 string? email = default,
                 params InputTestValue[] otherValues
-            ) : base(
-                    new InputTestValue(nameof(Predicate.Model.FirstName), firstName),
-                    new InputTestValue(nameof(Predicate.Model.LastName), lastName),
-                    new InputTestValue(nameof(Predicate.Model.Email), email), 
-                    otherValues
-                ) { }
+            )
+            {
+                var vals = new List<InputTestValue> {
+                    new (nameof(Predicate.Model.FirstName), firstName),
+                    new (nameof(Predicate.Model.LastName), lastName),
+                    new (nameof(Predicate.Model.Email), email)
+                };
+                if(otherValues is not null && otherValues.Length > 0 )
+                    vals.AddRange(otherValues);
+
+                _values = vals;
+            }
 
             public InputTestValue? ModelWiseHandler { get; set; }
 
             public PredicateTestValues Clone(Action<PredicateTestValues>? modify = null)
             {
-                var result = new PredicateTestValues(
-                    Value1 as string,
-                    Value2 as string,
-                    ValuePwn as string,
-                    [.. OtherValues]
-                ) {
-                    ModelWiseHandler = ModelWiseHandler?.Clone()
+                var nVals = _values.Select(v => v.Clone());
+                var result = new PredicateTestValues() { 
+                    ModelWiseHandler = ModelWiseHandler?.Clone(),
+                    _values = nVals
                 };
-                
+
                 modify?.Invoke(result);
 
                 return result;
             }
+
+            public override IEnumerable<InputTestValue> AllValues() => _values;
         }
     }
 }

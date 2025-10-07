@@ -12,11 +12,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\" />
-    <Folder Include="wwwroot\lib\foolproof-validation\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Content Update="wwwroot\lib\foolproof-validation\foolproof.jquery.unobtrusive.js">
+      <PackagePath>contentFiles\Scripts\</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Update="wwwroot\lib\foolproof-validation\mvcfoolproof.aspnet-client-validation.js">
+      <PackagePath>contentFiles\Scripts\</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Update="wwwroot\lib\foolproof-validation\mvcfoolproof.core.js">
+      <PackagePath>contentFiles\Scripts\</PackagePath>
+      <Pack>true</Pack>
+    </Content>
     <Content Update="wwwroot\lib\foolproof-validation\mvcfoolproof.jquery.validation.js">
       <PackagePath>contentFiles\Scripts\</PackagePath>
       <Pack>true</Pack>
@@ -25,6 +32,18 @@
       <PackagePath>contentFiles\Scripts\</PackagePath>
       <Pack>true</Pack>
     </Content>
+    <Content Update="wwwroot\lib\foolproof-validation\mvcfoolproof.validators.js">
+      <PackagePath>contentFiles\Scripts\</PackagePath>
+      <Pack>true</Pack>
+    </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\foolproof-validation\" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="echo Coping JavaSript files...&#xD;&#xA;xcopy /S /Y &quot;$(ProjectDir)..\FoolProof.Core\Scripts\*&quot; &quot;$(ProjectDir)wwwroot\lib\foolproof-validation&quot;" />
+  </Target>
 
 </Project>

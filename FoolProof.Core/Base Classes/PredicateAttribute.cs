@@ -95,20 +95,20 @@ namespace FoolProof.Core
                 var stringLocalizer = validationContext.ActionContext.HttpContext.RequestServices.GetService<IStringLocalizer>();
                 
                 var attrAdapter = adapterProvider.GetAttributeAdapter(operand, stringLocalizer);
-                if (attrAdapter is null)
-                    return null;
-
-                attrAdapter.AddValidation(validContext);
+                if (attrAdapter is not null)
+                    attrAdapter.AddValidation(validContext);
+                else if(operand is IClientModelValidator clientModelValid)
+                    clientModelValid.AddValidation(validContext);
 
                 var validMethod = validContext.Attributes.Where(at => at.Key.StartsWith("data-val-"))
-                                  .OrderBy(at => at.Key.Length)
-                                  .FirstOrDefault()
-                                  .Key["data-val-".Length..]
-                                  .ToLowerInvariant();
+                                    .OrderBy(at => at.Key.Length)
+                                    .FirstOrDefault()
+                                    .Key.Substring("data-val-".Length)
+                                    .ToLowerInvariant();
                 var paramsPrefix = $"data-val-{validMethod}-";
                 var validParams = validContext.Attributes.Where(at => at.Key.StartsWith(paramsPrefix))
                                   .ToDictionary(
-                                      x => x.Key[paramsPrefix.Length..],
+                                      x => x.Key.Substring(paramsPrefix.Length),
                                       x => x.Value as object
                                   );
                 result = new() { 

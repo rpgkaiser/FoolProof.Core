@@ -1,79 +1,143 @@
-﻿function showValidationResult($form, result) {
+﻿function fadeOut(elem) {
+    if (!elem.checkVisibility())
+        return;
+
+    elem.classList.remove("fade-in", "fade-out");
+    setTimeout(function () {
+        elem.classList.add("fade-out");
+        setTimeout(function () {
+            elem.classList.add("d-none");
+        }, 400);
+    }, 0);
+}
+
+function fadeIn(elem) {
+    if (elem.checkVisibility())
+        elem.classList.remove("fade-in", "fade-out");
+
+    setTimeout(function () {
+        elem.classList.add("fade-in");
+        setTimeout(function () {
+            elem.classList.remove("d-none");
+        }, 400);
+    }, 0);
+}
+
+function showValidationResult(form, result) {
+    var validAlert = form.querySelector(".valid-alert");
+    fadeOut(validAlert);
+
     if (result && result.succeed) {
-        $(document).trigger("foolproof.validation.succeed");
-        $(".valid-alert", $form).fadeOut(function () {
-            $(this).find(".alert-message").html("Model validation succeed.");
-            $(this).removeClass("alert-danger")
-            .addClass("alert-success")
-            .fadeIn();
-        });  
+        document.dispatchEvent(new Event("foolproof.validation.succeed"));
+        validAlert.querySelector(".alert-message").innerHTML = "Model validation succeed.";
+        validAlert.classList.remove("alert-danger");
+        validAlert.classList.add("alert-success");
+        fadeIn(validAlert);
 
         return;
     }
 
-    if (!result || !result.succeed) {
-        $(document).trigger("foolproof.validation.failed", result);
-        $(".valid-alert", $form).fadeOut(function () {
-            if (!Array.isArray(result.errors) || !result.errors.length)
-                result.errors = ["Model validation failed."];
-            var messages = $.map(result.errors, function (err, indx) {
-                return `${(indx ? "<br/>" : "" )}<p>${err}</p>`;
-            });
-            $(this).find(".alert-message").html(messages);
-            $(this).removeClass("alert-success")
-            .addClass("alert-danger")
-            .fadeIn();
-        });  
+    document.dispatchEvent(new Event("foolproof.validation.failed", result));
+        
+    if (!Array.isArray(result.errors) || !result.errors.length)
+        result.errors = ["Model validation failed."];
 
-        return;
-    }
-}
-
-function clientValidate($form) {
-    var valid = $form.valid();
-    showValidationResult($form, {
-        succeed: valid,
-        errors: []
+    var messages = "";
+    result.errors.forEach(function (err, indx) {
+        messages += `<div class='field-error-msg'>${err}</div>`;
     });
+    validAlert.querySelector(".alert-message").innerHTML = messages;
+    validAlert.classList.remove("alert-success");
+    validAlert.classList.add("alert-danger");
+    fadeIn(validAlert);
 }
 
-function serverValidate($form) {
-    $form.valid();
+//This function will be overriden for every validation library to use.
+function isFormValid(form) {
+    return form.valid();
+}
 
-    $.ajax({
-        url: $form.attr("action"),
-        type: "POST",
-        data: $form.serialize()
+function clientValidate(form) {
+    try
+    {
+        var valid = isFormValid(form);
+        showValidationResult(form, {
+            succeed: valid,
+            errors: []
+        });
+        console.debug("Validation completed", valid);
+        console.log("Validation completed", valid);
+        console.trace("Validation completed", valid);
+    }
+    catch (e) {
+        console.debug("Validation completed", false);
+        console.log("Validation completed", false);
+        console.trace("Validation completed", false);
+    }
+}
+
+function serverValidate(form) {
+    try
+    {
+        isFormValid(form);
+
+        var url = form.getAttribute("action");
+        fetch(url, {
+            method: "POST",
+            body: new FormData(form)
+        })
+        .then(response => response.json())
+        .then(function (result) { 
+            showValidationResult(form, result);
+            var valid = result && result.succeed;
+            console.debug("Validation completed", valid);
+            console.log("Validation completed", valid);
+            console.trace("Validation completed", valid);
+        })
+        .catch(function (error) { 
+            showValidationResult(form, {
+                succeed: false,
+                errors: ["Unexpected error validating the model."]
+            });
+            console.debug("Validation completed", false);
+            console.log("Validation completed", false);
+            console.trace("Validation completed", false);
+        });
+    }
+    catch (e) {
+        console.debug("Validation completed", false);
+        console.log("Validation completed", false);
+        console.trace("Validation completed", false);
+    }
+}
+
+function setupForms() {
+    document.querySelectorAll("form .btn-validate").forEach(function (btnElem) {
+        btnElem.addEventListener("click", function (evt) {
+            evt.preventDefault();
+
+            var form = this.closest("form");
+            if (btnElem.dataset.serverValidate)
+                serverValidate(form);
+            else
+                clientValidate(form);
+        });
     })
-    .then(function (result) { 
-        showValidationResult($form, result);
-    })
-    .catch(function (error) { 
-        showValidationResult($form, {
-            succeed: false,
-            errors: ["Unexpected error validating the model."]
+
+    document.querySelectorAll("form .btn-reset").forEach(function (btnElem) {
+        btnElem.addEventListener("click", function (evt) {
+            evt.preventDefault();
+
+            var form = this.closest("form");
+            form.reset();
+
+            fadeOut(form.querySelector(".valid-alert"));
+            form.querySelector("[data-valmsg-for]").innerHTML = "";
         });
     });
 }
 
-function setupForms() {
-    $("form .btn-validate").on("click", function (evt) {
-        evt.preventDefault();
-
-        var $form = $(this).closest("form");
-        if ($(this).data("serverValidate"))
-            serverValidate($form);
-        else
-            clientValidate($form);
-    });
-
-    $("form .btn-reset").on("click", function (evt) {
-        evt.preventDefault();
-
-        var $form = $(this).closest("form");
-        $form[0].reset();
-
-        $(".valid-alert", $form).fadeOut();
-        $("[data-valmsg-for]", $form).html("");
-    });
+function useJQuery(useIt) {
+    Cookies.set('UseJQuery', useIt, { expires: 7 });
+    location.reload();
 }

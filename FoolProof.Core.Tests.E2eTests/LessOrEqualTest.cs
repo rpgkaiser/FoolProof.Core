@@ -48,7 +48,7 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override string DataType => "Date";
 
-            protected override TestValues GetValues2PassValidation()
+            protected override CompareTestValues GetValues2PassValidation()
             {
                 return new(
                     DateOnly.Parse("12/12/2020"), 
@@ -60,7 +60,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 );
             }
 
-            protected override TestValues GetValues2FailsValidation()
+            protected override CompareTestValues GetValues2FailsValidation()
             {
                 return new(
                     DateOnly.Parse("05/05/2005"), 
@@ -78,14 +78,14 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override string DataType => "Int16";
 
-            protected override TestValues GetValues2PassValidation()
+            protected override CompareTestValues GetValues2PassValidation()
             {
                 return new(222, 55, 11, [
                     new(nameof(LessThanOrEqualTo.Int16Model.MaxValue), 300)
                 ]);
             }
 
-            protected override TestValues GetValues2FailsValidation()
+            protected override CompareTestValues GetValues2FailsValidation()
             {
                 return new(22, 88, 111, [
                     new(nameof(LessThanOrEqualTo.Int16Model.MaxValue), 1300)
@@ -98,7 +98,7 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override string DataType => "Time";
 
-            protected override TestValues GetValues2PassValidation()
+            protected override CompareTestValues GetValues2PassValidation()
             {
                 return new(
                     TimeSpan.Parse("22:00"), 
@@ -109,7 +109,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 );
             }
 
-            protected override TestValues GetValues2FailsValidation()
+            protected override CompareTestValues GetValues2FailsValidation()
             {
                 return new(
                     TimeSpan.Parse("10:00"), 
@@ -126,7 +126,7 @@ namespace FoolProof.Core.Tests.E2eTests
         {
             protected override string DataType => "DateTime";
 
-            protected override TestValues GetValues2PassValidation()
+            protected override CompareTestValues GetValues2PassValidation()
             {
                 return new(
                     DateTime.Parse("12/12/2020 10:30"),
@@ -138,7 +138,7 @@ namespace FoolProof.Core.Tests.E2eTests
                 );
             }
 
-            protected override TestValues GetValues2FailsValidation()
+            protected override CompareTestValues GetValues2FailsValidation()
             {
                 return new(
                     DateTime.Parse("5/5/2005 12:00"),

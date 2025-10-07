@@ -52,6 +52,9 @@ namespace FoolProof.Core
 
             DependentValue = dependentValues.Select(strVal => ConvertValue<T>(strVal)).ToArray();
         }
+
+        protected override ClientDataType GetDataType(Type modelType)
+            => base.GetDataType(typeof(T));
     }
 
     //Use this class for string values instead of NotInAttribute<string>, to avoid ambiguity during construction
