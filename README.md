@@ -79,7 +79,7 @@ After installing the nuget package, a new folder `foolproof-validation` should b
 with all the required JavaScript files for the client-side validation. The content of this new folder correspond 
 with the content of the `Scripts` folder in the nuget package.
 
-+ To integrate with [jquery.validation](https://jqueryvalidation.org), include the following JavaScript files in the given order:
+#### To integrate with [jquery.validation](https://jqueryvalidation.org), include the following JavaScript files in the given order:
 
 1. [`jquery.js` (NPM)](https://www.npmjs.com/package/jquery)
 2. [`jquery.validate.js` (NPM)](https://www.npmjs.com/package/jquery-validation)
@@ -89,13 +89,16 @@ with the content of the `Scripts` folder in the nuget package.
 6. `foolproof.jquery.validation.js`
 7. `foolproof.jquery.validation.unobtrusive.js`
 
-+ To integrate with [aspnet-client-validation](https://github.com/haacked/aspnet-client-validation), include the following JavaScript files in the given order:
+#### To integrate with [aspnet-client-validation](https://github.com/haacked/aspnet-client-validation), include the following JavaScript files in the given order:
+
 1. [`aspnet-validation.js` (NPM)](https://www.npmjs.com/package/aspnet-client-validation)
 4. `foolproof.core.js`
 5. `foolproof.validators.js`
 6. `foolproof.aspnet-validation.js`
-7. `foolproof.aspnet-validation.unobtrusive.js`
+7. `foolproof.aspnet-validation.unobtrusive.  js`
 
+Once the page get loaded, `FoolProofCore.aspnetValidationService` will contain a bootstrapped instance of a _[ValidationService](https://github.com/haacked/aspnet-client-validation?tab=readme-ov-file#quick-start-guide)_, with all
+the available validation methods already registered and associated with the corresponding form fields.
 
 ## Example WebApp
 

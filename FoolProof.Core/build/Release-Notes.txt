@@ -2,3 +2,4 @@
 - Refactoring (and renaming) JavaScripts files.
 - Add support for *IClientModelValidator* while procesing *Operands* in *predicate* validators. This will increase the number of *ValidationAttribute* available in client-side for predicates.
 - Fix some edge cases for `In` and `NotIn` validators.
+- Fix some issues with the `RequiredIf` validators family.
