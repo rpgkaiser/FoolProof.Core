@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netcoreapp3.1;net6.0;net7.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>netcoreapp3.1;net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>"MVC Foolproof Validation" for modern .Net</Description>
 		<Authors>Rafael Peña García</Authors>
@@ -12,7 +12,7 @@
 		<PackageLicenseFile>license.txt</PackageLicenseFile>
 		<RepositoryUrl>https://github.com/rpgkaiser/FoolProof.Core</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
-		<Version>2.2.0</Version>
+		<Version>2.3.0</Version>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<LangVersion>11.0</LangVersion>
 	</PropertyGroup>
