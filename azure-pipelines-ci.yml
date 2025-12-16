@@ -19,7 +19,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  version.MajorMinor: '1.3'
+  version.MajorMinor: '2.3'
   version.Revision: $[counter(variables['version.MajorMinor'], 0)]
   versionNumber: '$(version.MajorMinor).$(version.Revision)'
 
@@ -64,7 +64,7 @@ steps:
   displayName: Install Playwright Browsers
   inputs:
     targetType: filePath
-    filePath: 'FoolProof.Core.Tests.E2eTests/bin/$(buildConfiguration)/net8.0/playwright.ps1'
+    filePath: 'FoolProof.Core.Tests.E2eTests/bin/$(buildConfiguration)/net10.0/playwright.ps1'
     arguments: install chromium --with-deps
 
 - task: VSTest@3

@@ -48,7 +48,7 @@ namespace FoolProof.Core
         {
             return IsValid(value, validationContext.ObjectInstance) 
                     ? ValidationResult.Success 
-                    : new ValidationResult(FormatErrorMessage(validationContext));
+                    : new ValidationResult(FormatErrorMessage(validationContext), new[] { validationContext.MemberName });
         }
 
         protected virtual IEnumerable<KeyValuePair<string, object>> GetClientValidationParameters(ModelMetadata modelMetadata)
