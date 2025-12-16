@@ -64,7 +64,7 @@ steps:
   displayName: Install Playwright Browsers
   inputs:
     targetType: filePath
-    filePath: 'FoolProof.Core.Tests.E2eTests/bin/$(buildConfiguration)/net8.0/playwright.ps1'
+    filePath: 'FoolProof.Core.Tests.E2eTests/bin/$(buildConfiguration)/net10.0/playwright.ps1'
     arguments: install chromium --with-deps
 
 - task: VSTest@3
